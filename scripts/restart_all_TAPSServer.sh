@@ -6,13 +6,13 @@
 ##                                                                 ##
 #####################################################################
 
-# local ROOT
-export ROOTSYS=/usr/kernph_x86_64/pkg/root/5.34/gcc4.2
+# ROOT
+export ROOTSYS=/opt/root
 export PATH="$ROOTSYS/bin:$PATH"
 export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
 
 # TAPSsc
-export TAPSSC="$HOME/src/ROOT/TAPSsc"
+export TAPSSC="$HOME/TAPSsc"
 export LD_LIBRARY_PATH="$TAPSSC/lib:$LD_LIBRARY_PATH"
  
 # kill old instance
