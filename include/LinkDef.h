@@ -1,0 +1,43 @@
+// SVN Info: $Id$
+
+/*************************************************************************
+ * Author: Dominik Werthmueller, 2013
+ *************************************************************************/
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+// LinkDef.h                                                            //
+//                                                                      //
+// TAPSsc dictionary header file.                                       //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+
+
+#ifdef __CINT__
+
+// turn everything off
+#pragma link off all globals;
+#pragma link off all classes;
+#pragma link off all functions;
+#pragma link off all typedef;
+
+#pragma link C++ nestedclasses;
+#pragma link C++ nestedtypedef;
+
+// enums
+#pragma link C++ enum ETDataType;
+
+// typedefs
+#pragma link C++ typedef TDataType_t;
+
+// classes
+#pragma link C++ namespace TTConfig;
+#pragma link C++ class TTMySQLManager+;
+#pragma link C++ class TTServerManager+;
+#pragma link C++ class TTDataType+;
+#pragma link C++ class TTNetServer+;
+#pragma link C++ class TTServer+;
+#pragma link C++ class TTNetClient+;
+
+#endif
+
