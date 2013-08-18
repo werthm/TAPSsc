@@ -17,6 +17,7 @@
 #define TTMYSQLMANAGER_H
 
 #include <fstream>
+#include <cstdlib>
 
 #include "TSQLServer.h"
 #include "TSQLResult.h"
