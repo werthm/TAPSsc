@@ -37,6 +37,7 @@ void HVTalk()
     while (strcmp(input, "quit"))
     {
         // read command
+        printf("> ");
         scanf("%s", input);
     }
     
