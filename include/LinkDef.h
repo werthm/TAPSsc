@@ -38,6 +38,7 @@
 #pragma link C++ class TTNetServer+;
 #pragma link C++ class TTServer+;
 #pragma link C++ class TTNetClient+;
+#pragma link C++ class TTSerialComm+;
 
 #endif
 
