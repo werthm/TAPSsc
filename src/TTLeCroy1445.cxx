@@ -6,47 +6,28 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTSerialComm                                                         //
+// TTLeCroy1445                                                         //
 //                                                                      //
-// Serial port communication class.                                     //
-// Source: http://slackware.mirror.ac.za/slackware-4.0/docs/mini/       //
-//         Serial-Port-Programming                                      //
+// RS232 communication class for LeCroy 1445 high voltage controller.   //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
-#include "TTSerialComm.h"
+#include "TTLeCroy1445.h"
 
-ClassImp(TTSerialComm)
+ClassImp(TTLeCroy1445)
 
 
 //______________________________________________________________________________
-TTSerialComm::TTSerialComm(const Char_t* device)
+TTLeCroy1445::TTLeCroy1445(const Char_t* device)
+    : TTRS232(device)
 {
     // Constructor.
     
-    // init members
-    fDesc = -1;
-
-    // try to open the port (read/write, not controlling term. of process, not blocking)
-    fDesc = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
-    if (fDesc == -1)
-    {
-        Error("TTSerialComm", "Could not open device '%s'!", device);
-        return;
-    }
 }
 
 //______________________________________________________________________________
-TTSerialComm::~TTSerialComm()
-{
-    // Destructor.
-
-    Close();
-}
-
-//______________________________________________________________________________
-void TTSerialComm::Configure()
+void TTLeCroy1445::Configure()
 {
     // Configure the serial port.
     
@@ -67,7 +48,7 @@ void TTSerialComm::Configure()
         // enable the receiver and set local mode
         options.c_cflag |= (CLOCAL | CREAD);
 
-        // mask the character size to 8 bits, no parity
+        // mask the character size to 8 bits, no parity, 1 stop bit
         options.c_cflag &= ~PARENB;
         options.c_cflag &= ~CSTOPB;
         options.c_cflag &= ~CSIZE;
@@ -85,17 +66,5 @@ void TTSerialComm::Configure()
         // set the new options for the port
         tcsetattr(fDesc, TCSANOW, &options);
     }
-    else
-    {
-        Error("Configure", "No serial port was opened!");
-    }
-}
-
-//______________________________________________________________________________
-void TTSerialComm::Close()
-{
-    // Close the serial port.
-
-    if (fDesc != -1) close(fDesc);
 }
 

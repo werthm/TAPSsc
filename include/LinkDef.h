@@ -38,7 +38,8 @@
 #pragma link C++ class TTNetServer+;
 #pragma link C++ class TTServer+;
 #pragma link C++ class TTNetClient+;
-#pragma link C++ class TTSerialComm+;
+#pragma link C++ class TTRS232+;
+#pragma link C++ class TTLeCroy1445+;
 
 #endif
 
