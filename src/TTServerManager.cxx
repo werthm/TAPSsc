@@ -109,7 +109,7 @@ void TTServerManager::PrintStatus()
         for (Int_t i = 0; i < fNServer; i++)
         {
             // show hostname
-            printf("=> Server %2d running on %-40s", i, fServer[i]->GetHost().GetHostName());
+            printf("=> Server %2d on %-40s", i, fServer[i]->GetHost().GetHostName());
             
             // show status
             switch (fServer[i]->GetStatus())
