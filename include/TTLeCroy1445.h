@@ -19,7 +19,7 @@
 #include "TTRS232.h"
 
 
-class TTLeCroy1445 : TTRS232
+class TTLeCroy1445 : public TTRS232
 {
 
 public:

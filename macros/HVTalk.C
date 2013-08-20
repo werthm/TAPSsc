@@ -25,7 +25,7 @@ void HVTalk()
     gEnv->ReadFile(cfg, kEnvLocal);
     
     // start communication with HV 
-    TTLeCroy1445* hvtalk = new TTLeCroy1445("/dev/ttyS0");
+    TTLeCroy1445* hvtalk = new TTLeCroy1445("/dev/ttyUSB0");
     hvtalk->Configure();
 
     // user info
@@ -33,12 +33,26 @@ void HVTalk()
     printf("Enter 'quit' to leave\n\n");
     
     // user input loop
-    Char_t* input[256];
-    while (strcmp(input, "quit"))
+    Char_t input[256];
+    while (1)
     {
         // read command
         printf("> ");
-        scanf("%s", input);
+        std::cin.getline(input, 256);
+
+        // check quit
+        if (!strcmp(input, "quit")) break;
+        
+        // send command
+        Char_t* res = hvtalk->SendCmd(input);
+        
+        // print response
+        if (res) 
+        {
+            fputs(res, stdout);
+            printf("\n");
+        }
+        else printf("no response\n");
     }
     
     // clean-up

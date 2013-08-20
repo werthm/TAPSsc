@@ -20,6 +20,7 @@
 
 #include <fcntl.h>
 #include <termios.h>
+#include <errno.h>
 
 #include "TError.h"
 
@@ -29,13 +30,15 @@ class TTRS232
 
 protected:
     Int_t fDesc;                        // file descriptor
-    
+    Char_t* fBuffer;                    // character buffer
+
 public:
-    TTRS232() : fDesc(-1) { }
+    TTRS232() : fDesc(-1), fBuffer(0) { }
     TTRS232(const Char_t* device);
     virtual ~TTRS232();
     
     virtual void Configure() = 0;
+    Char_t* SendCmd(const Char_t* c);
     void Close();
 
     ClassDef(TTRS232, 0) // Serial port RS232 communication
