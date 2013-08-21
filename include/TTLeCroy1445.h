@@ -28,7 +28,8 @@ public:
     virtual ~TTLeCroy1445() { }
     
     virtual void Configure();
-    
+    void PrintCmdHelp();
+
     ClassDef(TTLeCroy1445, 0) // LeCroy 1445 communication
 };
 

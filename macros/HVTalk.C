@@ -8,7 +8,7 @@
 //                                                                      //
 // HVTalk.C                                                             //
 //                                                                      //
-// ROOT macro imitating hvtalk.                                         //
+// ROOT macro imitating hvtalk for controlling LeCroy 1445.             //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
@@ -25,11 +25,12 @@ void HVTalk()
     gEnv->ReadFile(cfg, kEnvLocal);
     
     // start communication with HV 
-    TTLeCroy1445* hvtalk = new TTLeCroy1445("/dev/ttyUSB0");
-    hvtalk->Configure();
+    TTLeCroy1445* lecroy = new TTLeCroy1445("/dev/ttyUSB0");
+    lecroy->Configure();
 
     // user info
     printf("\nWelcome to hvtalk!\n");
+    printf("Enter 'help' for a list of commands\n");
     printf("Enter 'quit' to leave\n\n");
     
     // user input loop
@@ -37,14 +38,25 @@ void HVTalk()
     while (1)
     {
         // read command
-        printf("> ");
+        printf("HVTALK> ");
         std::cin.getline(input, 256);
-
-        // check quit
-        if (!strcmp(input, "quit")) break;
         
+        // convert characters to uppercase
+        for (Int_t i = 0; i < strlen(input); i++)
+            input[i] = toupper(input[i]);
+        
+        // check quit
+        if (!strcmp(input, "QUIT")) break;
+        
+        // check help
+        if (!strcmp(input, "HELP")) 
+        {
+            lecroy->PrintCmdHelp();
+            continue;
+        }
+
         // send command
-        Char_t* res = hvtalk->SendCmd(input);
+        Char_t* res = lecroy->SendCmd(input);
         
         // print response
         if (res) 
@@ -56,7 +68,7 @@ void HVTalk()
     }
     
     // clean-up
-    delete hvtalk;
+    delete lecroy;
 
     gSystem->Exit(0);
 }

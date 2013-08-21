@@ -38,7 +38,7 @@ public:
     virtual ~TTRS232();
     
     virtual void Configure() = 0;
-    Char_t* SendCmd(const Char_t* c);
+    Char_t* SendCmd(const Char_t* c, Bool_t addCR = kTRUE);
     void Close();
 
     ClassDef(TTRS232, 0) // Serial port RS232 communication

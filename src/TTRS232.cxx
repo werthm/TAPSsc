@@ -57,23 +57,31 @@ void TTRS232::Close()
 }
 
 //______________________________________________________________________________
-Char_t* TTRS232::SendCmd(const Char_t* c)
+Char_t* TTRS232::SendCmd(const Char_t* c, Bool_t addCR)
 {
     // Send the command 'c' to the serial port and return the answer.
+    // If 'addCR' is kTRUE, a carriage return is added to the command.
     
-    printf("Sending command '%s'\n", c);
-
     // check if port is open
     if (fDesc != -1)
     {
-        // terminate command with carriage return
-        Int_t len = strlen(c);
-        Char_t tmp[len+1];
-        strncpy(tmp, c, len);
-        tmp[len] = '\r';
+        // terminate command with carriage return if necessary
+        // and send the command
+        Int_t res;
+        if (addCR)
+        {
+            Int_t len = strlen(c);
+            Char_t tmp[len+1];
+            strncpy(tmp, c, len);
+            tmp[len] = '\r';
+            res = write(fDesc, tmp, len+1);
+        }
+        else
+        {
+            res = write(fDesc, c, strlen(c));
+        }
 
-        // write command
-        Int_t res = write(fDesc, tmp, len+1);
+        // wait some time
         usleep(100000);
 
         // check write result
@@ -93,18 +101,19 @@ Char_t* TTRS232::SendCmd(const Char_t* c)
         // clear buffer
         memset(fBuffer, 0, 32768);
         
-        // watch file descriptor to see when it has input
-        FD_ZERO(&rfds);
-        FD_SET(fDesc, &rfds);
-        
         // loop until no more input arrives within timeout
         do
         {
+            // watch file descriptor to see when it has input
+            FD_ZERO(&rfds);
+            FD_SET(fDesc, &rfds);
+            
             // wait for input
             tv.tv_sec = 0;
             tv.tv_usec = 500000;
             retval = select(fDesc+1, &rfds, NULL, NULL, &tv);
-        
+            
+            // read if input has arrived
             if (retval)
             {
                 // read into buffer
@@ -114,9 +123,9 @@ Char_t* TTRS232::SendCmd(const Char_t* c)
                 if (res != -1)
                 {
                     // terminate buffer
-                    tmp2[res+1] = '\0';
+                    tmp2[res] = '\0';
                     strcat(fBuffer, tmp2);
-                    nRead += res+1;
+                    nRead += res;
                 }
                 else
                 {
@@ -126,15 +135,6 @@ Char_t* TTRS232::SendCmd(const Char_t* c)
             }
         } while (retval);
         
-        // replace control characters by spaces
-        //for (Int_t i = 0; i < nRead; i++)
-        //{
-        //    if (fBuffer[i] == '\n') fBuffer[i] = ' ';
-        //    else if (fBuffer[i] == '\r') fBuffer[i] = ' ';
-        //    else if (fBuffer[i] == '\0') fBuffer[i] = ' ';
-        //}
-        //fBuffer[nRead] = '\0';
-
         return fBuffer;
     }
     else return 0;

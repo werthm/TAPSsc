@@ -107,3 +107,58 @@ void TTLeCroy1445::Configure()
     }
 }
 
+//______________________________________________________________________________
+void TTLeCroy1445::PrintCmdHelp()
+{
+    // Print command help to stdout.
+    // Command list taken from http://ikpe1101.ikp.kfa-juelich.de/manuals/
+    // LeCroy_1440/LeCroy_1445_System_Controller.html
+    
+    printf("\n");
+    printf("LeCroy 1445 command overview (Firmware 1.7)\n");
+    printf("\n");
+    printf("Main commands:\n");
+    printf("M n         Mainframe specifier\n");
+    printf("ST          Status Request\n");
+    printf("EM          Empty HV Card Slot Request\n");
+    printf("N           Non Updated Channel Request\n");
+    printf("RL          Report both Current Limits\n");
+    printf("VER         Print Version number of Firmware\n");
+    printf("R           Read\n");
+    printf("W v         Write\n");
+    printf("I           Write with Auto Increment of Channel Pointer\n");
+    printf("ON          Turn High Voltage Output On\n");
+    printf("OF          Turn High Voltage Output Off\n");
+    printf("LI +/- n    Current Limit Specifier\n");
+    printf("SW          Swap Demand and Backup Program Buffers\n");
+    printf("CO          Copy Demand into BAckup Program Buffers\n");
+    printf("U           Update (Demand = Demand + Backup - Actual)\n");
+    printf("CL          Clear Faults\n");
+    printf("\n");
+    printf("Pointer Modifiers:\n");
+    printf("C n         Channel Specifier, Select Demand Programming Buffer\n");
+    printf("B           Backup Programming Buffer. Must precede 'C' if used in the same command.\n");
+    printf("P           Specifies Programming buffer, either Demand or Backup\n");
+    printf("V           Specifies Actual HV Output Value\n");
+    printf("\n");
+    printf("Iteration Modifiers:\n");
+    printf("A           Modifies command to function on all channels or all mainframes.\n");
+    printf("DO n        Specifies a number of successive channels for command to operate on\n");
+    printf("\n");
+    printf("Format Modifiers:\n");
+    printf("F           Selects 8 column output format\n");
+    printf("E           Selects output of Demand, Backup and Actual\n");
+    printf("\n");
+    printf("Control Characters:\n");
+    printf("<^C>        Abort Currently executing command\n");
+    printf("<^X>        Clear command line\n");
+    printf("<^H>        Rubout or Delete\n");
+    printf("<^S>        Suspend printout\n");
+    printf("<^Q>        Resume printout\n");
+    printf("<^Z>        Reboot\n");
+    printf(";           Begin or end comment characters\n");
+    printf(",           Multiply preceding number by 16 and add next number,\n");
+    printf("            i.e. 'C2,3' is equivalent to 'C35'.\n");
+    printf("\n");
+}
+
