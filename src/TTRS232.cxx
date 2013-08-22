@@ -26,16 +26,13 @@ TTRS232::TTRS232(const Char_t* device)
     // Constructor.
     
     // init members
+    fDevice = new Char_t[32];
+    fIsConfigured = kFALSE;
     fDesc = -1;
     fBuffer = new Char_t[32768];
-
-    // try to open the port (read/write, not controlling term. of process, not blocking)
-    fDesc = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
-    if (fDesc == -1)
-    {
-        Error("TTRS232", "Could not open device '%s'!", device);
-        return;
-    }
+    
+    // set device
+    strcpy(fDevice, device);
 }
 
 //______________________________________________________________________________
@@ -44,6 +41,7 @@ TTRS232::~TTRS232()
     // Destructor.
 
     Close();
+    if (fDevice) delete [] fDevice;
     if (fBuffer) delete [] fBuffer;
 }
 
@@ -55,6 +53,38 @@ void TTRS232::Close()
     // check if port is open
     if (fDesc != -1) close(fDesc);
 }
+    
+//______________________________________________________________________________
+Bool_t TTRS232::Init()
+{
+    // Try to open and initalize the serial port.
+    // Return kTRUE on success, otherwise kFALSE.
+
+    // try to open the port (read/write, not controlling term. of process, not blocking)
+    fDesc = open(fDevice, O_RDWR | O_NOCTTY | O_NDELAY);
+    if (fDesc == -1)
+    {
+        Error("TTRS232", "Could not open device '%s'!", fDevice);
+        fIsConfigured = kFALSE;
+        return kFALSE;
+    }
+    else
+    {
+        // try to configure the device
+        if (Configure()) 
+        {
+            Info("TTRS232", "Connected to configured port '%s'", fDevice);
+            fIsConfigured = kTRUE;
+            return kTRUE;
+        }
+        else
+        {
+            Error("TTRS232", "Could not configure device '%s'!", fDevice);
+            fIsConfigured = kFALSE;
+            return kFALSE;
+        }
+    }
+}
 
 //______________________________________________________________________________
 Char_t* TTRS232::SendCmd(const Char_t* c, Bool_t addCR)
@@ -62,8 +92,8 @@ Char_t* TTRS232::SendCmd(const Char_t* c, Bool_t addCR)
     // Send the command 'c' to the serial port and return the answer.
     // If 'addCR' is kTRUE, a carriage return is added to the command.
     
-    // check if port is open
-    if (fDesc != -1)
+    // check if port was configured
+    if (fIsConfigured)
     {
         // terminate command with carriage return if necessary
         // and send the command
@@ -137,6 +167,10 @@ Char_t* TTRS232::SendCmd(const Char_t* c, Bool_t addCR)
         
         return fBuffer;
     }
-    else return 0;
+    else 
+    {
+        Error("SendCmd", "Port was not initialized!");
+        return 0;
+    }
 }
 

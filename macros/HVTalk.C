@@ -24,14 +24,26 @@ void HVTalk()
     sprintf(cfg, "%s/config/config.rootrc", gSystem->Getenv("TAPSSC"));
     gEnv->ReadFile(cfg, kEnvLocal);
     
+    // get serial device
+    const Char_t* device = gEnv->GetValue("HV.RS232.Device", "null");
+    if (!strcmp(device, "null")) 
+    {
+        Error("HVTalk", "Could not read serial device from configuration file!");
+        gSystem->Exit(-1);
+    }
+
     // start communication with HV 
-    TTLeCroy1445* lecroy = new TTLeCroy1445("/dev/ttyUSB0");
-    lecroy->Configure();
+    TTLeCroy1445* lecroy = new TTLeCroy1445(device);
+    if (!lecroy->Init())
+    {
+        Error("HVTalk", "No connection to LeCroy 1445!");
+        gSystem->Exit(-1);
+    }
 
     // user info
     printf("\nWelcome to hvtalk!\n");
     printf("Enter 'help' for a list of commands\n");
-    printf("Enter 'quit' to leave\n\n");
+    printf("Enter 'quit' or 'exit' to leave\n\n");
     
     // user input loop
     Char_t input[256];
@@ -47,6 +59,7 @@ void HVTalk()
         
         // check quit
         if (!strcmp(input, "QUIT")) break;
+        if (!strcmp(input, "EXIT")) break;
         
         // check help
         if (!strcmp(input, "HELP")) 

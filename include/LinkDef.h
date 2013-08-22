@@ -30,8 +30,11 @@
 // typedefs
 #pragma link C++ typedef TDataType_t;
 
-// classes
+// namespaces
 #pragma link C++ namespace TTConfig;
+#pragma link C++ namespace TTUtils;
+
+// classes
 #pragma link C++ class TTMySQLManager+;
 #pragma link C++ class TTServerManager+;
 #pragma link C++ class TTDataType+;

@@ -28,16 +28,25 @@
 class TTRS232
 {
 
+private:
+    Char_t* fDevice;                    // device specifier
+    Bool_t fIsConfigured;               // configured flag
+
 protected:
     Int_t fDesc;                        // file descriptor
     Char_t* fBuffer;                    // character buffer
+    
+    virtual Bool_t Configure() = 0;
 
 public:
-    TTRS232() : fDesc(-1), fBuffer(0) { }
+    TTRS232() : fDevice(0), fIsConfigured(kFALSE), 
+                fDesc(-1), fBuffer(0) { }
     TTRS232(const Char_t* device);
     virtual ~TTRS232();
     
-    virtual void Configure() = 0;
+    Bool_t IsConfigured() const { return fIsConfigured; }
+
+    Bool_t Init();
     Char_t* SendCmd(const Char_t* c, Bool_t addCR = kTRUE);
     void Close();
 
