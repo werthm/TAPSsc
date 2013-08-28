@@ -27,6 +27,10 @@ private:
     virtual Bool_t Configure();
     Int_t GetHVStatus(Int_t mf);
     Bool_t ChangeHVStatus(Int_t mf, Bool_t status);
+    
+    Bool_t ValidateMainframe(Int_t mf);
+    Bool_t ValidateChannel(Int_t c);
+    Bool_t ValidateHVValue(Int_t val);
 
     enum { kOn, kOff, kUndef };
 
@@ -41,6 +45,7 @@ public:
 
     Bool_t TurnHVOn(Int_t mf);
     Bool_t TurnHVOff(Int_t mf);
+    Bool_t WriteHV(Int_t mf, Int_t c, Int_t val);
 
     void PrintCmdHelp();
 

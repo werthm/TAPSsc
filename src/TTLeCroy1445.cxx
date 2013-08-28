@@ -145,11 +145,50 @@ void TTLeCroy1445::PrintCmdHelp()
 }
 
 //______________________________________________________________________________
+Bool_t TTLeCroy1445::ValidateMainframe(Int_t mf)
+{
+    // Return kTRUE if the mainframe number 'mf' is valid, otherwise kFALSE.
+
+    if (mf == 1 || mf == 2) return kTRUE;
+    else
+    {
+        Error("ValidateMainframe", "Invalid mainframe number %d!", mf);
+        return kFALSE;
+    }
+}
+
+//______________________________________________________________________________
+Bool_t TTLeCroy1445::ValidateChannel(Int_t c)
+{
+    // Return kTRUE if the channel number 'c' is valid, otherwise kFALSE.
+
+    if (c >= 0 && c <= 255) return kTRUE;
+    else
+    {
+        Error("ValidateChannel", "Invalid channel number %d!", c);
+        return kFALSE;
+    }
+}
+
+//______________________________________________________________________________
+Bool_t TTLeCroy1445::ValidateHVValue(Int_t val)
+{
+    // Return kTRUE if the HV value 'val' is valid, otherwise kFALSE.
+
+    if (val >= 0 && val <= 3000) return kTRUE;
+    else
+    {
+        Error("ValidateHVValue", "Invalid HV value %d!", val);
+        return kFALSE;
+    }
+}
+
+//______________________________________________________________________________
 Int_t TTLeCroy1445::GetHVStatus(Int_t mf)
 {
     // Return the status of the high voltage of mainframe 'mf'.
     // Return values are kOn, kOff and kUndef.
-
+    
     // check if port was configured
     if (IsConfigured())
     {
@@ -161,7 +200,11 @@ Int_t TTLeCroy1445::GetHVStatus(Int_t mf)
         // check response
         if (TTUtils::IndexOf(ret, "HV on") != -1) return kOn;
         else if (TTUtils::IndexOf(ret, "HV off") != -1) return kOff;
-        else return kUndef;
+        else 
+        {
+            Error("GetHVStatus", "Could not determine HV status!");
+            return kUndef;
+        }
     }
     else return kOff;
 }
@@ -189,7 +232,7 @@ Bool_t TTLeCroy1445::ChangeHVStatus(Int_t mf, Bool_t status)
         // create command
         Char_t cmd[256];
         if (status) sprintf(cmd, "M%d ON", mf);
-        else sprintf(cmd, "M%d OFF", mf);
+        else sprintf(cmd, "M%d OF", mf);
         SendCmd(cmd);
          
         // check status
@@ -199,7 +242,12 @@ Bool_t TTLeCroy1445::ChangeHVStatus(Int_t mf, Bool_t status)
             Error("ChangeHVStatus", "Could not change HV status!");
             return kFALSE;
         }
-        else return kTRUE;
+        else 
+        {
+            if (status) Info("ChangeHVStatus", "Changed HV status to on");
+            else Info("ChangeHVStatus", "Changed HV status to off");
+            return kTRUE;
+        }
     }
     else return kFALSE;
 }
@@ -209,6 +257,9 @@ Bool_t TTLeCroy1445::IsHVOn(Int_t mf)
 {
     // Check if the high voltage of mainframe 'mf' is on.
     // Return kTRUE if it is on, otherwise kFALSE.
+    
+    // validate arguments
+    if (!ValidateMainframe(mf)) return kFALSE;
 
     // try to read HV status
     while (1)
@@ -227,6 +278,10 @@ Bool_t TTLeCroy1445::ReadHV(Int_t mf, Int_t c, Int_t* outDem,
     // Read the high voltage values of the channel 'c' (0-255) of mainframe 'm'
     // and save them to 'outDem' (demand), 'outBack' (backup) and 'outAc' (actual).
     // Return kTRUE on success, otherwise kFALSE.
+    
+    // validate arguments
+    if (!ValidateMainframe(mf)) return kFALSE;
+    if (!ValidateChannel(c)) return kFALSE;
 
     // check if port was configured
     if (IsConfigured())
@@ -238,13 +293,21 @@ Bool_t TTLeCroy1445::ReadHV(Int_t mf, Int_t c, Int_t* outDem,
         
         // try to search the beginning of the interesting line
         Int_t begin = TTUtils::IndexOf(ret, "\nC ");
-        if (begin == -1) return kFALSE;
+        if (begin == -1) 
+        {
+            Error("ReadHV", "Could not parse response from HV controller!");
+            return kFALSE;
+        }
         begin++;
 
         // try to search the ending of the interesting line
         Int_t end = TTUtils::IndexOf(ret, "\r", begin);
-        if (end == -1) return kFALSE;
-        
+        if (end == -1) 
+        {
+            Error("ReadHV", "Could not parse response from HV controller!");
+            return kFALSE;
+        }
+
         // extract the interesting line
         Char_t line[256];
         strncpy(line, ret+begin, end-begin);
@@ -253,27 +316,38 @@ Bool_t TTLeCroy1445::ReadHV(Int_t mf, Int_t c, Int_t* outDem,
         // try to parse the line
         Int_t ch, de, ba, ac;
         Int_t nscan = sscanf(line, "C%d -%d -%d -%d", &ch, &de, &ba, &ac);
-        if (nscan != 4) return kFALSE;
-        
-        // check channel number
-        if (ch != c) return kFALSE;
-        
-        // save values
-        *outDem = -de;
-        if (outBack) *outBack = -ba;
-        if (outAc) *outAc = -ac;
+        if (nscan != 4) 
+        {
+            Error("ReadHV", "Could not parse response from HV controller!");
+            return kFALSE;
+        }
 
+        // check channel number
+        if (ch != c) 
+        {
+            Error("ReadHV", "Response from HV controller contained wrong channel number!");
+            return kFALSE;
+        }
+
+        // save values
+        *outDem = de;
+        if (outBack) *outBack = ba;
+        if (outAc) *outAc = ac;
+
+        Info("ReadHV", "Read HV values of channel %d", c);
         return kTRUE;
     }
     else return kFALSE;
 }
-
 
 //______________________________________________________________________________
 Bool_t TTLeCroy1445::TurnHVOn(Int_t mf)
 {
     // Turn the high voltage of mainframe 'mf' on.
     // Return kTRUE on success, otherwise kFALSE.
+    
+    // validate arguments
+    if (!ValidateMainframe(mf)) return kFALSE;
     
     return ChangeHVStatus(mf, kTRUE);
 }
@@ -284,6 +358,52 @@ Bool_t TTLeCroy1445::TurnHVOff(Int_t mf)
     // Turn the high voltage of mainframe 'mf' off.
     // Return kTRUE on success, otherwise kFALSE.
     
+    // validate arguments
+    if (!ValidateMainframe(mf)) return kFALSE;
+     
     return ChangeHVStatus(mf, kFALSE);
+}
+
+//______________________________________________________________________________
+Bool_t TTLeCroy1445::WriteHV(Int_t mf, Int_t c, Int_t val)
+{
+    // Write the high voltage value 'val' to the channel 'c' (0-255) of mainframe 'm'.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // validate arguments
+    if (!ValidateMainframe(mf)) return kFALSE;
+    if (!ValidateChannel(c)) return kFALSE;
+    if (!ValidateHVValue(val)) return kFALSE;
+
+    // check if port was configured
+    if (IsConfigured())
+    { 
+        // create command
+        Char_t cmd[256];
+        sprintf(cmd, "M%d W -%d C%d", mf, val, c);
+        SendCmd(cmd);
+        
+        // check if value was set
+        Int_t dem, back, act = 0;
+        if (ReadHV(mf, c, &dem, &back, &act))
+        {
+            if (dem == val) 
+            {
+                Info("WriteHV", "Set HV of channel %d in mainframe %d to value -%d", c, mf, val);
+                return kTRUE;
+            }
+            else
+            {   
+                Error("WriteHV", "HV value to set is -%d but -%d was read!", val, dem);
+                return kFALSE;
+            }
+        }
+        else 
+        {
+            Error("WriteHV", "Could not re-read HV values!");
+            return kFALSE;
+        }
+    }
+    else return kFALSE;
 }
 

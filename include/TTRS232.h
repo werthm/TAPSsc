@@ -47,7 +47,7 @@ public:
     Bool_t IsConfigured() const { return fIsConfigured; }
 
     Bool_t Init();
-    Char_t* SendCmd(const Char_t* c, Bool_t addCR = kTRUE);
+    Char_t* SendCmd(const Char_t* c, Bool_t addCR = kTRUE, Int_t* outNread = 0);
     void Close();
 
     ClassDef(TTRS232, 0) // Serial port RS232 communication

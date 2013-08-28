@@ -87,10 +87,11 @@ Bool_t TTRS232::Init()
 }
 
 //______________________________________________________________________________
-Char_t* TTRS232::SendCmd(const Char_t* c, Bool_t addCR)
+Char_t* TTRS232::SendCmd(const Char_t* c, Bool_t addCR, Int_t* outNread)
 {
     // Send the command 'c' to the serial port and return the answer.
     // If 'addCR' is kTRUE, a carriage return is added to the command.
+    // If 'outNread' is non-zero, the number of read bytes will be stored to it.
     
     // check if port was configured
     if (fIsConfigured)
@@ -165,6 +166,7 @@ Char_t* TTRS232::SendCmd(const Char_t* c, Bool_t addCR)
             }
         } while (retval);
         
+        if (outNread) *outNread = nRead;
         return fBuffer;
     }
     else 
