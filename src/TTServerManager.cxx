@@ -69,7 +69,7 @@ Bool_t TTServerManager::RegisterServers()
     }
     
     // create server array
-    fServer = new TTNetClient*[fNServer];
+    fServer = new TTClient*[fNServer];
 
     // loop over servers
     for (Int_t i = 0; i < fNServer; i++)
@@ -84,7 +84,7 @@ Bool_t TTServerManager::RegisterServers()
         }
 
         // register new server
-        fServer[i] = new TTNetClient(sHost, TTConfig::kTAPSServerPort);
+        fServer[i] = new TTClient(sHost, TTConfig::kTAPSServerPort);
     }
 
     return kTRUE;
@@ -126,8 +126,35 @@ void TTServerManager::PrintStatus()
                 case TTNetClient::kReady:
                     strcpy(tmp, "READY");
                     break;
+                default:
+                    strcpy(tmp, "UNKNOWN");
+                    break;
             }
-            printf("  Status: %s", tmp);
+            printf("  Status: %14s", tmp);
+            
+            // show type
+            switch (fServer[i]->GetType())
+            {
+                case kNoServer:
+                    strcpy(tmp, "UNKNOWN");
+                    break;
+                case kBaF2Server:
+                    strcpy(tmp, "BaF2");
+                    break;
+                case kVetoServer:
+                    strcpy(tmp, "Veto");
+                    break;
+                case kPWOServer:
+                    strcpy(tmp, "PWO");
+                    break;
+                case kHVServer:
+                    strcpy(tmp, "HV");
+                    break;
+                default:
+                    strcpy(tmp, "UNKNOWN");
+                    break;
+            }
+            printf("  Type: %7s", tmp);
 
             printf("\n");
         }

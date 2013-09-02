@@ -20,7 +20,7 @@
 #include "TError.h"
 
 #include "TTConfig.h"
-#include "TTNetClient.h"
+#include "TTClient.h"
 
 
 class TTServerManager
@@ -28,7 +28,7 @@ class TTServerManager
     
 private:
     Int_t fNServer;                             // number of servers
-    TTNetClient** fServer;                      // servers
+    TTClient** fServer;                         // servers
     Bool_t fSilence;                            // silence mode toggle
     static TTServerManager* fgServerManager;    // pointer to static instance of this class
     

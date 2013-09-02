@@ -6,9 +6,9 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTNetServer                                                          //
+// TTServer                                                             //
 //                                                                      //
-// Network server class.                                                //
+// TAPS server class.                                                   //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
@@ -19,11 +19,12 @@ ClassImp(TTServer)
 
 
 //______________________________________________________________________________
-TTServer::TTServer(Int_t port)
+TTServer::TTServer(TServerType_t type, Int_t port)
     : TTNetServer(port)
 {
     // Constructor.
     
+    fType = type;
 }
 
 //______________________________________________________________________________
@@ -40,10 +41,13 @@ void TTServer::ProcessCommand(const Char_t* cmd, TSocket* s)
     
     // call parent method
     TTNetServer::ProcessCommand(cmd, s);
-
-    if (!strcmp(cmd, "SPECIAL"))
+    
+    // TYPE command: return the server type
+    if (!strcmp(cmd, "TYPE"))
     {
-        printf("Special operation\n");
+        Char_t tmp[8];
+        sprintf(tmp, "%d", fType);
+        s->Send(tmp);
     }
     else
     {

@@ -26,9 +26,11 @@
 
 // enums
 #pragma link C++ enum ETDataType;
+#pragma link C++ enum ETServerType;
 
 // typedefs
 #pragma link C++ typedef TDataType_t;
+#pragma link C++ typedef TServerType_t;
 
 // namespaces
 #pragma link C++ namespace TTConfig;
@@ -41,6 +43,7 @@
 #pragma link C++ class TTNetServer+;
 #pragma link C++ class TTServer+;
 #pragma link C++ class TTNetClient+;
+#pragma link C++ class TTClient+;
 #pragma link C++ class TTRS232+;
 #pragma link C++ class TTLeCroy1445+;
 

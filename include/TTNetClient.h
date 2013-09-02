@@ -31,7 +31,7 @@ public:
     TTNetClient(const Char_t* server, Int_t port);
     virtual ~TTNetClient();
     
-    TInetAddress GetHost() { return fSocket->GetInetAddress(); }
+    TInetAddress GetHost() const { return fSocket->GetInetAddress(); }
     Int_t GetStatus();
     
     enum { kNoConn, kNoResp, kBadResp, kReady };
