@@ -51,9 +51,16 @@ static void server_shutdown(int signal)
 {
     // Proper shutdown of the TAPSServer.
 
+    // check if TAPSServer was created
     if (gTAPSServer)
     {
+        // stop listening
         gTAPSServer->StopListening();   
+
+        // wait for listen loop to terminate
+        usleep(1000*200);
+
+        // clean-up
         delete gTAPSServer;
         gTAPSServer = 0;
     }
@@ -138,9 +145,9 @@ Int_t main(Int_t argc, Char_t* argv[])
     signal(SIGINT, server_shutdown);
     signal(SIGTERM, server_shutdown);
 
-    // create network server and start listening
+    // create network server and listen
     gTAPSServer = new TTServer(gTAPSServerType, TTConfig::kTAPSServerPort);
-    gTAPSServer->StartListening();
+    gTAPSServer->Listen();
     
     // clean-up
     if (gTAPSServer) delete gTAPSServer;

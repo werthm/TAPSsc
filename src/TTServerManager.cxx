@@ -130,7 +130,7 @@ void TTServerManager::PrintStatus()
                     strcpy(tmp, "UNKNOWN");
                     break;
             }
-            printf("  Status: %14s", tmp);
+            printf("  Status: %-14s", tmp);
             
             // show type
             switch (fServer[i]->GetType())
@@ -154,7 +154,7 @@ void TTServerManager::PrintStatus()
                     strcpy(tmp, "UNKNOWN");
                     break;
             }
-            printf("  Type: %7s", tmp);
+            printf("  Type: %-7s", tmp);
 
             printf("\n");
         }

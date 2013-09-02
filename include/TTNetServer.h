@@ -37,7 +37,7 @@ public:
     TTNetServer(Int_t port);
     virtual ~TTNetServer();
 
-    void StartListening();
+    void Listen();
     void StopListening();
 
     ClassDef(TTNetServer, 0) // Network server

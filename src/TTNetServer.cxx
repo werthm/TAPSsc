@@ -53,9 +53,9 @@ TTNetServer::~TTNetServer()
 }
 
 //______________________________________________________________________________
-void TTNetServer::StartListening()
+void TTNetServer::Listen()
 {
-    // Start listening on the server socket.
+    // Listen on the server socket.
     
     // check server status
     if (!fServer)
@@ -78,9 +78,6 @@ void TTNetServer::StartListening()
     // listen to port
     while (1)
     {
-        // check running status
-        if (!fIsRunning) break;
-        
         // remove inactive sockets from monitor, close and destroy them
         for (Int_t i = 0; i < sockets->GetSize(); i++) 
         {
@@ -93,7 +90,10 @@ void TTNetServer::StartListening()
                 delete t;
             }
         }
-
+        
+        // check running status
+        if (!fIsRunning) break;
+ 
         // wait for connections via socket
         TSocket* s = mon->Select(100);
         
