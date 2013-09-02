@@ -37,7 +37,7 @@ TTNetServer::TTNetServer(Int_t port)
     }
     
     // set non-blocking socket
-    fServer->SetOption(kNoBlock, 1);
+    //fServer->SetOption(kNoBlock, 1);
 }
 
 //______________________________________________________________________________
@@ -66,41 +66,68 @@ void TTNetServer::StartListening()
 
     // set running flag
     fIsRunning = kTRUE;
+    
+    // create monitor to watch network sockets
+    TMonitor* mon = new TMonitor();
+    mon->Add(fServer);
+    
+    // create list for network sockets
+    TList* sockets = new TList();
+    sockets->SetOwner(kTRUE);
 
     // listen to port
     while (1)
     {
         // check running status
-        if (!fIsRunning) return;
+        if (!fIsRunning) break;
+        
+        // remove inactive sockets from monitor, close and destroy them
+        for (Int_t i = 0; i < sockets->GetSize(); i++) 
+        {
+            TSocket* t = (TSocket*)sockets->At(i);
+            if (!t->IsValid())
+            {
+                mon->Remove(t);
+                t->Close();
+                sockets->Remove(t);
+                delete t;
+            }
+        }
 
-        // accept connections via socket
-        TSocket* socket = fServer->Accept();
+        // wait for connections via socket
+        TSocket* s = mon->Select(100);
         
         // check socket connection
-        if (socket == (TSocket*)-1)
-        {   
-            // wait and continue to listen
-            gSystem->Sleep(100);
+        if (s == (TSocket*)-1) continue;
+        
+        // accept new connections
+        if (s->IsA() == TServerSocket::Class())
+        {
+            // get socket
+            TSocket* sn = ((TServerSocket*) s)->Accept();
+            
+            // add socket to monitor
+            mon->Add(sn);
+            
+            // add socket to list
+            sockets->Add(sn);
+            
             continue;
         }
 
         // accept message
         TMessage* mess;
-        socket->Recv(mess);
+        s->Recv(mess);
         
         // skip empty message
-        if (!mess)
-        {
-            delete socket;
-            continue;
-        }
+        if (!mess) continue;
 
         // interpret message
         if (mess->What() == kMESS_STRING)
         {
             Char_t cmd[256];
             mess->ReadString(cmd, 256);
-            ProcessCommand(cmd, socket);
+            ProcessCommand(cmd, s);
         }
         else if (mess->What() == kMESS_OBJECT)
         {
@@ -108,8 +135,22 @@ void TTNetServer::StartListening()
 
         // clean-up
         delete mess;
-        delete socket;
     }
+
+    // remove sockets from monitor and close them
+    for (Int_t i = 0; i < sockets->GetSize(); i++) 
+    {
+        TSocket* t = (TSocket*)sockets->At(i);
+        mon->Remove(t);
+        t->Close();
+    }
+
+    // clean-up of monitor
+    mon->Remove(fServer);
+    delete mon;
+
+    // clean-up of sockets and socket list
+    delete sockets;
 }
 
 //______________________________________________________________________________

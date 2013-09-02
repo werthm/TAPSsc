@@ -22,7 +22,7 @@ OBJ           = $(notdir $(OBJD))
 
 OSTYPE       := $(subst -,,$(shell uname))
 
-ROOTGLIBS    := $(shell root-config --libs --glibs) -lEG -lFoam -lSpectrum
+ROOTGLIBS    := $(shell root-config --libs)
 ROOTCFLAGS   := $(shell root-config --cflags)
 ROOTLDFLAGS  := $(shell root-config --ldflags)
 

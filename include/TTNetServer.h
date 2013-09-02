@@ -17,9 +17,10 @@
 #define TTNETSERVER_H
 
 #include "TServerSocket.h"
+#include "TMonitor.h"
 #include "TMessage.h"
-#include "TSystem.h"
 #include "TError.h"
+#include "TList.h"
 
 
 class TTNetServer
