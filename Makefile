@@ -1,10 +1,16 @@
 # SVN Info: $Id$
 
 #####################################################################
+##                              TAPSsc                             ##
 ##                                                                 ##
-## TAPSsc Makefile                                                 ##
+##                     TAPS slowcontrol software                   ##
+##                                                                 ##
+##                                                                 ##
+##                           (C) 2013 by                           ##
+##      Dominik Werthmueller <dominik.werthmueller@unibas.ch>      ##
 ##                                                                 ##
 #####################################################################
+
 
 # --------------------------- System and ROOT variables ---------------------------
 
@@ -20,45 +26,36 @@ INC           = $(notdir $(INCD))
 OBJD          = $(patsubst $(S)/%.cxx, $(O)/%.o, $(SRC))
 OBJ           = $(notdir $(OBJD))
 
-OSTYPE       := $(subst -,,$(shell uname))
+ROOTLIBS      = $(shell root-config --libs)
+ROOTCFLAGS    = $(shell root-config --cflags)
+ROOTLDFLAGS   = $(shell root-config --ldflags)
+ROOTLIB       = $(shell root-config --libdir)
+ROOTLIBA      = $(ROOTLIB)/libRoot.a -lXpm -lXext -lX11 -lm -ldl -pthread \
+                -rdynamic $(ROOTLIB)/libpcre.a -lfreetype -lz -lXft -lz $(ROOTLIB)/liblzma.a
 
-ROOTGLIBS    := $(shell root-config --libs)
-ROOTCFLAGS   := $(shell root-config --cflags)
-ROOTLDFLAGS  := $(shell root-config --ldflags)
+DEP_LIB       = libRMySQL.so
 
-DEP_LIB      := libHist.so libGui.so libRMySQL.so libSpectrum.so
+SLIB_TAPSsc   = $(L)/libTAPSsc.so
+ALIB_TAPSsc   = $(L)/libTAPSsc.a
 
 vpath %.cxx $(S)
 vpath %.h  $(I)
 vpath %.o  $(O)
 
-# ------------------------ Architecture dependent settings ------------------------
-
-ifeq ($(OSTYPE),Darwin)
-	LIB_TAPSsc = $(L)/libTAPSsc.dylib
-	SOFLAGS = -dynamiclib -single_module -undefined dynamic_lookup -install_name $(CURDIR)/$(LIB_TAPSsc)
-	POST_LIB_BUILD = @ln $(L)/libTAPSsc.dylib $(L)/libTAPSsc.so
-endif
-
-ifeq ($(OSTYPE),Linux)
-	LIB_TAPSsc = $(L)/libTAPSsc.so
-	SOFLAGS = -shared
-	POST_LIB_BUILD = 
-endif
-
 # -------------------------------- Compile options --------------------------------
 
 CCCOMP      = g++
-CXXFLAGS    = -g -O2 -Wall -fPIC $(ROOTCFLAGS) -I./$(I)
-LDFLAGS     = -g -O2 $(ROOTLDFLAGS)
+CXXFLAGS    = -g -O3 -Wall -fPIC $(ROOTCFLAGS) -I./$(I)
+CXXAFLAGS   = -g -O3 -s -ffunction-sections -fdata-sections -Wl,--no-undefined -Wl,--as-needed $(ROOTCFLAGS) -I./$(I)
+LDFLAGS     = -g -O3 -s -ffunction-sections -fdata-sections $(ROOTLDFLAGS)
 
 # ------------------------------------ targets ------------------------------------
 
-all:	begin $(LIB_TAPSsc) $(L)/libTAPSsc.rootmap $(B)/TAPSServer end
+all:	begin $(SLIB_TAPSsc) $(ALIB_TAPSsc) $(L)/libTAPSsc.rootmap $(B)/TAPSServer $(B)/HVTalk end
 
 begin:
 	@echo
-	@echo "-> Building TAPSsc on a $(OSTYPE) system"
+	@echo "-> Building TAPSsc"
 	@echo
 
 end:
@@ -66,22 +63,34 @@ end:
 	@echo "-> Finished!"
 	@echo
 
-$(B)/TAPSServer: $(LIB_TAPSsc) $(S)/MainTAPSServer.cxx
+$(B)/TAPSServer: $(SLIB_TAPSsc) $(S)/MainTAPSServer.cxx
 	@echo "Building the TAPSServer application"
 	@mkdir -p $(B)
-	@$(CCCOMP) $(CXXFLAGS) $(ROOTGLIBS) $(CURDIR)/$(LIB_TAPSsc) -o $(B)/TAPSServer $(S)/MainTAPSServer.cxx
+#	@$(CCCOMP) $(CXXFLAGS) $(ROOTLIBS) $(CURDIR)/$(SLIB_TAPSsc) -o $(B)/TAPSServer $(S)/MainTAPSServer.cxx
+	@$(CCCOMP) $(CXXAFLAGS) -o $(B)/TAPSServer $(S)/MainTAPSServer.cxx $(CURDIR)/$(ALIB_TAPSsc) $(ROOTLIBA)
 
-$(LIB_TAPSsc): $(OBJ)
+$(B)/HVTalk: $(SLIB_TAPSsc) $(S)/MainHVTalk.cxx
+	@echo "Building the HVTalk application"
+	@mkdir -p $(B)
+#	@$(CCCOMP) $(CXXFLAGS) $(ROOTLIBS) $(CURDIR)/$(SLIB_TAPSsc) -o $(B)/HVTalk $(S)/MainHVTalk.cxx
+	@$(CCCOMP) $(CXXAFLAGS) -o $(B)/HVTalk $(S)/MainHVTalk.cxx $(CURDIR)/$(ALIB_TAPSsc) $(ROOTLIBA)
+
+$(SLIB_TAPSsc): $(OBJ)
 	@echo
-	@echo "Building libTAPSsc"
+	@echo "Building $(SLIB_TAPSsc)"
 	@mkdir -p $(L)
-	@rm -f $(L)/libTAPSsc.*
-	@$(CCCOMP) $(LDFLAGS) $(SOFLAGS) $(OBJD) -o $(LIB_TAPSsc)
-	@$(POST_LIB_BUILD)
+	@$(CCCOMP) $(LDFLAGS) -shared $(OBJD) -o $(SLIB_TAPSsc)
 
-$(L)/libTAPSsc.rootmap: $(LIB_TAPSsc)
+$(ALIB_TAPSsc): $(OBJ)
+	@echo
+	@echo "Building $(ALIB_TAPSsc)"
+	@mkdir -p $(L)
+	@ar rv $(ALIB_TAPSsc) $(OBJD) > /dev/null 2>&1
+
+$(L)/libTAPSsc.rootmap: $(SLIB_TAPSsc)
+	@echo
 	@echo "Creating ROOT map"
-	@rlibmap -o $(L)/libTAPSsc.rootmap -l $(LIB_TAPSsc) -d $(DEP_LIB) -c $(I)/LinkDef.h
+	@rlibmap -o $(L)/libTAPSsc.rootmap -l $(SLIB_TAPSsc) -d $(DEP_LIB) -c $(I)/LinkDef.h
 
 $(S)/G__TAPSsc.cxx: $(INC) $(I)/LinkDef.h
 	@echo

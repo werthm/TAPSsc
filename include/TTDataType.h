@@ -48,7 +48,7 @@ public:
 
     void SetTableName(TString tName) { fTableName = tName; }
     
-    void Print();
+    virtual void Print();
     virtual ULong_t Hash() const { return fName.Hash(); }
 
     ClassDef(TTDataType, 1) // Data type class

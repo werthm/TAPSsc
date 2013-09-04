@@ -25,11 +25,9 @@
 #pragma link C++ nestedtypedef;
 
 // enums
-#pragma link C++ enum ETDataType;
 #pragma link C++ enum ETServerType;
 
 // typedefs
-#pragma link C++ typedef TDataType_t;
 #pragma link C++ typedef TServerType_t;
 
 // namespaces
@@ -40,6 +38,8 @@
 #pragma link C++ class TTMySQLManager+;
 #pragma link C++ class TTServerManager+;
 #pragma link C++ class TTDataType+;
+#pragma link C++ class TTDataTypePar+;
+#pragma link C++ class TTDataTypeMap+;
 #pragma link C++ class TTNetServer+;
 #pragma link C++ class TTServer+;
 #pragma link C++ class TTNetClient+;

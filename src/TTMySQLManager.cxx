@@ -175,6 +175,8 @@ Bool_t TTMySQLManager::ReadDataTypes(TDataType_t type)
                 TString title;
                 TString table;
                 Int_t size = 0;
+                Double_t min = 0;
+                Double_t max = 0;
 
                 // iterate over tokens
                 TIter next(token);
@@ -200,6 +202,12 @@ Bool_t TTMySQLManager::ReadDataTypes(TDataType_t type)
                         case 3:
                             size = atoi(str.Data());
                             break;
+                        case 4:
+                            min = atof(str.Data());
+                            break;
+                        case 5:
+                            max = atof(str.Data());
+                            break;
                     }
 
                     count++;
@@ -209,10 +217,24 @@ Bool_t TTMySQLManager::ReadDataTypes(TDataType_t type)
                 delete token;
                 
                 // check number of tokens
-                if (count == 4)
+                if (count == 6 && type == kParType)
                 {
                     // create a new data type object
-                    TTDataType* data = new TTDataType(name, title, type, size);
+                    TTDataTypePar* data = new TTDataTypePar(name, title, size);
+                    data->SetTableName(table);
+                    data->SetMin(min);
+                    data->SetMax(max);
+
+                    // add it to list
+                    fData->Add(data);
+
+                    // count data type
+                    added++;
+                }
+                else if (count == 4 && type == kMapType)
+                {
+                    // create a new data type object
+                    TTDataTypeMap* data = new TTDataTypeMap(name, title, size);
                     data->SetTableName(table);
                 
                     // add it to list
@@ -532,9 +554,10 @@ Bool_t TTMySQLManager::WriteMaps(const Char_t* data, Int_t length, Int_t* crate,
 }
 
 //______________________________________________________________________________
-void TTMySQLManager::InitDatabase()
+Bool_t TTMySQLManager::InitDatabase()
 {
     // Init a new TAPSsc database on a MySQL server.
+    // Return kFALSE on user abort, otherwise kTRUE.
     
     // ask for user confirmation
     Char_t answer[256];
@@ -546,13 +569,15 @@ void TTMySQLManager::InitDatabase()
     if (strcmp(answer, "yes")) 
     {
         printf("Aborted.\n");
-        return;
+        return kFALSE;
     }
     
     // create the data tbles
     TTDataType* d;
     TIter next(fData);
     while ((d = (TTDataType*)next())) CreateTable(d);
+
+    return kTRUE;
 }
 
 //______________________________________________________________________________

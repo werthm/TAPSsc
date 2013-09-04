@@ -4,19 +4,19 @@
 # TAPSsc parameter definitions                                         #
 ########################################################################
 
-# ID                         description                         table              parameters
-Par.BaF2.HV,                 BaF2 high voltage,                  par_baf2_hv,       384
-Par.BaF2.Thr.CFD,            BaF2 CFD thresholds,                par_baf2_thr_cfd,  384
-Par.BaF2.Thr.LED1,           BaF2 LED1 thresholds,               par_baf2_thr_led1, 384
-Par.BaF2.Thr.LED2,           BaF2 LED2 thresholds,               par_baf2_thr_led2, 384
-Par.BaF2.QAC.LG,             BaF2 QAC pedestals LG,              par_baf2_qac_lg,   384
-Par.BaF2.QAC.LGS,            BaF2 QAC pedestals LGS,             par_baf2_qac_lgs,  384
-Par.BaF2.QAC.SG,             BaF2 QAC pedestals SG,              par_baf2_qac_sg,   384
-Par.BaF2.QAC.SGS,            BaF2 QAC pedestals SGS,             par_baf2_qac_sgs,  384
+# ID                         description                         table              parameters      min     max
+Par.BaF2.HV,                 BaF2 high voltage,                  par_baf2_hv,       384,            0,      2000
+Par.BaF2.Thr.CFD,            BaF2 CFD thresholds,                par_baf2_thr_cfd,  384,            1,      10000
+Par.BaF2.Thr.LED1,           BaF2 LED1 thresholds,               par_baf2_thr_led1, 384,            -999,   -1
+Par.BaF2.Thr.LED2,           BaF2 LED2 thresholds,               par_baf2_thr_led2, 384,            -999,   -1
+Par.BaF2.QAC.LG,             BaF2 QAC pedestals LG,              par_baf2_qac_lg,   384,            1,      10000
+Par.BaF2.QAC.LGS,            BaF2 QAC pedestals LGS,             par_baf2_qac_lgs,  384,            1,      10000
+Par.BaF2.QAC.SG,             BaF2 QAC pedestals SG,              par_baf2_qac_sg,   384,            1,      10000
+Par.BaF2.QAC.SGS,            BaF2 QAC pedestals SGS,             par_baf2_qac_sgs,  384,            1,      10000
 
-Par.PWO.HV,                  PbWO4 high voltage,                 par_pwo_hv,        72
+Par.PWO.HV,                  PbWO4 high voltage,                 par_pwo_hv,        72,             0,      2000
 
-Par.Veto.HV,                 Veto high voltage,                  par_veto_hv,       384
-Par.Veto.Thr.LED,            Veto LED thresholds,                par_veto_thr_led,  384
-Par.Veto.QAC,                Veto QAC pedestals,                 par_veto_qac,      384
+Par.Veto.HV,                 Veto high voltage,                  par_veto_hv,       384,            0,      1000
+Par.Veto.Thr.LED,            Veto LED thresholds,                par_veto_thr_led,  384,            -999,   -1
+Par.Veto.QAC,                Veto QAC pedestals,                 par_veto_qac,      384,            1,      10000
 

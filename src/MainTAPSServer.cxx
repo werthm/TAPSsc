@@ -14,6 +14,11 @@
 
 
 #include <signal.h>
+#include <fcntl.h>
+#include <cstdlib>
+
+#include "TSystem.h"
+#include "TEnv.h"
 
 #include "TTServer.h"
 #include "TTConfig.h"
@@ -22,7 +27,8 @@
 
 // global variables
 static TTServer* gTAPSServer = 0;
-static TServerType_t gTAPSServerType = kNoServer;
+static Int_t gTAPSServerID = -1;
+static Char_t gCfgFile[256] = "";
 
 
 // enum for command line arguments
@@ -30,7 +36,7 @@ enum ETAPSServerArgs
 {
     kNoArgs,
     kPrintHelp,
-    kBadServerType,
+    kBadServerID,
     kOk
 };
 
@@ -42,7 +48,7 @@ void PrintHelp()
 
     printf("\n");
     printf("TAPSServer\n");
-    printf("Usage: TAPSServer -t [BaF2,Veto,PWO,HV]\n");
+    printf("Usage: TAPSServer -id N [-c config.rootrc] [-h]\n");
     printf("\n");
 }
 
@@ -99,23 +105,23 @@ Int_t DecodeArgs(Int_t argc, Char_t* argv[])
         strncpy(tmp, params+start, end-start-1);
         tmp[end-start-1] = '\0';
         
-        // parse server type
+        // parse server configuration
         if (TTUtils::IndexOf(tmp, "-h") == 0) return kPrintHelp;
-        else if (TTUtils::IndexOf(tmp, "-t") == 0) 
+        else if (TTUtils::IndexOf(tmp, "-id") == 0) 
         {
-            if (!strcmp(tmp+3, "BaF2")) gTAPSServerType = kBaF2Server;
-            else if (!strcmp(tmp+3, "Veto")) gTAPSServerType = kVetoServer;
-            else if (!strcmp(tmp+3, "PWO")) gTAPSServerType = kPWOServer;
-            else if (!strcmp(tmp+3, "HV")) gTAPSServerType = kHVServer;
-            else return kBadServerType;
+            if (strcmp(tmp+3, "")) gTAPSServerID = atoi(tmp+3);
+        }
+        else if (TTUtils::IndexOf(tmp, "-c") == 0) 
+        {
+            strcpy(gCfgFile, tmp+3);
         }
 
         // set the new start to the current end value
         start = end;
     }
 
-    // check server configuration
-    if (gTAPSServerType == kNoServer) return kBadServerType;
+    // check server id
+    if (gTAPSServerID == -1) return kBadServerID;
 
     return kOk;
 }
@@ -124,6 +130,8 @@ Int_t DecodeArgs(Int_t argc, Char_t* argv[])
 Int_t main(Int_t argc, Char_t* argv[])
 {
     // Main method.
+    
+    Char_t tmp[256];
     
     // decode command line arguments
     switch (DecodeArgs(argc, argv))
@@ -134,19 +142,78 @@ Int_t main(Int_t argc, Char_t* argv[])
         case kPrintHelp:
             PrintHelp();
             return 0;
-        case kBadServerType:
-            printf("ERROR: server type has to be BaF2/Veto/PWO/HV!\n");
+        case kBadServerID:
+            printf("ERROR: server id has to be specified!\n");
             return -1;
         case kOk:
             break;
     }
     
+    // try to load configuration file either via cmd-line argument or env. variable
+    if (strcmp(gCfgFile, "")) strcpy(tmp, gCfgFile);
+    else sprintf(tmp, "%s/config/config.rootrc", gSystem->Getenv("TAPSSC"));
+    if (gEnv->ReadFile(tmp, kEnvLocal))
+    {
+        printf("ERROR: Could not find configuration file!\n");
+        printf("Check the command line arguments or the TAPSSC environment variable!\n");
+        return -1;
+    }
+
+    // get server type
+    TServerType_t serverType = kNoServer;
+    sprintf(tmp, "Server-%d.Type", gTAPSServerID);
+    const Char_t* sType = gEnv->GetValue(tmp, "null");
+    if (!strcmp(sType, "null")) 
+    {
+        printf("ERROR: Could not find server type for server with ID %d!\n", gTAPSServerID);
+        return -1;
+    }
+    else
+    {
+        if (!strcmp(sType, "BaF2")) serverType = kBaF2Server;
+        else if (!strcmp(sType, "Veto")) serverType = kVetoServer;
+        else if (!strcmp(sType, "PWO")) serverType = kPWOServer;
+        else if (!strcmp(sType, "HV")) serverType = kHVServer;
+        else
+        {
+            printf("ERROR: Unknown server type '%s'!\n", sType);
+            return -1;
+        }
+    }
+
+    //
+    // locking (inspired by http://www.enderunix.org/docs/eng/daemon.php)
+    //   
+
+    // try to create lock file 
+    Int_t lfp = open("/var/lock/TAPSServer.pid", O_RDWR | O_CREAT, 0644);
+
+    // can not open lock-file
+    if (lfp < 0) 
+    {
+        printf("ERROR: Cannot create lock-file! Check if an other instance of TAPSServer is already running!\n");
+        printf("Delete /var/lock/TAPSServer.pid if you are ABSOLUTELY sure what you're doing!\n");
+        return -1;
+    }
+
+    // can not lock lock-file
+    if (lockf(lfp, F_TLOCK, 0) < 0) 
+    {
+        printf("ERROR: Cannot lock lock-file! Check if an other instance of TAPSServer is already running!\n");
+        printf("Delete /var/lock/TAPSServer.pid if you are ABSOLUTELY sure what you're doing!\n");
+        return -1;
+    }
+
+    // write pid to lockfile
+    sprintf(tmp, "%d\n", getpid());
+    write(lfp, tmp, strlen(tmp));
+
     // catch termination signals for proper server shutdown
     signal(SIGINT, server_shutdown);
     signal(SIGTERM, server_shutdown);
 
     // create network server and listen
-    gTAPSServer = new TTServer(gTAPSServerType, TTConfig::kTAPSServerPort);
+    gTAPSServer = new TTServer(serverType, TTConfig::kTAPSServerPort);
     gTAPSServer->Listen();
     
     // clean-up

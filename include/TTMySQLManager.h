@@ -30,7 +30,8 @@
 #include "TSystem.h"
 
 #include "TTConfig.h"
-#include "TTDataType.h"
+#include "TTDataTypePar.h"
+#include "TTDataTypeMap.h"
 
 
 class TTMySQLManager
@@ -66,7 +67,7 @@ public:
     Bool_t WriteMaps(const Char_t* data, Int_t length, Int_t* crate,
                      Int_t* board, Int_t* channel);
     
-    void InitDatabase();
+    Bool_t InitDatabase();
     
     static TTMySQLManager* GetManager()
     {
