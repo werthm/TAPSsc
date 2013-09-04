@@ -93,24 +93,25 @@ void Init()
     gEnv->ReadFile(cfg, kEnvLocal);
 
     // init TAPSsc database
-    TTMySQLManager::GetManager()->InitDatabase();
-    
-    // write default parameter data
-    WritePar("Par.BaF2.HV", "data/init/par_baf2_hv");
-    WritePar("Par.BaF2.Thr.CFD", "data/init/par_baf2_cfd");
-    WritePar("Par.BaF2.Thr.LED1", "data/init/par_baf2_led1");
-    WritePar("Par.BaF2.Thr.LED2", "data/init/par_baf2_led2");
-    WritePar("Par.BaF2.QAC.LG", "data/init/par_baf2_qac_ped_lg");
-    WritePar("Par.BaF2.QAC.LGS", "data/init/par_baf2_qac_ped_lgs");
-    WritePar("Par.BaF2.QAC.SG", "data/init/par_baf2_qac_ped_sg");
-    WritePar("Par.BaF2.QAC.SGS", "data/init/par_baf2_qac_ped_sgs");
-    WritePar("Par.PWO.HV", "data/init/par_pwo_hv");
-    WritePar("Par.Veto.Thr.LED", "data/init/par_veto_led");
-    WritePar("Par.Veto.QAC", "data/init/par_veto_qac_ped");
+    if (TTMySQLManager::GetManager()->InitDatabase())
+    {
+        // write default parameter data
+        WritePar("Par.BaF2.HV", "data/init/par_baf2_hv");
+        WritePar("Par.BaF2.Thr.CFD", "data/init/par_baf2_cfd");
+        WritePar("Par.BaF2.Thr.LED1", "data/init/par_baf2_led1");
+        WritePar("Par.BaF2.Thr.LED2", "data/init/par_baf2_led2");
+        WritePar("Par.BaF2.QAC.LG", "data/init/par_baf2_qac_ped_lg");
+        WritePar("Par.BaF2.QAC.LGS", "data/init/par_baf2_qac_ped_lgs");
+        WritePar("Par.BaF2.QAC.SG", "data/init/par_baf2_qac_ped_sg");
+        WritePar("Par.BaF2.QAC.SGS", "data/init/par_baf2_qac_ped_sgs");
+        WritePar("Par.PWO.HV", "data/init/par_pwo_hv");
+        WritePar("Par.Veto.Thr.LED", "data/init/par_veto_led");
+        WritePar("Par.Veto.QAC", "data/init/par_veto_qac_ped");
 
-    // write default map data
-    WriteMap("Map.BaF2.HV", "data/init/map_baf2_hv");
-    WriteMap("Map.PWO.HV", "data/init/map_pwo_hv");
+        // write default map data
+        WriteMap("Map.BaF2.HV", "data/init/map_baf2_hv");
+        WriteMap("Map.PWO.HV", "data/init/map_pwo_hv");
+    }
 
     gSystem->Exit(0);
 }
