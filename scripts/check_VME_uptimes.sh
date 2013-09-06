@@ -6,9 +6,11 @@
 ##                                                                 ##
 #####################################################################
 
-for i in {0..10} 
+HOSTS=`grep vme-taps $TAPSSC/config/config.rootrc | cut -f2 -d: | tr -d ' '`
+
+for i in $HOSTS
 do
-    printf "taps-vme-%d : " $i 
-    ssh a2cb@taps-vme-$i uptime
+    printf "%-20s : " $i 
+    ssh a2cb@$i uptime
 done
 
