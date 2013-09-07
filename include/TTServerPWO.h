@@ -6,41 +6,31 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTNetServer                                                          //
+// TTServerPWO                                                          //
 //                                                                      //
-// Network server class.                                                //
+// PWO TAPS server class.                                               //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TTNETSERVER_H
-#define TTNETSERVER_H
+#ifndef TTSERVERPWO_H
+#define TTSERVERPWO_H
 
-#include "TServerSocket.h"
-#include "TMonitor.h"
-#include "TMessage.h"
-#include "TError.h"
-#include "TList.h"
+#include "TTServer.h"
 
 
-class TTNetServer
+class TTServerPWO : public TTServer
 {
 
 protected:
-    TServerSocket* fServer;                 // server socket
-    Bool_t fIsRunning;                      // running flag
-    
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 
 public:
-    TTNetServer() : fServer(0), fIsRunning(kFALSE) { }
-    TTNetServer(Int_t port);
-    virtual ~TTNetServer();
+    TTServerPWO() : TTServer() { }
+    TTServerPWO(Int_t port);
+    virtual ~TTServerPWO() { }
 
-    void Listen();
-    void StopListening();
-
-    ClassDef(TTNetServer, 0) // Network server
+    ClassDef(TTServerPWO, 0) // PWO TAPS server
 };
 
 #endif

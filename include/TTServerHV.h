@@ -6,41 +6,31 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTNetServer                                                          //
+// TTServerHV                                                           //
 //                                                                      //
-// Network server class.                                                //
+// HV TAPS server class.                                                //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TTNETSERVER_H
-#define TTNETSERVER_H
+#ifndef TTSERVERHV_H
+#define TTSERVERHV_H
 
-#include "TServerSocket.h"
-#include "TMonitor.h"
-#include "TMessage.h"
-#include "TError.h"
-#include "TList.h"
+#include "TTServer.h"
 
 
-class TTNetServer
+class TTServerHV : public TTServer
 {
 
 protected:
-    TServerSocket* fServer;                 // server socket
-    Bool_t fIsRunning;                      // running flag
-    
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 
 public:
-    TTNetServer() : fServer(0), fIsRunning(kFALSE) { }
-    TTNetServer(Int_t port);
-    virtual ~TTNetServer();
+    TTServerHV() : TTServer() { }
+    TTServerHV(Int_t port);
+    virtual ~TTServerHV() { }
 
-    void Listen();
-    void StopListening();
-
-    ClassDef(TTNetServer, 0) // Network server
+    ClassDef(TTServerHV, 0) // HV TAPS server
 };
 
 #endif

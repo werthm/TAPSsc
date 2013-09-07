@@ -20,7 +20,10 @@
 #include "TSystem.h"
 #include "TEnv.h"
 
-#include "TTServer.h"
+#include "TTServerBaF2.h"
+#include "TTServerVeto.h"
+#include "TTServerPWO.h"
+#include "TTServerHV.h"
 #include "TTConfig.h"
 #include "TTUtils.h"
 
@@ -213,7 +216,10 @@ Int_t main(Int_t argc, Char_t* argv[])
     signal(SIGTERM, server_shutdown);
 
     // create network server and listen
-    gTAPSServer = new TTServer(serverType, TTConfig::kTAPSServerPort);
+    if (serverType == kBaF2Server) gTAPSServer = new TTServerBaF2(TTConfig::kTAPSServerPort);
+    else if (serverType == kVetoServer) gTAPSServer = new TTServerVeto(TTConfig::kTAPSServerPort);
+    else if (serverType == kPWOServer) gTAPSServer = new TTServerPWO(TTConfig::kTAPSServerPort);
+    else if (serverType == kHVServer) gTAPSServer = new TTServerHV(TTConfig::kTAPSServerPort);
     gTAPSServer->Listen();
     
     // clean-up

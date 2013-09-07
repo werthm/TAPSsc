@@ -8,7 +8,7 @@
 //                                                                      //
 // TTServer                                                             //
 //                                                                      //
-// TAPS server class.                                                   //
+// Parent TAPS server class.                                            //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +19,7 @@
 #include "TTNetServer.h"
 
 
+// server type enum
 enum ETServerType {
     kNoServer,
     kBaF2Server,
@@ -36,7 +37,7 @@ private:
     TServerType_t fType;                // TAPS server type
 
 protected:
-    virtual void ProcessCommand(const Char_t* cmd, TSocket* s);
+    virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 
 public:
     TTServer() : TTNetServer(),
@@ -44,7 +45,7 @@ public:
     TTServer(TServerType_t type, Int_t port);
     virtual ~TTServer();
 
-    ClassDef(TTServer, 0) // TAPS server
+    ClassDef(TTServer, 0) // Parent TAPS server
 };
 
 #endif

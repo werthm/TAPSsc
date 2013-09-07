@@ -6,52 +6,41 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTServer                                                             //
+// TTServerBaF2                                                         //
 //                                                                      //
-// Parent TAPS server class.                                            //
+// BaF2 TAPS server class.                                              //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
-#include "TTServer.h"
+#include "TTServerBaF2.h"
 
-ClassImp(TTServer)
+ClassImp(TTServerBaF2)
 
 
 //______________________________________________________________________________
-TTServer::TTServer(TServerType_t type, Int_t port)
-    : TTNetServer(port)
+TTServerBaF2::TTServerBaF2(Int_t port)
+    : TTServer(kBaF2Server, port)
 {
     // Constructor.
     
-    fType = type;
 }
 
 //______________________________________________________________________________
-TTServer::~TTServer()
-{
-    // Destructor.
-
-}
-
-//______________________________________________________________________________
-Bool_t TTServer::ProcessCommand(const Char_t* cmd, TSocket* s)
+Bool_t TTServerBaF2::ProcessCommand(const Char_t* cmd, TSocket* s)
 {
     // Process the command 'cmd' coming from the socket 's'.
     // Return kTRUE if the command was accepted, otherwise kFALSE.
     
-    // TYPE command: return the server type
-    if (!strcmp(cmd, "TYPE"))
+    // WRITE_ARDAQ command: write AcquDAQ config files
+    if (!strcmp(cmd, "WRITE_ARDAQ"))
     {
-        Char_t tmp[8];
-        sprintf(tmp, "%d", fType);
-        s->Send(tmp);
         return kTRUE;
     }
     else
     {
         // call parent method
-        if (TTNetServer::ProcessCommand(cmd, s)) return kTRUE;
+        if (TTServer::ProcessCommand(cmd, s)) return kTRUE;
         else
         {
             Warning("ProcessCommand", "Unknown command '%s'", cmd);

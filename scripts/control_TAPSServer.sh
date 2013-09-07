@@ -15,10 +15,11 @@ then
         IS_VME=`hostname | grep vme | wc -l`
         if [ $IS_VME -eq 0 ] 
         then
-            for i in {0..10}
+            HOSTS=`grep vme-taps $TAPSSC/config/config.rootrc | cut -f2 -d: | tr -d ' '`
+            for i in $HOSTS
             do
-                printf "Performing TAPSServer %s on taps-vme-%d\n" $CMD $i 
-                ssh a2cb@taps-vme-$i /home/a2cb/TAPSsc/scripts/control_TAPSServer.sh $CMD
+                printf "Performing TAPSServer %s on %s\n" $CMD $i 
+                ssh a2cb@$i /home/a2cb/TAPSsc/scripts/control_TAPSServer.sh $CMD
             done
         else
             # ROOT
@@ -36,8 +37,9 @@ then
                 killall -q TAPSServer
             fi
             
-            # set server ID
-            ID=`hostname -s | cut -f3 -d-`
+            # get server ID
+            H=`hostname -s`
+            ID=`grep $H $HOME/TAPSsc/config/config.rootrc | cut -d: -f1 | sed 's/Server-//g;s/\.Host//g'`
 
             # start new instance
             if [ "$CMD" == "restart" ]

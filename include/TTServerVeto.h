@@ -6,41 +6,31 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTNetServer                                                          //
+// TTServerVeto                                                         //
 //                                                                      //
-// Network server class.                                                //
+// Veto TAPS server class.                                              //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TTNETSERVER_H
-#define TTNETSERVER_H
+#ifndef TTSERVERVETO_H
+#define TTSERVERVETO_H
 
-#include "TServerSocket.h"
-#include "TMonitor.h"
-#include "TMessage.h"
-#include "TError.h"
-#include "TList.h"
+#include "TTServer.h"
 
 
-class TTNetServer
+class TTServerVeto : public TTServer
 {
 
 protected:
-    TServerSocket* fServer;                 // server socket
-    Bool_t fIsRunning;                      // running flag
-    
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 
 public:
-    TTNetServer() : fServer(0), fIsRunning(kFALSE) { }
-    TTNetServer(Int_t port);
-    virtual ~TTNetServer();
+    TTServerVeto() : TTServer() { }
+    TTServerVeto(Int_t port);
+    virtual ~TTServerVeto() { }
 
-    void Listen();
-    void StopListening();
-
-    ClassDef(TTNetServer, 0) // Network server
+    ClassDef(TTServerVeto, 0) // Veto TAPS server
 };
 
 #endif

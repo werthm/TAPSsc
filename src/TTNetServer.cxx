@@ -131,6 +131,7 @@ void TTNetServer::Listen()
         }
         else if (mess->What() == kMESS_OBJECT)
         {
+            // not needed yet
         }
 
         // clean-up
@@ -170,23 +171,27 @@ void TTNetServer::StopListening()
 }
 
 //______________________________________________________________________________
-void TTNetServer::ProcessCommand(const Char_t* cmd, TSocket* s)
+Bool_t TTNetServer::ProcessCommand(const Char_t* cmd, TSocket* s)
 {
     // Process the command 'cmd' coming from the socket 's'.
+    // Return kTRUE if the command was accepted, otherwise kFALSE.
     
     // STOP command: stop listening on socket
     if (!strcmp(cmd, "STOP"))
     {
         StopListening();
+        return kTRUE;
     }
     // STATUS command: return the server status
     else if (!strcmp(cmd, "STATUS"))
     {
         s->Send("READY");
+        return kTRUE;
     }
     else
     {
         Warning("ProcessCommand", "Unknown command '%s'", cmd);
+        return kFALSE;
     }
 }
 

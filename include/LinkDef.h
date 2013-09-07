@@ -42,6 +42,10 @@
 #pragma link C++ class TTDataTypeMap+;
 #pragma link C++ class TTNetServer+;
 #pragma link C++ class TTServer+;
+#pragma link C++ class TTServerBaF2+;
+#pragma link C++ class TTServerVeto+;
+#pragma link C++ class TTServerPWO+;
+#pragma link C++ class TTServerHV+;
 #pragma link C++ class TTNetClient+;
 #pragma link C++ class TTClient+;
 #pragma link C++ class TTRS232+;
