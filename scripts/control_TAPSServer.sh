@@ -19,7 +19,7 @@ then
             for i in $HOSTS
             do
                 printf "Performing TAPSServer %s on %s\n" $CMD $i 
-                ssh a2cb@$i /home/a2cb/TAPSsc/scripts/control_TAPSServer.sh $CMD
+                ssh root@$i /root/TAPSsc/scripts/control_TAPSServer.sh $CMD
             done
         else
             # ROOT

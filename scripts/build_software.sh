@@ -13,7 +13,7 @@ then
     for i in {0..10}
     do
         printf "\nBuilding software on taps-vme-%d\n\n" $i 
-        ssh a2cb@taps-vme-$i /home/a2cb/TAPSsc/scripts/build_software.sh
+        ssh root@taps-vme-$i /root/TAPSsc/scripts/build_software.sh
     done
 else
     # ROOT
