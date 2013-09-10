@@ -295,13 +295,92 @@ Bool_t TTMySQLManager::IsConnected()
 }
 
 //______________________________________________________________________________
+TTDataTypeMap* TTMySQLManager::SearchCrate(Int_t crate)
+{
+    // Search a specific list of map tables for data containing the
+    // crate 'crate' and return the corresponding map data type.
+    // Return 0 if nothing was found.
+    
+    // set data types to check for modules
+    const Int_t nTypes = 2;
+    const Char_t types[nTypes][32] = { "Map.BaF2", "Map.Veto" };
+
+    // loop over data types and search for the crate
+    for (Int_t i = 0; i < nTypes; i++)
+    {
+        // get data type
+        TTDataTypeMap* d = (TTDataTypeMap*) fData->FindObject(types[i]);
+        if (d)
+        {
+            // create the query
+            Char_t query[256];
+            sprintf(query, "SELECT elem from %s WHERE crate = %d LIMIT 1", d->GetTableName(), crate);
+
+            // read from database
+            TSQLResult* res = SendQuery(query);
+
+            // check result
+            if (!res)
+            {
+                if (!fSilence) Error("SearchCrate", "Could not read table of map data type '%s'!", 
+                                     d->GetName());
+                return 0;
+            }
+            else if (!res->GetRowCount())
+            {
+                delete res;
+                continue;
+            }
+            else if (res->GetRowCount() == 1)
+            {
+                delete res;
+                return d;
+            }
+        }
+    }
+
+    // nothing found here
+    return 0;
+}
+
+//______________________________________________________________________________
 Int_t TTMySQLManager::GetNmodules(Int_t crate)
 {
     // Return the number of modules in the crate 'crate'.
     // Return -1 if the crate was not found or any error occurred.
+    
+    // search the data type for the crate
+    TTDataTypeMap* d = SearchCrate(crate);
 
-    return 0;
-}
+    // check if the crate was found
+    if (!d)
+    {
+        Error("GetNmodules", "The crate %d was not found in the database!", crate);
+        return -1;
+    }
+
+    // create the query
+    Char_t query[256];
+    sprintf(query, "SELECT DISTINCT module from %s WHERE crate = %d", d->GetTableName(), crate);
+
+    // read from database
+    TSQLResult* res = SendQuery(query);
+
+    // check result
+    if (!res)
+    {
+        if (!fSilence) Error("GetNmodules", "Could not read table of map data type '%s'!", 
+                             d->GetName());
+        return -1;
+    }
+    else
+    {
+        // row count should be >= 1 so just count them
+        Int_t nMod = res->GetRowCount();
+        delete res;
+        return nMod;
+    }
+}      
 
 //______________________________________________________________________________
 Int_t TTMySQLManager::GetElements(Int_t crate, Int_t module, Int_t* outElem)
@@ -309,8 +388,45 @@ Int_t TTMySQLManager::GetElements(Int_t crate, Int_t module, Int_t* outElem)
     // Search all elements of the crate 'crate' and module 'module' and write
     // them to 'outElem'. 
     // Return the number of elements or -1 if any error occurred.
+    
+    // search the data type for the crate
+    TTDataTypeMap* d = SearchCrate(crate);
 
-    return 0;
+    // check if the crate was found
+    if (!d)
+    {
+        Error("GetElements", "The crate %d was not found in the database!", crate);
+        return -1;
+    }
+
+    // create the query
+    Char_t query[256];
+    sprintf(query, "select elem from %s where crate = %d AND module = %d ORDER BY channel ASC", 
+            d->GetTableName(), crate, module);
+
+    // read from database
+    TSQLResult* res = SendQuery(query);
+
+    // check result
+    if (!res)
+    {
+        if (!fSilence) Error("GetElements", "Could not read table of map data type '%s'!", 
+                             d->GetName());
+        return -1;
+    }
+    else 
+    {
+        // read and save data
+        Int_t nElem = res->GetRowCount();
+        for (Int_t i = 0; i < nElem; i++) 
+        {
+            TSQLRow* row = res->Next();
+            outElem[i] = atoi(row->GetField(0));
+            delete row;
+        }
+        delete res;
+        return nElem;
+    }
 }
 
 //______________________________________________________________________________

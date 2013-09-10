@@ -46,6 +46,7 @@ private:
     Bool_t ReadDataTypes(TDataType_t type);
    
     TSQLResult* SendQuery(const Char_t* query);
+    TTDataTypeMap* SearchCrate(Int_t crate);
 
 public:
     TTMySQLManager();
