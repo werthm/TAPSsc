@@ -31,7 +31,7 @@ namespace TTConfig
                     "id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                     "elem INT,"
                     "crate INT,"
-                    "board INT,"
+                    "module INT,"
                     "channel INT,"
                     "time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
                     "               ON UPDATE CURRENT_TIMESTAMP";

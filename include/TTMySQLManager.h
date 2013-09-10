@@ -58,15 +58,18 @@ public:
     const Char_t* GetDBHost() const { return fDB ? fDB->GetHost() : 0; }
     THashList* GetDataTypes() const { return fData; }
     
-    void CreateTable(TTDataType* d);
- 
-    Bool_t ReadParameters(const Char_t* data, Int_t length, Double_t* par);
-    Bool_t ReadMaps(const Char_t* data, Int_t length, Int_t* crate = 0,
-                    Int_t* board = 0, Int_t* channel = 0);
-    Bool_t WriteParameters(const Char_t* data, Int_t length, Double_t* par);
-    Bool_t WriteMaps(const Char_t* data, Int_t length, Int_t* crate,
-                     Int_t* board, Int_t* channel);
+    Bool_t ReadParameters(const Char_t* data, Int_t length, 
+                          Int_t* elem, Double_t* outPar);
+    Bool_t ReadMaps(const Char_t* data, Int_t length, Int_t* elem,
+                    Int_t* outCrate = 0, Int_t* outModule = 0, Int_t* outChannel = 0);
+    Bool_t WriteParameters(const Char_t* data, Int_t length, 
+                           Int_t* elem, Double_t* par);
+    Bool_t WriteMaps(const Char_t* data, Int_t length, Int_t* elem, 
+                     Int_t* crate, Int_t* module, Int_t* channel);
+    Int_t GetNmodules(Int_t crate);
+    Int_t GetElements(Int_t crate, Int_t module, Int_t* outElem);
     
+    void CreateTable(TTDataType* d);
     Bool_t InitDatabase();
     
     static TTMySQLManager* GetManager()

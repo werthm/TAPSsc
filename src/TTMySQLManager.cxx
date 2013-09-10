@@ -116,7 +116,7 @@ TTMySQLManager::~TTMySQLManager()
 Bool_t TTMySQLManager::ReadDataTypes(TDataType_t type)
 {
     // Read the TAPSsc data types definitions from the configuration file.
-    // Return kTRUE on success, kFALSE if an error occured.
+    // Return kTRUE on success, kFALSE if an error occurred.
     
     Int_t added = 0;
     
@@ -295,12 +295,35 @@ Bool_t TTMySQLManager::IsConnected()
 }
 
 //______________________________________________________________________________
-Bool_t TTMySQLManager::ReadParameters(const Char_t* data, Int_t length, Double_t* par)
+Int_t TTMySQLManager::GetNmodules(Int_t crate)
 {
-    // Read 'length' entries of the parameter data type 'data' from the database to
-    // the array 'par'.
-    // Return kFALSE if an error occured, otherwise kTRUE.
- 
+    // Return the number of modules in the crate 'crate'.
+    // Return -1 if the crate was not found or any error occurred.
+
+    return 0;
+}
+
+//______________________________________________________________________________
+Int_t TTMySQLManager::GetElements(Int_t crate, Int_t module, Int_t* outElem)
+{
+    // Search all elements of the crate 'crate' and module 'module' and write
+    // them to 'outElem'. 
+    // Return the number of elements or -1 if any error occurred.
+
+    return 0;
+}
+
+//______________________________________________________________________________
+Bool_t TTMySQLManager::ReadParameters(const Char_t* data, Int_t length, 
+                                      Int_t* elem, Double_t* outPar)
+{
+    // Read 'length' entries of the parameter data type 'data' for the elements 
+    // 'elem' from the database to the array 'outPar'.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
+    // NOTE: The element numbers in 'elem' have to be sorted in ascending order!
+
+    Char_t tmp[256];
+
     // get the data type
     TTDataType* d = (TTDataType*) fData->FindObject(data);
     if (!d)
@@ -317,10 +340,16 @@ Bool_t TTMySQLManager::ReadParameters(const Char_t* data, Int_t length, Double_t
     }   
  
     // create the query
-    Char_t query[1024];
-    sprintf(query,
-            "SELECT value FROM %s WHERE id IN (SELECT MAX(id) FROM %s GROUP BY elem )",
+    Char_t query[8192];
+    sprintf(query, "SELECT value FROM %s WHERE id IN (SELECT MAX(id) FROM %s GROUP BY elem ) ",
             d->GetTableName(), d->GetTableName());
+    for (Int_t i = 0; i < length; i++)
+    {
+        if (i == 0) sprintf(tmp, "AND (elem = %d ", elem[i]);
+        else sprintf(tmp, "OR elem = %d ", elem[i]);
+        strcat(query, tmp);
+    }
+    strcat(query, ")");
 
     // read from database
     TSQLResult* res = SendQuery(query);
@@ -353,7 +382,7 @@ Bool_t TTMySQLManager::ReadParameters(const Char_t* data, Int_t length, Double_t
     for (Int_t i = 0; i < length; i++) 
     {
         TSQLRow* row = res->Next();
-        par[i] = atof(row->GetField(0));
+        outPar[i] = atof(row->GetField(0));
         delete row;
     }
 
@@ -368,13 +397,17 @@ Bool_t TTMySQLManager::ReadParameters(const Char_t* data, Int_t length, Double_t
 }
 
 //______________________________________________________________________________
-Bool_t TTMySQLManager::ReadMaps(const Char_t* data, Int_t length, Int_t* crate,
-                                Int_t* board, Int_t* channel)
+Bool_t TTMySQLManager::ReadMaps(const Char_t* data, Int_t length, Int_t* elem,
+                                Int_t* outCrate, Int_t* outModule, Int_t* outChannel)
 {
-    // Read 'length' entries of the map data type 'data' from the database to
-    // the arrays 'crate', 'board' and 'channel' (if non-zero, respectively).
-    // Return kFALSE if an error occured, otherwise kTRUE.
- 
+    // Read 'length' entries of the map data type 'data' for the elements 'elem' 
+    // from the database to the arrays 'outCrate', 'outModule' and 'outChannel' 
+    // (if non-zero, respectively).
+    // Return kFALSE if an error occurred, otherwise kTRUE.
+    // NOTE: The element numbers in 'elem' have to be sorted in ascending order!
+    
+    Char_t tmp[256];
+
     // get the data type
     TTDataType* d = (TTDataType*) fData->FindObject(data);
     if (!d)
@@ -391,10 +424,16 @@ Bool_t TTMySQLManager::ReadMaps(const Char_t* data, Int_t length, Int_t* crate,
     }   
  
     // create the query
-    Char_t query[1024];
-    sprintf(query,
-            "SELECT crate,board,channel FROM %s WHERE id IN (SELECT MAX(id) FROM %s GROUP BY elem )",
+    Char_t query[8192];
+    sprintf(query, "SELECT crate,module,channel FROM %s WHERE id IN (SELECT MAX(id) FROM %s GROUP BY elem ) ",
             d->GetTableName(), d->GetTableName());
+    for (Int_t i = 0; i < length; i++)
+    {
+        if (i == 0) sprintf(tmp, "AND (elem = %d ", elem[i]);
+        else sprintf(tmp, "OR elem = %d ", elem[i]);
+        strcat(query, tmp);
+    }
+    strcat(query, ")");
 
     // read from database
     TSQLResult* res = SendQuery(query);
@@ -427,9 +466,9 @@ Bool_t TTMySQLManager::ReadMaps(const Char_t* data, Int_t length, Int_t* crate,
     for (Int_t i = 0; i < length; i++) 
     {
         TSQLRow* row = res->Next();
-        if (crate) crate[i] = atof(row->GetField(0));
-        if (board) board[i] = atof(row->GetField(1));
-        if (channel) channel[i] = atof(row->GetField(2));
+        if (outCrate) outCrate[i] = atof(row->GetField(0));
+        if (outModule) outModule[i] = atof(row->GetField(1));
+        if (outChannel) outChannel[i] = atof(row->GetField(2));
         delete row;
     }
 
@@ -444,11 +483,12 @@ Bool_t TTMySQLManager::ReadMaps(const Char_t* data, Int_t length, Int_t* crate,
 }
 
 //______________________________________________________________________________
-Bool_t TTMySQLManager::WriteParameters(const Char_t* data, Int_t length, Double_t* par)
+Bool_t TTMySQLManager::WriteParameters(const Char_t* data, Int_t length, 
+                                       Int_t* elem, Double_t* par)
 {
-    // Write 'length' entries of the parameter data type 'data' using the value 
-    // array 'par' to the database.
-    // Return kFALSE if an error occured, otherwise kTRUE.
+    // Write 'length' entries of the parameter data type 'data' for the elements 
+    // in 'elem' using the value array 'par' to the database.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
   
     // get the data type
     TTDataType* d = (TTDataType*) fData->FindObject(data);
@@ -471,7 +511,7 @@ Bool_t TTMySQLManager::WriteParameters(const Char_t* data, Int_t length, Double_
     for (Int_t i = 0; i < length; i++)
     {
         // build query
-        sprintf(query, "INSERT INTO %s (elem, value) VALUES (%d, %lf)", d->GetTableName(), i, par[i]);
+        sprintf(query, "INSERT INTO %s (elem, value) VALUES (%d, %lf)", d->GetTableName(), elem[i], par[i]);
  
         // write data to database
         TSQLResult* res = SendQuery(query);
@@ -498,12 +538,12 @@ Bool_t TTMySQLManager::WriteParameters(const Char_t* data, Int_t length, Double_
 }
 
 //______________________________________________________________________________
-Bool_t TTMySQLManager::WriteMaps(const Char_t* data, Int_t length, Int_t* crate, 
-                                 Int_t* board, Int_t* channel)
+Bool_t TTMySQLManager::WriteMaps(const Char_t* data, Int_t length, Int_t* elem,
+                                 Int_t* crate, Int_t* module, Int_t* channel)
 {
-    // Write 'length' entries of the map data type 'data' using the value 
-    // arrays 'crate', 'board' and 'channel' to the database.
-    // Return kFALSE if an error occured, otherwise kTRUE.
+    // Write 'length' entries of the map data type 'data' for the elements in
+    // 'elem' using the value arrays 'crate', 'module' and 'channel' to the database.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
     
     // get the data type
     TTDataType* d = (TTDataType*) fData->FindObject(data);
@@ -526,8 +566,8 @@ Bool_t TTMySQLManager::WriteMaps(const Char_t* data, Int_t length, Int_t* crate,
     for (Int_t i = 0; i < length; i++)
     {
         // build query
-        sprintf(query, "INSERT INTO %s (elem, crate, board, channel) VALUES (%d, %d, %d, %d)", 
-                d->GetTableName(), i, crate[i], board[i], channel[i]);
+        sprintf(query, "INSERT INTO %s (elem, crate, module, channel) VALUES (%d, %d, %d, %d)", 
+                d->GetTableName(), elem[i], crate[i], module[i], channel[i]);
  
         // write data to database
         TSQLResult* res = SendQuery(query);

@@ -35,7 +35,7 @@ TTServerManager::TTServerManager()
     // register servers
     if (!RegisterServers())
     {
-        if (!fSilence) Error("TTServerManager", "An error occured during the server registration!");
+        if (!fSilence) Error("TTServerManager", "An error occurred during the server registration!");
         return;
     }
 }
@@ -56,7 +56,7 @@ TTServerManager::~TTServerManager()
 Bool_t TTServerManager::RegisterServers()
 {
     // Register all configured servers.
-    // Return kFALSE if an error occured, otherwise kTRUE.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
     
     Char_t tmp[256];
 

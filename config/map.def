@@ -5,7 +5,11 @@
 ########################################################################
 
 # ID                         description                         table           parameters
+Map.BaF2,                    BaF2 modules,                       map_baf2,       384
 Map.BaF2.HV,                 BaF2 high voltage,                  map_baf2_hv,    384
+
+Map.Veto,                    Veto modules,                       map_veto,       384
 Map.Veto.HV,                 Veto high voltage,                  map_veto_hv,    384
+
 Map.PWO.HV,                  PbWO4 high voltage,                 map_pwo_hv,     72
 

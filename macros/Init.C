@@ -14,11 +14,14 @@
 
 
 //______________________________________________________________________________
-void WritePar(const Char_t* data, const Char_t* file)
+void WritePar(const Char_t* data, const Char_t* file, Bool_t startsWithOne = kTRUE)
 {
     // Write the parameter data type 'data' to the database using the values in the
     // ASCII file 'file' (TAPSMaintain export format).
-    
+    // If 'startsWithOne' is kTRUE, the read element numbers will be decremented by
+    // 1 to have element numbers starting with 0.
+  
+    Int_t elem[1000];
     Double_t par[1000];
     Int_t nPar = 0;
 
@@ -31,27 +34,29 @@ void WritePar(const Char_t* data, const Char_t* file)
         l.Remove(TString::kBoth, ' ');
         l.Remove(TString::kBoth, '\n');
         if (l.BeginsWith("#") || l == "") continue;
-        else sscanf(l.Data(), "%*d%lf", &par[nPar++]);
+        else 
+        {
+            sscanf(l.Data(), "%d%lf", &elem[nPar], &par[nPar]);
+            if (startsWithOne) elem[nPar]--;
+            nPar++;
+        }
     }
     fclose(f);
 
-    // show parameters
-    //for (Int_t i = 0; i < nPar; i++) printf("Par %03d : %lf\n", i, par[i]);
-    //printf("Read %d parameters\n", nPar);
-    
     // write to database
-    TTMySQLManager::GetManager()->WriteParameters(data, nPar, par);
+    TTMySQLManager::GetManager()->WriteParameters(data, nPar, elem, par);
 }
 
 //______________________________________________________________________________
 void WriteMap(const Char_t* data, const Char_t* file)
 {
     // Write the map data type 'data' to the database using the values in the
-    // ASCII file 'file' (custom SQL export format).
-    
+    // ASCII file 'file'.
+  
     // par array
-    Int_t mainframe[1000];
-    Int_t board[1000];
+    Int_t elem[1000];
+    Int_t crate[1000];
+    Int_t module[1000];
     Int_t channel[1000];
     Int_t nMap = 0;
 
@@ -66,19 +71,51 @@ void WriteMap(const Char_t* data, const Char_t* file)
         if (l.BeginsWith("#") || l == "") continue;
         else 
         {
-            sscanf(l.Data(), "%*d%d%d", &mainframe[nMap], &channel[nMap]);
-            board[nMap] = 0;
+            sscanf(l.Data(), "%d%d%d%d", &elem[nMap], &crate[nMap], &module[nMap], &channel[nMap]);
             nMap++;
         }
     }
     fclose(f);
 
-    // show data
-    //for (Int_t i = 0; i < nMap; i++) printf("Par %03d : %d  %d\n", i, mainframe[i], channel[i]);
-    //printf("Read %d parameters\n", nMap);
-    
     // write to database
-    TTMySQLManager::GetManager()->WriteMaps(data, nMap, mainframe, board, channel);
+    TTMySQLManager::GetManager()->WriteMaps(data, nMap, elem, crate, module, channel);
+}
+
+//______________________________________________________________________________
+void WriteMapHV(const Char_t* data, const Char_t* file)
+{
+    // Write the HV map data type 'data' to the database using the values in the
+    // ASCII file 'file' (custom SQL export format).
+  
+    // par array
+    Int_t elem[1000];
+    Int_t mainframe[1000];
+    Int_t module[1000];
+    Int_t channel[1000];
+    Int_t nMap = 0;
+
+    // read from file
+    Char_t* line[256];
+    FILE* f = fopen(file, "r");
+    while (fgets(line, 256, f)) 
+    {
+        TString l((const Char_t*)line);
+        l.Remove(TString::kBoth, ' ');
+        l.Remove(TString::kBoth, '\n');
+        if (l.BeginsWith("#") || l == "") continue;
+        else 
+        {
+            sscanf(l.Data(), "%d%d%d", &elem[nMap], &mainframe[nMap], &channel[nMap]);
+            elem[nMap]--;
+            channel[nMap]--;
+            module[nMap] = 0;
+            nMap++;
+        }
+    }
+    fclose(f);
+
+    // write to database
+    TTMySQLManager::GetManager()->WriteMaps(data, nMap, elem, mainframe, module, channel);
 }
 
 //______________________________________________________________________________
@@ -109,8 +146,10 @@ void Init()
         WritePar("Par.Veto.QAC", "data/init/par_veto_qac_ped");
 
         // write default map data
-        WriteMap("Map.BaF2.HV", "data/init/map_baf2_hv");
-        WriteMap("Map.PWO.HV", "data/init/map_pwo_hv");
+        WriteMap("Map.BaF2", "data/init/map_baf2");
+        WriteMap("Map.Veto", "data/init/map_veto");
+        WriteMapHV("Map.BaF2.HV", "data/init/map_baf2_hv");
+        WriteMapHV("Map.PWO.HV", "data/init/map_pwo_hv");
     }
 
     gSystem->Exit(0);
