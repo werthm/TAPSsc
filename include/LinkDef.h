@@ -50,6 +50,8 @@
 #pragma link C++ class TTClient+;
 #pragma link C++ class TTRS232+;
 #pragma link C++ class TTLeCroy1445+;
+#pragma link C++ class TTWriteADConfig+;
+#pragma link C++ class TTWriteADConfigBaF2+;
 
 #endif
 

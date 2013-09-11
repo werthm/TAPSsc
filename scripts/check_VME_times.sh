@@ -11,6 +11,6 @@ HOSTS=`grep vme-taps $TAPSSC/config/config.rootrc | cut -f2 -d: | tr -d ' '`
 for i in $HOSTS
 do
     printf "%-20s : " $i 
-    ssh root@$i uptime
+    ssh root@$i date
 done
 

@@ -29,6 +29,10 @@ class TTServerManager
 private:
     Int_t fNServer;                             // number of servers
     TTClient** fServer;                         // servers
+    TList* fServerBaF2;                         // list of BaF2 servers
+    TList* fServerVeto;                         // list of Veto servers
+    TList* fServerPWO;                          // list of PWO servers
+    TTClient* fServerHV;                        // single HV server
     Bool_t fSilence;                            // silence mode toggle
     static TTServerManager* fgServerManager;    // pointer to static instance of this class
     
@@ -39,7 +43,8 @@ public:
     virtual ~TTServerManager();
     
     void SetSilenceMode(Bool_t s) { fSilence = s; }
-    
+    Bool_t WriteHV(TTDataTypePar* d, Int_t elem);
+
     void PrintStatus();
 
     static TTServerManager* GetManager()

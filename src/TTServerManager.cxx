@@ -30,6 +30,10 @@ TTServerManager::TTServerManager()
     // init members
     fNServer = 0;
     fServer = 0;
+    fServerBaF2 = new TList();
+    fServerVeto = new TList();
+    fServerPWO = new TList();
+    fServerHV = 0;
     fSilence = kFALSE;
 
     // register servers
@@ -50,6 +54,9 @@ TTServerManager::~TTServerManager()
         for (Int_t i = 0; i < fNServer; i++) delete fServer[i];
         delete [] fServer;
     }
+    if (fServerBaF2) delete fServerBaF2;
+    if (fServerVeto) delete fServerVeto;
+    if (fServerPWO) delete fServerPWO;
 }
 
 //______________________________________________________________________________
@@ -82,9 +89,38 @@ Bool_t TTServerManager::RegisterServers()
             Error("RegisterServers", "Configuration key '%s' was not found!", tmp);
             return kFALSE;
         }
+        
+        // get type hostname
+        sprintf(tmp, "Server-%d.Type", i);
+        const Char_t* sType = gEnv->GetValue(tmp, "null");
+        if (!strcmp(sType, "null")) 
+        {
+            Error("RegisterServers", "Configuration key '%s' was not found!", tmp);
+            return kFALSE;
+        }
 
         // register new server
         fServer[i] = new TTClient(sHost, TTConfig::kTAPSServerPort);
+        
+        // classify according to server type
+        if (!strcmp(sType, "BaF2")) fServerBaF2->Add(fServer[i]);
+        else if (!strcmp(sType, "Veto")) fServerVeto->Add(fServer[i]);
+        else if (!strcmp(sType, "PWO")) fServerPWO->Add(fServer[i]);
+        else if (!strcmp(sType, "HV")) 
+        {   
+            if (!fServerHV) fServerHV = fServer[i];
+            else 
+            {
+                Error("RegisterServers", "Only 1 HV server can be defined at the moment!");
+                return kFALSE;
+            }
+        }
+        else
+        {
+            Error("RegisterServers", "Unknown server type '%s'!", sType);
+            return kFALSE;
+        }
+ 
     }
 
     return kTRUE;
@@ -165,5 +201,30 @@ void TTServerManager::PrintStatus()
     }
     
     printf("\n");
+}
+
+//______________________________________________________________________________
+Bool_t TTServerManager::WriteHV(TTDataTypePar* d, Int_t elem)
+{
+    // Write the high voltage values of the parameter data type 'd' for the
+    // element 'elem' using the HV server client.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // check for HV server 
+    if (!fServerHV)
+    {
+        Error("WriteHV", "Could not find connection to HV server!");
+        return kFALSE;
+    }
+
+    // check of HV server connection
+    if (fServerHV->GetStatus() != TTNetClient::kReady)
+    {
+        Error("WriteHV", "No connection to HV server!");
+        return kFALSE;
+    }
+
+    // write HV and return return-value
+    return fServerHV->WriteHV(d, elem);
 }
 

@@ -70,6 +70,5 @@ Server-10.Type:         PWO
 ARDAQ.Cfg.Mod.Templ.BaF2:   config/Module_Template_BaF2
 ARDAQ.Cfg.Mod.Templ.Veto:   config/Module_Template_Veto
 ARDAQ.Cfg.Mod.Templ.PWO:    config/Module_Template_PWO
-ARDAQ.Cfg.Mod.Dir:          $HOME/acqu/data
-ARDAQ.Cfg.Mod.Name:         Module_%0d
+ARDAQ.Cfg.Mod.File.Prefix:  $HOME/acqu/data/Module_
 

@@ -33,17 +33,17 @@ TTMySQLManager::TTMySQLManager()
     fData = new THashList();
     fData->SetOwner(kTRUE);
 
-    // read parameter types
-    if (!ReadDataTypes(kParType))
-    {
-        if (!fSilence) Error("TTMySQLManager", "Could not read the TAPSsc parameter definitions!");
-        return;
-    }
-
     // read map types
     if (!ReadDataTypes(kMapType))
     {
         if (!fSilence) Error("TTMySQLManager", "Could not read the TAPSsc map definitions!");
+        return;
+    }
+    
+    // read parameter types
+    if (!ReadDataTypes(kParType))
+    {
+        if (!fSilence) Error("TTMySQLManager", "Could not read the TAPSsc parameter definitions!");
         return;
     }
 
@@ -177,6 +177,7 @@ Bool_t TTMySQLManager::ReadDataTypes(TDataType_t type)
                 Int_t size = 0;
                 Double_t min = 0;
                 Double_t max = 0;
+                TString map;
 
                 // iterate over tokens
                 TIter next(token);
@@ -208,6 +209,9 @@ Bool_t TTMySQLManager::ReadDataTypes(TDataType_t type)
                         case 5:
                             max = atof(str.Data());
                             break;
+                        case 6:
+                            map = str;
+                            break;
                     }
 
                     count++;
@@ -217,13 +221,25 @@ Bool_t TTMySQLManager::ReadDataTypes(TDataType_t type)
                 delete token;
                 
                 // check number of tokens
-                if (count == 6 && type == kParType)
+                if (count == 7 && type == kParType)
                 {
                     // create a new data type object
-                    TTDataTypePar* data = new TTDataTypePar(name, title, size);
+                    TTDataTypePar* data = new TTDataTypePar(name.Data(), title.Data(), size);
                     data->SetTableName(table);
                     data->SetMin(min);
                     data->SetMax(max);
+                    
+                    // try to get map
+                    TTDataTypeMap* m = (TTDataTypeMap*) fData->FindObject(map.Data());
+                    if (!m)
+                    {
+                        if (!fSilence) Error("ReadDataTypes", "Could not find map '%s' for parameter '%s'!", 
+                                             map.Data(), name.Data());
+                        return kFALSE;
+                    }
+                    
+                    // set map
+                    data->SetMap(m);
 
                     // add it to list
                     fData->Add(data);
@@ -619,6 +635,26 @@ Bool_t TTMySQLManager::WriteParameters(const Char_t* data, Int_t length,
     {
         if (!fSilence) Error("WriteParameters", "Data type '%s' is not a parameter data type!", data);
         return kFALSE;
+    }
+
+    // check parameter limits
+    TTDataTypePar* dd = (TTDataTypePar*) d;
+    for (Int_t i = 0; i < length; i++)
+    {
+        // check minimum
+        if (par[i] < dd->GetMin())
+        {
+            Error("WriteParameters", "Value %.f of element %d below minimum of %.f - aborting!", 
+                  par[i], i, dd->GetMin());
+            return kFALSE;
+        }
+        // check maximum
+        if (par[i] > dd->GetMax())
+        {
+            Error("WriteParameters", "Value %.f of element %d above maximum of %.f - aborting!", 
+                  par[i], i, dd->GetMax());
+            return kFALSE;
+        }
     }
     
     // insert the parameters

@@ -25,6 +25,7 @@ TTDataTypePar::TTDataTypePar(const Char_t* name, const Char_t* title,
 {
     // Constructor.
     
+    fMap = 0;
 }
 
 //______________________________________________________________________________
@@ -36,5 +37,7 @@ void TTDataTypePar::Print()
 
     printf("Minimum value  : %f\n", fMin);
     printf("Maximum value  : %f\n", fMax);
+    if (fMap) printf("Map            : %s\n", fMap->GetName());
+    else printf("Map            : none\n");
 }
 

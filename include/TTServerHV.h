@@ -17,18 +17,25 @@
 #define TTSERVERHV_H
 
 #include "TTServer.h"
+#include "TTMySQLManager.h"
+#include "TTLeCroy1445.h"
+#include "TTUtils.h"
 
 
 class TTServerHV : public TTServer
 {
 
+private:
+    TTLeCroy1445* fLeCroy;          // LeCroy 1445 communication
+
 protected:
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 
 public:
-    TTServerHV() : TTServer() { }
+    TTServerHV() : TTServer(),
+                   fLeCroy(0) { }
     TTServerHV(Int_t port);
-    virtual ~TTServerHV() { }
+    virtual ~TTServerHV();
 
     ClassDef(TTServerHV, 0) // HV TAPS server
 };

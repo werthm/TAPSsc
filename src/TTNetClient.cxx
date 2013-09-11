@@ -64,7 +64,7 @@ Int_t TTNetClient::GetStatus()
             fSocket->Send("STATUS");
             
             // wait for the response
-            if (fSocket->Select(TSocket::kRead, 2000) == 1)
+            if (fSocket->Select(TSocket::kRead, 100) == 1)
             {
                 // get response
                 Char_t res[256];

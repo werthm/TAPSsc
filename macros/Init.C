@@ -141,15 +141,19 @@ void Init()
         WritePar("Par.BaF2.QAC.LGS", "data/init/par_baf2_qac_ped_lgs");
         WritePar("Par.BaF2.QAC.SG", "data/init/par_baf2_qac_ped_sg");
         WritePar("Par.BaF2.QAC.SGS", "data/init/par_baf2_qac_ped_sgs");
+        WritePar("Par.BaF2.HWID", "data/init/par_baf2_hwid", kFALSE);
         WritePar("Par.PWO.HV", "data/init/par_pwo_hv");
+        WritePar("Par.Veto.HV", "data/init/par_veto_hv");
         WritePar("Par.Veto.Thr.LED", "data/init/par_veto_led");
         WritePar("Par.Veto.QAC", "data/init/par_veto_qac_ped");
 
         // write default map data
         WriteMap("Map.BaF2", "data/init/map_baf2");
         WriteMap("Map.Veto", "data/init/map_veto");
+        WriteMap("Map.Veto.HV", "data/init/map_veto_hv");
         WriteMapHV("Map.BaF2.HV", "data/init/map_baf2_hv");
         WriteMapHV("Map.PWO.HV", "data/init/map_pwo_hv");
+        WriteMap("Map.BaF2.HWID", "data/init/map_baf2_hwid");
     }
 
     gSystem->Exit(0);

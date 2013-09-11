@@ -147,7 +147,7 @@ Int_t main(Int_t argc, Char_t* argv[])
         std::cin.getline(input, 256);
         
         // convert characters to uppercase
-        for (Int_t i = 0; i < strlen(input); i++)
+        for (UInt_t i = 0; i < strlen(input); i++)
             input[i] = toupper(input[i]);
         
         // check quit
