@@ -8,6 +8,7 @@
 ##                                                                 ##
 ##                           (C) 2013 by                           ##
 ##      Dominik Werthmueller <dominik.werthmueller@unibas.ch>      ##
+##              Thomas Strub <thomas.strub@unibas.ch>              ##
 ##                                                                 ##
 #####################################################################
 
