@@ -146,7 +146,7 @@ Int_t main(Int_t argc, Char_t* argv[])
             PrintHelp();
             return 0;
         case kBadServerID:
-            printf("ERROR: server id has to be specified!\n");
+            Error("main", "Server id has to be specified!");
             return -1;
         case kOk:
             break;
@@ -157,8 +157,8 @@ Int_t main(Int_t argc, Char_t* argv[])
     else sprintf(tmp, "%s/config/config.rootrc", gSystem->Getenv("TAPSSC"));
     if (gEnv->ReadFile(tmp, kEnvLocal))
     {
-        printf("ERROR: Could not find configuration file!\n");
-        printf("Check the command line arguments or the TAPSSC environment variable!\n");
+        Error("main", "Could not find configuration file!");
+        Error("main", "Check the command line arguments or the TAPSSC environment variable!");
         return -1;
     }
 
@@ -168,7 +168,7 @@ Int_t main(Int_t argc, Char_t* argv[])
     const Char_t* sType = gEnv->GetValue(tmp, "null");
     if (!strcmp(sType, "null")) 
     {
-        printf("ERROR: Could not find server type for server with ID %d!\n", gTAPSServerID);
+        Error("main", "Could not find server type for server with ID %d!", gTAPSServerID);
         return -1;
     }
     else
@@ -179,7 +179,7 @@ Int_t main(Int_t argc, Char_t* argv[])
         else if (!strcmp(sType, "HV")) serverType = kHVServer;
         else
         {
-            printf("ERROR: Unknown server type '%s'!\n", sType);
+            Error("main", "Unknown server type '%s'!", sType);
             return -1;
         }
     }
@@ -194,16 +194,16 @@ Int_t main(Int_t argc, Char_t* argv[])
     // can not open lock-file
     if (lfp < 0) 
     {
-        printf("ERROR: Cannot create lock-file! Check if an other instance of TAPSServer is already running!\n");
-        printf("Delete /var/lock/TAPSServer.pid if you are ABSOLUTELY sure what you're doing!\n");
+        Error("main", "Cannot create lock-file! Check if an other instance of TAPSServer is already running!");
+        Error("main", "Delete /var/lock/TAPSServer.pid if you are ABSOLUTELY sure what you're doing!");
         return -1;
     }
 
     // can not lock lock-file
     if (lockf(lfp, F_TLOCK, 0) < 0) 
     {
-        printf("ERROR: Cannot lock lock-file! Check if an other instance of TAPSServer is already running!\n");
-        printf("Delete /var/lock/TAPSServer.pid if you are ABSOLUTELY sure what you're doing!\n");
+        Error("main", "Cannot lock lock-file! Check if an other instance of TAPSServer is already running!");
+        Error("main", "Delete /var/lock/TAPSServer.pid if you are ABSOLUTELY sure what you're doing!");
         return -1;
     }
 

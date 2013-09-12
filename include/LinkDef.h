@@ -52,6 +52,8 @@
 #pragma link C++ class TTLeCroy1445+;
 #pragma link C++ class TTWriteADConfig+;
 #pragma link C++ class TTWriteADConfigBaF2+;
+#pragma link C++ class TTWriteADConfigVeto+;
+#pragma link C++ class TTWriteADConfigPWO+;
 
 #endif
 

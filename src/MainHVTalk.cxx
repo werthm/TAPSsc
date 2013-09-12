@@ -111,8 +111,8 @@ Int_t main(Int_t argc, Char_t* argv[])
     else sprintf(tmp, "%s/config/config.rootrc", gSystem->Getenv("TAPSSC"));
     if (gEnv->ReadFile(tmp, kEnvLocal))
     {
-        printf("ERROR: Could not find configuration file!\n");
-        printf("Check the command line arguments or the TAPSSC environment variable!\n");
+        Error("main", "Could not find configuration file!");
+        Error("main", "Check the command line arguments or the TAPSSC environment variable!");
         return -1;
     }
     
@@ -120,7 +120,7 @@ Int_t main(Int_t argc, Char_t* argv[])
     const Char_t* device = gEnv->GetValue("HV.RS232.Device", "null");
     if (!strcmp(device, "null")) 
     {
-        printf("ERROR: Could not read serial device from the configuration file!\n");
+        Error("main", "Could not read serial device from the configuration file!");
         return -1;
     }
 
@@ -128,7 +128,7 @@ Int_t main(Int_t argc, Char_t* argv[])
     gLeCroy = new TTLeCroy1445(device);
     if (!gLeCroy->Init())
     {
-        printf("ERROR: No connection to LeCroy 1445!\n");
+        Error("main", "No connection to LeCroy 1445!");
         delete gLeCroy;
         return -1;
     }
