@@ -123,6 +123,8 @@ Bool_t TTServerManager::RegisterServers()
  
     }
 
+    Info("RegisterServers", "Successfully registered %d servers", fNServer);
+
     return kTRUE;
 }
 
@@ -204,9 +206,34 @@ void TTServerManager::PrintStatus()
 }
 
 //______________________________________________________________________________
+Bool_t TTServerManager::ReadHV(TTDataTypePar* d, Int_t elem, Int_t* outHV)
+{
+    // Read the high voltage value of the parameter data type 'd' for the
+    // element 'elem' using the HV server client and save it to 'outHV'.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // check for HV server 
+    if (!fServerHV)
+    {
+        Error("ReadHV", "Could not find connection to HV server!");
+        return kFALSE;
+    }
+
+    // check of HV server connection
+    if (fServerHV->GetStatus() != TTNetClient::kReady)
+    {
+        Error("ReadHV", "No connection to HV server!");
+        return kFALSE;
+    }
+
+    // read HV and return return-value
+    return fServerHV->ReadHV(d, elem, outHV);
+}
+
+//______________________________________________________________________________
 Bool_t TTServerManager::WriteHV(TTDataTypePar* d, Int_t elem)
 {
-    // Write the high voltage values of the parameter data type 'd' for the
+    // Write the high voltage value of the parameter data type 'd' for the
     // element 'elem' using the HV server client.
     // Return kTRUE on success, otherwise kFALSE.
     
@@ -226,5 +253,19 @@ Bool_t TTServerManager::WriteHV(TTDataTypePar* d, Int_t elem)
 
     // write HV and return return-value
     return fServerHV->WriteHV(d, elem);
+}
+
+//______________________________________________________________________________
+Bool_t TTServerManager::IsConnectedToHV()
+{
+    // Check if the connection to the HV server is ready.
+    // If yes, return kTRUE, otherwise kFALSE.
+
+    // check for HV server 
+    if (!fServerHV) return kFALSE;
+
+    // check of HV server connection
+    if (fServerHV->GetStatus() == TTNetClient::kReady) return kTRUE;
+    else return kFALSE;
 }
 

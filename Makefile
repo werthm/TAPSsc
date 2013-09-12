@@ -35,8 +35,7 @@ ROOTLIBA      = $(ROOTLIB)/libRoot.a -lXpm -lXext -lX11 -lm -ldl -pthread \
 
 DEP_LIB       = libRMySQL.so
 
-SLIB_TAPSsc   = $(L)/libTAPSsc.so
-ALIB_TAPSsc   = $(L)/libTAPSsc.a
+LIB_TAPSsc   = $(L)/libTAPSsc.so
 
 vpath %.cxx $(S)
 vpath %.h  $(I)
@@ -51,7 +50,7 @@ LDFLAGS     = -g -O3 -s -ffunction-sections -fdata-sections $(ROOTLDFLAGS)
 
 # ------------------------------------ targets ------------------------------------
 
-all:	begin $(SLIB_TAPSsc) $(ALIB_TAPSsc) $(L)/libTAPSsc.rootmap $(B)/TAPSServer $(B)/HVTalk end
+all:	begin $(LIB_TAPSsc) $(L)/libTAPSsc.rootmap $(B)/TAPSServer $(B)/HVTalk end
 
 begin:
 	@echo
@@ -63,34 +62,26 @@ end:
 	@echo "-> Finished!"
 	@echo
 
-$(B)/TAPSServer: $(SLIB_TAPSsc) $(S)/MainTAPSServer.cxx
+$(B)/TAPSServer: $(LIB_TAPSsc) $(S)/MainTAPSServer.cxx
 	@echo "Building the TAPSServer application"
 	@mkdir -p $(B)
-#	@$(CCCOMP) $(CXXFLAGS) $(ROOTLIBS) $(CURDIR)/$(SLIB_TAPSsc) -o $(B)/TAPSServer $(S)/MainTAPSServer.cxx
-	@$(CCCOMP) $(CXXAFLAGS) -o $(B)/TAPSServer $(S)/MainTAPSServer.cxx $(CURDIR)/$(ALIB_TAPSsc) $(ROOTLIBA)
+	@$(CCCOMP) $(CXXFLAGS) $(ROOTLIBS) -L $(CURDIR)/$(L) -lTAPSsc -o $(B)/TAPSServer $(S)/MainTAPSServer.cxx
 
-$(B)/HVTalk: $(SLIB_TAPSsc) $(S)/MainHVTalk.cxx
+$(B)/HVTalk: $(LIB_TAPSsc) $(S)/MainHVTalk.cxx
 	@echo "Building the HVTalk application"
 	@mkdir -p $(B)
-#	@$(CCCOMP) $(CXXFLAGS) $(ROOTLIBS) $(CURDIR)/$(SLIB_TAPSsc) -o $(B)/HVTalk $(S)/MainHVTalk.cxx
-	@$(CCCOMP) $(CXXAFLAGS) -o $(B)/HVTalk $(S)/MainHVTalk.cxx $(CURDIR)/$(ALIB_TAPSsc) $(ROOTLIBA)
+	@$(CCCOMP) $(CXXFLAGS) $(ROOTLIBS) -L $(CURDIR)/$(L) -lTAPSsc -o $(B)/HVTalk $(S)/MainHVTalk.cxx
 
-$(SLIB_TAPSsc): $(OBJ)
+$(LIB_TAPSsc): $(OBJ)
 	@echo
-	@echo "Building $(SLIB_TAPSsc)"
+	@echo "Building $(LIB_TAPSsc)"
 	@mkdir -p $(L)
-	@$(CCCOMP) $(LDFLAGS) -shared $(OBJD) -o $(SLIB_TAPSsc)
+	@$(CCCOMP) $(LDFLAGS) -shared $(OBJD) -o $(LIB_TAPSsc)
 
-$(ALIB_TAPSsc): $(OBJ)
-	@echo
-	@echo "Building $(ALIB_TAPSsc)"
-	@mkdir -p $(L)
-	@ar rv $(ALIB_TAPSsc) $(OBJD) > /dev/null 2>&1
-
-$(L)/libTAPSsc.rootmap: $(SLIB_TAPSsc)
+$(L)/libTAPSsc.rootmap: $(LIB_TAPSsc)
 	@echo
 	@echo "Creating ROOT map"
-	@rlibmap -o $(L)/libTAPSsc.rootmap -l $(SLIB_TAPSsc) -d $(DEP_LIB) -c $(I)/LinkDef.h
+	@rlibmap -o $(L)/libTAPSsc.rootmap -l $(LIB_TAPSsc) -d $(DEP_LIB) -c $(I)/LinkDef.h
 
 $(S)/G__TAPSsc.cxx: $(INC) $(I)/LinkDef.h
 	@echo

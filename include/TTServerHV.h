@@ -27,6 +27,9 @@ class TTServerHV : public TTServer
 
 private:
     TTLeCroy1445* fLeCroy;          // LeCroy 1445 communication
+    
+    Bool_t ReadHV(const Char_t* cmd, TSocket* s);
+    Bool_t WriteHV(const Char_t* cmd, TSocket* s);
 
 protected:
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);

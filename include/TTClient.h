@@ -21,6 +21,7 @@
 #include "TTNetClient.h"
 #include "TTServer.h"
 #include "TTDataTypePar.h"
+#include "TTUtils.h"
 
 
 class TTClient : public TTNetClient, public TObject
@@ -33,6 +34,7 @@ public:
     
     TServerType_t GetType();
 
+    Bool_t ReadHV(TTDataTypePar* d, Int_t elem, Int_t* outHV);
     Bool_t WriteHV(TTDataTypePar* d, Int_t elem);
 
     ClassDef(TTClient, 0) // TAPS client

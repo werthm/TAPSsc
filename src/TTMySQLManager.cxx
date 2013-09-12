@@ -749,7 +749,14 @@ Bool_t TTMySQLManager::WriteMaps(const Char_t* data, Int_t length, Int_t* elem,
 Bool_t TTMySQLManager::InitDatabase()
 {
     // Init a new TAPSsc database on a MySQL server.
-    // Return kFALSE on user abort, otherwise kTRUE.
+    // Return kTRUE on success, otherwise kFALSE
+    
+    // check server connection
+    if (!IsConnected())
+    {
+        if (!fSilence) Error("InitDatabase", "No connection to the database!");
+        return kFALSE;
+    }
     
     // ask for user confirmation
     Char_t answer[256];

@@ -6,6 +6,8 @@
 ##                                                                 ##
 #####################################################################
 
+LOC="/opt/TAPSsc"
+
 if [ $# -eq 1 ]
 then
     if [ "$1" == "restart" ] || [ "$1" == "stop" ]
@@ -19,17 +21,17 @@ then
             for i in $HOSTS
             do
                 printf "Performing TAPSServer %s on %s\n" $CMD $i 
-                ssh root@$i /root/TAPSsc/scripts/control_TAPSServer.sh $CMD
+                ssh root@$i $LOC/scripts/control_TAPSServer.sh $CMD
             done
         else
             # ROOT
-            #export ROOTSYS=/opt/root
-            #export PATH="$ROOTSYS/bin:$PATH"
-            #export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
+            export ROOTSYS=/opt/root
+            export PATH="$ROOTSYS/bin:$PATH"
+            export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
 
             # TAPSsc
-            export TAPSSC="$HOME/TAPSsc"
-            #export LD_LIBRARY_PATH="$TAPSSC/lib:$LD_LIBRARY_PATH"
+            export TAPSSC=$LOC
+            export LD_LIBRARY_PATH="$TAPSSC/lib:$LD_LIBRARY_PATH"
             
             # kill old instance
             if [ "$CMD" == "restart" ] || [ "$CMD" == "stop" ]
@@ -39,12 +41,12 @@ then
             
             # get server ID
             H=`hostname -s`
-            ID=`grep $H $HOME/TAPSsc/config/config.rootrc | cut -d: -f1 | sed 's/Server-//g;s/\.Host//g'`
+            ID=`grep $H $LOC/config/config.rootrc | cut -d: -f1 | sed 's/Server-//g;s/\.Host//g'`
 
             # start new instance
             if [ "$CMD" == "restart" ]
             then
-                nohup $HOME/TAPSsc/bin/TAPSServer -id $ID &> /dev/null &
+                nohup $LOC/bin/TAPSServer -id $ID &> /dev/null &
             fi
         fi
     else

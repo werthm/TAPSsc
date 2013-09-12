@@ -6,21 +6,23 @@
 ##                                                                 ##
 #####################################################################
 
-HOSTS=`grep vme-taps $TAPSSC/config/config.rootrc | cut -f2 -d: | tr -d ' '`
+SYNC_HOST="vme-taps-trigger"
+LOC="/opt"
 
-parallel ' \
-    printf "\nDeploying software to %s\n" {} 
-    ssh root@{} rm -rf TAPSsc 
-    ssh root@{} mkdir TAPSsc 
-    ssh root@{} mkdir TAPSsc/bin 
-    ssh root@{} mkdir TAPSsc/scripts 
-    ssh root@{} mkdir TAPSsc/config 
-    scp $HOME/TAPSsc/bin/TAPSServer root@{}:TAPSsc/bin 
-    scp $HOME/TAPSsc/scripts/control_TAPSServer.sh root@{}:TAPSsc/scripts 
-    scp $HOME/TAPSsc/config/config.rootrc root@{}:TAPSsc/config
-    if [ "{}" == "vme-taps-trigger" ]
-    then
-        scp $HOME/TAPSsc/bin/HVTalk root@{}:TAPSsc/bin
-    fi
-' ::: $HOSTS
+echo "Deploying software to common VME /opt"
+ssh root@$SYNC_HOST mount /opt
+ssh root@$SYNC_HOST rm -rf $LOC/TAPSsc 
+ssh root@$SYNC_HOST mkdir $LOC/TAPSsc 
+ssh root@$SYNC_HOST mkdir $LOC/TAPSsc/bin 
+ssh root@$SYNC_HOST mkdir $LOC/TAPSsc/scripts 
+ssh root@$SYNC_HOST mkdir $LOC/TAPSsc/config 
+ssh root@$SYNC_HOST mkdir $LOC/TAPSsc/lib
+scp $HOME/TAPSsc/bin/TAPSServer root@$SYNC_HOST:$LOC/TAPSsc/bin 
+scp $HOME/TAPSsc/scripts/control_TAPSServer.sh root@$SYNC_HOST:$LOC/TAPSsc/scripts 
+scp $HOME/TAPSsc/config/config.rootrc root@$SYNC_HOST:$LOC/TAPSsc/config
+scp $HOME/TAPSsc/config/map.def root@$SYNC_HOST:$LOC/TAPSsc/config
+scp $HOME/TAPSsc/config/par.def root@$SYNC_HOST:$LOC/TAPSsc/config
+scp $HOME/TAPSsc/bin/HVTalk root@$SYNC_HOST:$LOC/TAPSsc/bin
+scp $HOME/TAPSsc/lib/libTAPSsc.so root@$SYNC_HOST:$LOC/TAPSsc/lib
+ssh root@$SYNC_HOST umount /opt
 

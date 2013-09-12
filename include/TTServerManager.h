@@ -41,9 +41,12 @@ private:
 public:
     TTServerManager();
     virtual ~TTServerManager();
-    
+ 
     void SetSilenceMode(Bool_t s) { fSilence = s; }
+    Bool_t ReadHV(TTDataTypePar* d, Int_t elem, Int_t* outHV);
     Bool_t WriteHV(TTDataTypePar* d, Int_t elem);
+
+    Bool_t IsConnectedToHV();
 
     void PrintStatus();
 
