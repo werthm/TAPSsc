@@ -19,6 +19,9 @@
 #include "TSocket.h"
 #include "TError.h"
 
+#include "TTConfig.h"
+#include "TTUtils.h"
+
 
 class TTNetClient
 {

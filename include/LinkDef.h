@@ -48,6 +48,10 @@
 #pragma link C++ class TTServerHV+;
 #pragma link C++ class TTNetClient+;
 #pragma link C++ class TTClient+;
+#pragma link C++ class TTClientBaF2+;
+#pragma link C++ class TTClientVeto+;
+#pragma link C++ class TTClientPWO+;
+#pragma link C++ class TTClientHV+;
 #pragma link C++ class TTRS232+;
 #pragma link C++ class TTLeCroy1445+;
 #pragma link C++ class TTWriteADConfig+;

@@ -25,7 +25,7 @@ class TTLeCroy1445 : public TTRS232
 
 private:
     virtual Bool_t Configure();
-    Int_t GetHVStatus(Int_t mf);
+    Int_t ReadHVStatus(Int_t mf);
     Bool_t ChangeHVStatus(Int_t mf, Bool_t status);
     
     Bool_t ValidateMainframe(Int_t mf);
@@ -39,12 +39,10 @@ public:
     TTLeCroy1445(const Char_t* device);
     virtual ~TTLeCroy1445() { }
  
-    Bool_t IsHVOn(Int_t mf);
+    Bool_t GetStatusHV(Int_t mf, Bool_t* outSt);
+    Bool_t SetStatusHV(Int_t mf, Bool_t st);
     Bool_t ReadHV(Int_t mf, Int_t c, Int_t* outDem, 
                   Int_t* outBack = 0, Int_t* outAc = 0);
-
-    Bool_t TurnHVOn(Int_t mf);
-    Bool_t TurnHVOff(Int_t mf);
     Bool_t WriteHV(Int_t mf, Int_t c, Int_t val);
 
     void PrintCmdHelp();

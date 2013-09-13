@@ -22,6 +22,9 @@
 #include "TError.h"
 #include "TList.h"
 
+#include "TTConfig.h"
+#include "TTUtils.h"
+
 
 class TTNetServer
 {

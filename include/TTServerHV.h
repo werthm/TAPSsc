@@ -19,7 +19,6 @@
 #include "TTServer.h"
 #include "TTMySQLManager.h"
 #include "TTLeCroy1445.h"
-#include "TTUtils.h"
 
 
 class TTServerHV : public TTServer
@@ -28,6 +27,8 @@ class TTServerHV : public TTServer
 private:
     TTLeCroy1445* fLeCroy;          // LeCroy 1445 communication
     
+    Bool_t GetStatusHV(const Char_t* cmd, TSocket* s);
+    Bool_t SetStatusHV(const Char_t* cmd, TSocket* s);
     Bool_t ReadHV(const Char_t* cmd, TSocket* s);
     Bool_t WriteHV(const Char_t* cmd, TSocket* s);
 

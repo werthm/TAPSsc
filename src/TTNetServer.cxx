@@ -176,16 +176,19 @@ Bool_t TTNetServer::ProcessCommand(const Char_t* cmd, TSocket* s)
     // Process the command 'cmd' coming from the socket 's'.
     // Return kTRUE if the command was accepted, otherwise kFALSE.
     
-    // STOP command: stop listening on socket
-    if (!strcmp(cmd, "STOP"))
+    // get the network command
+    Int_t nc = TTUtils::GetNetworkCmd(cmd);
+
+    // stop command: stop listening on socket
+    if (nc == TTConfig::kNCStop)
     {
         StopListening();
         return kTRUE;
     }
-    // STATUS command: return the server status
-    else if (!strcmp(cmd, "STATUS"))
+    // status command: return the server status
+    else if (nc == TTConfig::kNCStatus)
     {
-        s->Send("READY");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCReady);
         return kTRUE;
     }
     else

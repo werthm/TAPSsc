@@ -184,7 +184,7 @@ Bool_t TTLeCroy1445::ValidateHVValue(Int_t val)
 }
 
 //______________________________________________________________________________
-Int_t TTLeCroy1445::GetHVStatus(Int_t mf)
+Int_t TTLeCroy1445::ReadHVStatus(Int_t mf)
 {
     // Return the status of the high voltage of mainframe 'mf'.
     // Return values are kOn, kOff and kUndef.
@@ -202,7 +202,7 @@ Int_t TTLeCroy1445::GetHVStatus(Int_t mf)
         else if (TTUtils::IndexOf(ret, "HV off") != -1) return kOff;
         else 
         {
-            Error("GetHVStatus", "Could not determine HV status!");
+            Error("ReadHVStatus", "Could not determine HV status of mainframe %d!", mf);
             return kUndef;
         }
     }
@@ -219,7 +219,12 @@ Bool_t TTLeCroy1445::ChangeHVStatus(Int_t mf, Bool_t status)
     if (IsConfigured())
     { 
         // check current status
-        Bool_t cur = IsHVOn(mf);
+        Bool_t cur;
+        if (!GetStatusHV(mf, &cur))
+        {
+            Error("ChangeHVStatus", "Could not read HV of mainframe %d!", mf);
+            return kFALSE;
+        }
         
         // check if nothing has to be done
         if (cur == status)
@@ -234,18 +239,24 @@ Bool_t TTLeCroy1445::ChangeHVStatus(Int_t mf, Bool_t status)
         if (status) sprintf(cmd, "M%d ON", mf);
         else sprintf(cmd, "M%d OF", mf);
         SendCmd(cmd);
-         
+        
+        // re-read status
+        if (!GetStatusHV(mf, &cur))
+        {
+            Error("ChangeHVStatus", "Could not read HV of mainframe %d!", mf);
+            return kFALSE;
+        }
+   
         // check status
-        cur = IsHVOn(mf);
         if (cur != status)
         {
-            Error("ChangeHVStatus", "Could not change HV status!");
+            Error("ChangeHVStatus", "Could not change HV status of mainframe %d!", mf);
             return kFALSE;
         }
         else 
         {
-            if (status) Info("ChangeHVStatus", "Changed HV status to on");
-            else Info("ChangeHVStatus", "Changed HV status to off");
+            if (status) Info("ChangeHVStatus", "Changed HV status of mainframe %d to on", mf);
+            else Info("ChangeHVStatus", "Changed HV status of mainframe %d to off", mf);
             return kTRUE;
         }
     }
@@ -253,22 +264,33 @@ Bool_t TTLeCroy1445::ChangeHVStatus(Int_t mf, Bool_t status)
 }
 
 //______________________________________________________________________________
-Bool_t TTLeCroy1445::IsHVOn(Int_t mf)
+Bool_t TTLeCroy1445::GetStatusHV(Int_t mf, Bool_t* outSt)
 {
-    // Check if the high voltage of mainframe 'mf' is on.
-    // Return kTRUE if it is on, otherwise kFALSE.
-    
+    // Get the status of the HV mainframe 'mf' and save it to 'outSt'.
+    // Return kTRUE on success, otherwise kFALSE.
+  
     // validate arguments
     if (!ValidateMainframe(mf)) return kFALSE;
 
     // try to read HV status
-    while (1)
+    for (Int_t i = 0; i < 100; i++)
     {
-        Int_t ret = GetHVStatus(mf);
-        if (ret == kOn) return kTRUE;
-        else if (ret == kOff) return kFALSE;
+        Int_t ret = ReadHVStatus(mf);
+        if (ret == kOn) 
+        {
+            *outSt = kTRUE;
+            return kTRUE;
+        }
+        else if (ret == kOff) 
+        {
+            *outSt = kFALSE;
+            return kTRUE;
+        }
         usleep(100000);
     }
+
+    // reading failed here
+    return kFALSE;
 }
 
 //______________________________________________________________________________
@@ -341,27 +363,15 @@ Bool_t TTLeCroy1445::ReadHV(Int_t mf, Int_t c, Int_t* outDem,
 }
 
 //______________________________________________________________________________
-Bool_t TTLeCroy1445::TurnHVOn(Int_t mf)
+Bool_t TTLeCroy1445::SetStatusHV(Int_t mf, Bool_t st)
 {
-    // Turn the high voltage of mainframe 'mf' on.
+    // Set the high voltage status of mainframe 'mf' to 'st'.
     // Return kTRUE on success, otherwise kFALSE.
     
     // validate arguments
     if (!ValidateMainframe(mf)) return kFALSE;
     
-    return ChangeHVStatus(mf, kTRUE);
-}
-
-//______________________________________________________________________________
-Bool_t TTLeCroy1445::TurnHVOff(Int_t mf)
-{
-    // Turn the high voltage of mainframe 'mf' off.
-    // Return kTRUE on success, otherwise kFALSE.
-    
-    // validate arguments
-    if (!ValidateMainframe(mf)) return kFALSE;
-     
-    return ChangeHVStatus(mf, kFALSE);
+    return ChangeHVStatus(mf, st);
 }
 
 //______________________________________________________________________________

@@ -30,6 +30,29 @@ namespace TTConfig
 
     // networking
     extern const Int_t kTAPSServerPort;
+
+    // network commands
+    enum ETTNetCmd
+    {
+        kNCStatus,
+        kNCStop,
+        kNCType,
+        kNCTypeRet,
+        kNCReady,
+        kNCReadHV,
+        kNCReadHVFailed,
+        kNCReadHVSuccess,
+        kNCWriteHV,
+        kNCWriteHVFailed,
+        kNCWriteHVSuccess,
+        kNCStatusHV,
+        kNCStatusHVFailed,
+        kNCStatusHVRet,
+        kNCSetStatusHV,
+        kNCSetStatusHVFailed,
+        kNCSetStatusHVSuccess,
+        kNCWriteAR
+    };
 }
 
 #endif

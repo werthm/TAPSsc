@@ -32,8 +32,11 @@ Bool_t TTServerPWO::ProcessCommand(const Char_t* cmd, TSocket* s)
     // Process the command 'cmd' coming from the socket 's'.
     // Return kTRUE if the command was accepted, otherwise kFALSE.
     
-    // WRITE_ARDAQ command: write AcquDAQ config files
-    if (!strcmp(cmd, "WRITE_ARDAQ"))
+    // get the network command
+    Int_t nc = TTUtils::GetNetworkCmd(cmd);
+    
+    // write AcquDAQ command: write AcquDAQ config files
+    if (nc == TTConfig::kNCWriteAR)
     {
         return kTRUE;
     }

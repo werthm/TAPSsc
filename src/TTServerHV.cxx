@@ -55,30 +55,97 @@ TTServerHV::~TTServerHV()
 }
 
 //______________________________________________________________________________
+Bool_t TTServerHV::GetStatusHV(const Char_t* cmd, TSocket* s)
+{
+    // Handler method for the get HV status command found in 'cmd' sent via 's'.
+    // Return value as in ProcessCommand().
+
+    // check if LeCroy is connected
+    if (!fLeCroy)
+    {
+        Error("GetStatusHV", "No connection to HV mainframe!");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCStatusHVFailed);
+        return kTRUE;
+    }
+    
+    // extract the mainframe number
+    Int_t mf;
+    sscanf(cmd, "%*d %d", &mf);
+ 
+    // try to read high voltage status from hardware
+    Bool_t st;
+    if (!fLeCroy->GetStatusHV(mf, &st))
+    {
+        Error("GetStatusHV", "Could not get the HV status of mainframe %d!", mf);
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCStatusHVFailed);
+        return kTRUE;
+    }
+
+    // all should be ok here
+    Char_t answ[32];
+    sprintf(answ, "%d %d", TTConfig::kNCStatusHVRet, st);
+    s->Send(answ);
+    
+    return kTRUE;
+}
+
+//______________________________________________________________________________
+Bool_t TTServerHV::SetStatusHV(const Char_t* cmd, TSocket* s)
+{
+    // Handler method for the set HV status command found in 'cmd' sent via 's'.
+    // Return value as in ProcessCommand().
+
+    // check if LeCroy is connected
+    if (!fLeCroy)
+    {
+        Error("SetStatusHV", "No connection to HV mainframe!");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCSetStatusHVFailed);
+        return kTRUE;
+    }
+    
+    // extract the mainframe number and the status
+    Int_t mf, st;
+    sscanf(cmd, "%*d %d %d", &mf, &st);
+ 
+    // try to set high voltage status in hardware
+    if (!fLeCroy->SetStatusHV(mf, st))
+    {
+        Error("SetStatusHV", "Could not set the HV status of mainframe %d!", mf);
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCSetStatusHVFailed);
+        return kTRUE;
+    }
+
+    // all should be ok here
+    TTUtils::SendNetworkCmd(s, TTConfig::kNCSetStatusHVSuccess);
+    
+    return kTRUE;
+}
+
+//______________________________________________________________________________
 Bool_t TTServerHV::ReadHV(const Char_t* cmd, TSocket* s)
 {
-    // Handler method for the READ_HV command found in 'cmd' sent via 's'.
+    // Handler method for the read HV command found in 'cmd' sent via 's'.
     // Return value as in ProcessCommand().
 
     // check if LeCroy is connected
     if (!fLeCroy)
     {
         Error("ReadHV", "No connection to HV mainframe!");
-        s->Send("READ_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCReadHVFailed);
         return kTRUE;
     }
 
     // extract the parameter data type and the element number
     Char_t type[32];
     Int_t elem;
-    sscanf(cmd, "READ_HV %s %d", type, &elem);
+    sscanf(cmd, "%*d %s %d", type, &elem);
     
     // try to get data type
     TTDataTypePar* d = (TTDataTypePar*) TTMySQLManager::GetManager()->GetDataTypes()->FindObject(type);
     if (!d)
     {
         Error("ReadHV", "Could not find data type '%s'!", type);
-        s->Send("READ_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCReadHVFailed);
         return kTRUE;
     }
 
@@ -87,7 +154,7 @@ Bool_t TTServerHV::ReadHV(const Char_t* cmd, TSocket* s)
     if (!TTMySQLManager::GetManager()->ReadMaps(d->GetMap()->GetName(), 1, &elem, &crate, 0, &channel))
     {
         Error("ReadHV", "Could not read map data type '%s' for element %d!", d->GetMap()->GetName(), elem);
-        s->Send("READ_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCReadHVFailed);
         return kTRUE;
     }
 
@@ -96,13 +163,13 @@ Bool_t TTServerHV::ReadHV(const Char_t* cmd, TSocket* s)
     if (!fLeCroy->ReadHV(crate, channel, &val))
     {
         Error("ReadHV", "Could not read HV '%s' of element %d from hardware!", d->GetMap()->GetName(), elem);
-        s->Send("READ_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCReadHVFailed);
         return kTRUE;
     }
 
     // all should be ok here
     Char_t answ[32];
-    sprintf(answ, "READ_HV_SUCCESS %d", val);
+    sprintf(answ, "%d %d", TTConfig::kNCReadHVSuccess, val);
     s->Send(answ);
     
     return kTRUE;
@@ -111,28 +178,28 @@ Bool_t TTServerHV::ReadHV(const Char_t* cmd, TSocket* s)
 //______________________________________________________________________________
 Bool_t TTServerHV::WriteHV(const Char_t* cmd, TSocket* s)
 {
-    // Handler method for the WRITE_HV command found in 'cmd' sent via 's'.
+    // Handler method for the write HV command found in 'cmd' sent via 's'.
     // Return value as in ProcessCommand().
 
     // check if LeCroy is connected
     if (!fLeCroy)
     {
         Error("WriteHV", "No connection to HV mainframe!");
-        s->Send("WRITE_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCWriteHVFailed);
         return kTRUE;
     }
 
     // extract the parameter data type and the element number
     Char_t type[32];
     Int_t elem;
-    sscanf(cmd, "WRITE_HV %s %d", type, &elem);
+    sscanf(cmd, "%*d %s %d", type, &elem);
     
     // try to get data type
     TTDataTypePar* d = (TTDataTypePar*) TTMySQLManager::GetManager()->GetDataTypes()->FindObject(type);
     if (!d)
     {
         Error("WriteHV", "Could not find data type '%s'!", type);
-        s->Send("WRITE_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCWriteHVFailed);
         return kTRUE;
     }
 
@@ -141,7 +208,7 @@ Bool_t TTServerHV::WriteHV(const Char_t* cmd, TSocket* s)
     if (!TTMySQLManager::GetManager()->ReadParameters(type, 1, &elem, &par))
     {
         Error("WriteHV", "Could not read parameter data type '%s' for element %d!", type, elem);
-        s->Send("WRITE_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCWriteHVFailed);
         return kTRUE;
     }
     
@@ -150,7 +217,7 @@ Bool_t TTServerHV::WriteHV(const Char_t* cmd, TSocket* s)
     if (!TTMySQLManager::GetManager()->ReadMaps(d->GetMap()->GetName(), 1, &elem, &crate, 0, &channel))
     {
         Error("WriteHV", "Could not read map data type '%s' for element %d!", d->GetMap()->GetName(), elem);
-        s->Send("WRITE_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCWriteHVFailed);
         return kTRUE;
     }
 
@@ -158,12 +225,12 @@ Bool_t TTServerHV::WriteHV(const Char_t* cmd, TSocket* s)
     if (!fLeCroy->WriteHV(crate, channel, (Int_t)par))
     {
         Error("WriteHV", "Could not write HV '%s' of element %d to hardware!", d->GetMap()->GetName(), elem);
-        s->Send("WRITE_HV_FAILED");
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCWriteHVFailed);
         return kTRUE;
     }
 
     // all should be ok here
-    s->Send("WRITE_HV_SUCCESS");
+    TTUtils::SendNetworkCmd(s, TTConfig::kNCWriteHVSuccess);
     
     return kTRUE;
 }
@@ -174,9 +241,14 @@ Bool_t TTServerHV::ProcessCommand(const Char_t* cmd, TSocket* s)
     // Process the command 'cmd' coming from the socket 's'.
     // Return kTRUE if the command was accepted, otherwise kFALSE.
     
-    // WRITE_HV command: write HV to hardware
-    if (TTUtils::IndexOf(cmd, "READ_HV") == 0) return ReadHV(cmd, s);
-    else if (TTUtils::IndexOf(cmd, "WRITE_HV") == 0) return WriteHV(cmd, s);
+    // get the network command
+    Int_t nc = TTUtils::GetNetworkCmd(cmd);
+    
+    // write HV command: write HV to hardware
+    if (nc == TTConfig::kNCStatusHV) return GetStatusHV(cmd, s);
+    else if (nc == TTConfig::kNCSetStatusHV) return SetStatusHV(cmd, s);
+    else if (nc == TTConfig::kNCReadHV) return ReadHV(cmd, s);
+    else if (nc == TTConfig::kNCWriteHV) return WriteHV(cmd, s);
     else
     {
         // call parent method

@@ -38,3 +38,57 @@ Int_t TTUtils::LastIndexOf(const Char_t* s, Char_t c)
     else return -1;
 }
 
+//______________________________________________________________________________
+Int_t TTUtils::GetNetworkCmd(const Char_t* cmd)
+{
+    // Extract and return the principal network command contained in the string
+    // 'cmd'.
+
+    Int_t c;
+    sscanf(cmd, "%d%*s", &c);
+    return c;
+}
+
+//______________________________________________________________________________
+void TTUtils::SendNetworkCmd(TSocket* s, Int_t cmd)
+{
+    // Send the network command 'cmd' as string via the socket 's'.
+    
+    Char_t tmp[32];
+    sprintf(tmp, "%d", cmd);
+    s->Send(tmp);
+}
+
+//______________________________________________________________________________
+void TTUtils::SendNetworkCmd(TSocket* s, Int_t cmd, Int_t par)
+{
+    // Send the network command 'cmd' combined with the parameter 'par' as 
+    // string via the socket 's'.
+    
+    Char_t tmp[32];
+    sprintf(tmp, "%d %d", cmd, par);
+    s->Send(tmp);
+}
+
+//______________________________________________________________________________
+void TTUtils::SendNetworkCmd(TSocket* s, Int_t cmd, Int_t par0, Int_t par1)
+{
+    // Send the network command 'cmd' combined with the parameters 'par0' and 
+    // 'par1' as string via the socket 's'.
+    
+    Char_t tmp[32];
+    sprintf(tmp, "%d %d %d", cmd, par0, par1);
+    s->Send(tmp);
+}
+
+//______________________________________________________________________________
+void TTUtils::SendNetworkCmd(TSocket* s, Int_t cmd, const Char_t* msg, Int_t par)
+{
+    // Send the network command 'cmd' combined with the string 'msg' and the 
+    // parameter 'par' as string via the socket 's'.
+    
+    Char_t tmp[32];
+    sprintf(tmp, "%d %s %d", cmd, msg, par);
+    s->Send(tmp);
+}
+

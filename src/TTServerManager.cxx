@@ -99,16 +99,26 @@ Bool_t TTServerManager::RegisterServers()
             return kFALSE;
         }
 
-        // register new server
-        fServer[i] = new TTClient(sHost, TTConfig::kTAPSServerPort);
-        
-        // classify according to server type
-        if (!strcmp(sType, "BaF2")) fServerBaF2->Add(fServer[i]);
-        else if (!strcmp(sType, "Veto")) fServerVeto->Add(fServer[i]);
-        else if (!strcmp(sType, "PWO")) fServerPWO->Add(fServer[i]);
+        // register server and classify according to server type
+        if (!strcmp(sType, "BaF2")) 
+        {
+            fServer[i] = new TTClientBaF2(sHost, TTConfig::kTAPSServerPort);
+            fServerBaF2->Add(fServer[i]);
+        }
+        else if (!strcmp(sType, "Veto"))
+        {
+            fServer[i] = new TTClientVeto(sHost, TTConfig::kTAPSServerPort);
+            fServerVeto->Add(fServer[i]);
+        }
+        else if (!strcmp(sType, "PWO")) 
+        {
+            fServer[i] = new TTClientPWO(sHost, TTConfig::kTAPSServerPort);
+            fServerPWO->Add(fServer[i]);
+        }
         else if (!strcmp(sType, "HV")) 
         {   
-            if (!fServerHV) fServerHV = fServer[i];
+            fServer[i] = new TTClientHV(sHost, TTConfig::kTAPSServerPort);
+            if (!fServerHV) fServerHV = (TTClientHV*) fServer[i];
             else 
             {
                 Error("RegisterServers", "Only 1 HV server can be defined at the moment!");
@@ -267,5 +277,53 @@ Bool_t TTServerManager::IsConnectedToHV()
     // check of HV server connection
     if (fServerHV->GetStatus() == TTNetClient::kReady) return kTRUE;
     else return kFALSE;
+}
+
+//______________________________________________________________________________
+Bool_t TTServerManager::GetStatusHV(Int_t mainframe, Bool_t* outSt)
+{
+    // Get the status of the HV mainframe 'mainframe' and save it to 'outSt'.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // check for HV server 
+    if (!fServerHV)
+    {
+        Error("GetStatusHV", "Could not find connection to HV server!");
+        return kFALSE;
+    }
+
+    // check of HV server connection
+    if (fServerHV->GetStatus() != TTNetClient::kReady)
+    {
+        Error("GetStatusHV", "No connection to HV server!");
+        return kFALSE;
+    }
+
+    // return return-value
+    return fServerHV->GetStatusHV(mainframe, outSt);
+}
+
+//______________________________________________________________________________
+Bool_t TTServerManager::SetStatusHV(Int_t mainframe, Bool_t status)
+{
+    // Set the status of the HV mainframe 'mainframe' to 'status'.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // check for HV server 
+    if (!fServerHV)
+    {
+        Error("SetStatusHV", "Could not find connection to HV server!");
+        return kFALSE;
+    }
+
+    // check of HV server connection
+    if (fServerHV->GetStatus() != TTNetClient::kReady)
+    {
+        Error("SetStatusHV", "No connection to HV server!");
+        return kFALSE;
+    }
+
+    // return return-value
+    return fServerHV->SetStatusHV(mainframe, status);
 }
 

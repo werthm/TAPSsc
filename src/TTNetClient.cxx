@@ -61,7 +61,7 @@ Int_t TTNetClient::GetStatus()
         else
         {
             // check if the server is responding
-            fSocket->Send("STATUS");
+            TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCStatus);
             
             // wait for the response
             if (fSocket->Select(TSocket::kRead, 100) == 1)
@@ -71,7 +71,8 @@ Int_t TTNetClient::GetStatus()
                 fSocket->Recv(res, 256);
                 
                 // check response
-                if (!strcmp(res, "READY")) return kReady;
+                Int_t nc = TTUtils::GetNetworkCmd(res);
+                if (nc == TTConfig::kNCReady) return kReady;
                 return kBadResp;
             }
             else return kNoResp;

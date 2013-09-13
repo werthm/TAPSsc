@@ -8,7 +8,7 @@
 //                                                                      //
 // TTClient                                                             //
 //                                                                      //
-// TAPS client class.                                                   //
+// Parent TAPS client class.                                            //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +47,7 @@ TServerType_t TTClient::GetType()
         else
         {
             // get the server type
-            fSocket->Send("TYPE");
+            TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCType);
             
             // wait for the response
             if (fSocket->Select(TSocket::kRead, 100) == 1)
@@ -57,132 +57,23 @@ TServerType_t TTClient::GetType()
                 fSocket->Recv(res, 256);
                 
                 // check response
-                TServerType_t t = (TServerType_t) atoi(res);
-                if (t == kNoServer) return t;
-                else if (t == kBaF2Server) return t;
-                else if (t == kVetoServer) return t;
-                else if (t == kPWOServer) return t;
-                else if (t == kHVServer) return t;
+                Int_t nc = TTUtils::GetNetworkCmd(res);
+                if (nc == TTConfig::kNCTypeRet)
+                {
+                    Int_t type;
+                    sscanf(res, "%*d %d", &type);
+                    TServerType_t t = (TServerType_t) type;
+                    if (t == kNoServer) return t;
+                    else if (t == kBaF2Server) return t;
+                    else if (t == kVetoServer) return t;
+                    else if (t == kPWOServer) return t;
+                    else if (t == kHVServer) return t;
+                    else return kNoServer;
+                }
                 else return kNoServer;
             }
             else return kNoServer;
         }
     }
-}
-
-//______________________________________________________________________________
-Bool_t TTClient::ReadHV(TTDataTypePar* d, Int_t elem, Int_t* outHV)
-{
-    // Read the high voltage value of the parameter data type 'd' for the
-    // element 'elem' and save it to 'outHV'.
-    // Return kTRUE on success, otherwise kFALSE.
-    
-    Char_t tmp[256];
-
-    // check if server has the correct type and is connected
-    if (GetType() != kHVServer)
-    {
-        Error("ReadHV", "Cannot execute high voltage reading on server '%s'!",
-              GetHost().GetHostName());
-        return kFALSE;
-    }
-
-    // check if the data type allows HV reading
-    const Int_t nType = 3;
-    const Char_t type[nType][32] = { "Par.BaF2.HV", "Par.Veto.HV", "Par.PWO.HV" };
-    Bool_t tFound = kFALSE;
-    for (Int_t i = 0; i < nType; i++)
-    {
-        if (!strcmp(d->GetName(), type[i]))
-        {
-            tFound = kTRUE;
-            break;
-        }
-    }
-    if (!tFound)
-    {
-        Error("ReadHV", "Data type '%s' does not allow HV reading!", d->GetName());
-        return kFALSE;
-    }
-
-    // send HV read command
-    sprintf(tmp, "READ_HV %s %d", d->GetName(), elem);
-    fSocket->Send(tmp);
-    
-    // wait for the response
-    if (fSocket->Select(TSocket::kRead, 5000) == 1)
-    {
-        // get response
-        fSocket->Recv(tmp, 256);
-        
-        // check response
-        if (TTUtils::IndexOf(tmp, "READ_HV_SUCCESS") == 0) 
-        {
-            // extract and set the read value
-            Int_t val;
-            sscanf(tmp, "READ_HV_SUCCESS %d", &val);
-            *outHV = val;
-
-            return kTRUE;
-        }
-        else return kFALSE;
-    }
-
-    // no answer here
-    return kFALSE;
-}
-
-//______________________________________________________________________________
-Bool_t TTClient::WriteHV(TTDataTypePar* d, Int_t elem)
-{
-    // Write the high voltage value of the parameter data type 'd' for the
-    // element 'elem'.
-    // Return kTRUE on success, otherwise kFALSE.
-    
-    Char_t tmp[256];
-
-    // check if server has the correct type and is connected
-    if (GetType() != kHVServer)
-    {
-        Error("WriteHV", "Cannot execute high voltage writing on server '%s'!",
-              GetHost().GetHostName());
-        return kFALSE;
-    }
-
-    // check if the data type allows HV writing
-    const Int_t nType = 3;
-    const Char_t type[nType][32] = { "Par.BaF2.HV", "Par.Veto.HV", "Par.PWO.HV" };
-    Bool_t tFound = kFALSE;
-    for (Int_t i = 0; i < nType; i++)
-    {
-        if (!strcmp(d->GetName(), type[i]))
-        {
-            tFound = kTRUE;
-            break;
-        }
-    }
-    if (!tFound)
-    {
-        Error("WriteHV", "Data type '%s' does not allow HV writing!", d->GetName());
-        return kFALSE;
-    }
-
-    // send HV write command
-    sprintf(tmp, "WRITE_HV %s %d", d->GetName(), elem);
-    fSocket->Send(tmp);
-    
-    // wait for the response
-    if (fSocket->Select(TSocket::kRead, 5000) == 1)
-    {
-        // get response
-        fSocket->Recv(tmp, 256);
-        
-        // check response
-        if (!strcmp(tmp, "WRITE_HV_SUCCESS")) return kTRUE;
-        else return kFALSE;
-    }
-
-    // no answer here
-    return kFALSE;
 }
 

@@ -6,34 +6,23 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTClient                                                             //
+// TTClientVeto                                                         //
 //                                                                      //
-// Parent TAPS client class.                                            //
+// Veto TAPS client class.                                              //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TTCLIENT_H
-#define TTCLIENT_H
+#include "TTClientVeto.h"
 
-//#include <cstdlib>
-
-#include "TTNetClient.h"
-#include "TTServer.h"
+ClassImp(TTClientVeto)
 
 
-class TTClient : public TTNetClient, public TObject
+//______________________________________________________________________________
+TTClientVeto::TTClientVeto(const Char_t* host, Int_t port)
+    : TTClient(host, port)
 {
-
-public:
-    TTClient() : TTNetClient(), TObject() { }
-    TTClient(const Char_t* server, Int_t port);
-    virtual ~TTClient();
+    // Constructor.
     
-    TServerType_t GetType();
-
-    ClassDef(TTClient, 0) // Parent TAPS client
-};
-
-#endif
+}
 

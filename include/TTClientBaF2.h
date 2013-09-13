@@ -6,33 +6,28 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTClient                                                             //
+// TTClientBaF2                                                         //
 //                                                                      //
-// Parent TAPS client class.                                            //
+// BaF2 TAPS client class.                                              //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TTCLIENT_H
-#define TTCLIENT_H
+#ifndef TTCLIENTBAF2_H
+#define TTCLIENTBAF2_H
 
-//#include <cstdlib>
-
-#include "TTNetClient.h"
-#include "TTServer.h"
+#include "TTClient.h"
 
 
-class TTClient : public TTNetClient, public TObject
+class TTClientBaF2 : public TTClient
 {
 
 public:
-    TTClient() : TTNetClient(), TObject() { }
-    TTClient(const Char_t* server, Int_t port);
-    virtual ~TTClient();
+    TTClientBaF2() : TTClient() { }
+    TTClientBaF2(const Char_t* server, Int_t port);
+    virtual ~TTClientBaF2() { }
     
-    TServerType_t GetType();
-
-    ClassDef(TTClient, 0) // Parent TAPS client
+    ClassDef(TTClientBaF2, 0) // BaF2 TAPS client
 };
 
 #endif

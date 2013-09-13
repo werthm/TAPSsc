@@ -6,33 +6,28 @@
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TTClient                                                             //
+// TTClientPWO                                                          //
 //                                                                      //
-// Parent TAPS client class.                                            //
+// PWO TAPS client class.                                               //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TTCLIENT_H
-#define TTCLIENT_H
+#ifndef TTCLIENTPWO_H
+#define TTCLIENTPWO_H
 
-//#include <cstdlib>
-
-#include "TTNetClient.h"
-#include "TTServer.h"
+#include "TTClient.h"
 
 
-class TTClient : public TTNetClient, public TObject
+class TTClientPWO : public TTClient
 {
 
 public:
-    TTClient() : TTNetClient(), TObject() { }
-    TTClient(const Char_t* server, Int_t port);
-    virtual ~TTClient();
+    TTClientPWO() : TTClient() { }
+    TTClientPWO(const Char_t* server, Int_t port);
+    virtual ~TTClientPWO() { }
     
-    TServerType_t GetType();
-
-    ClassDef(TTClient, 0) // Parent TAPS client
+    ClassDef(TTClientPWO, 0) // PWO TAPS client
 };
 
 #endif
