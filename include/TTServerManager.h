@@ -52,6 +52,8 @@ public:
     Bool_t IsConnectedToHV();
     Bool_t GetStatusHV(Int_t mainframe, Bool_t* outSt);
     Bool_t SetStatusHV(Int_t mainframe, Bool_t status);
+    
+    Bool_t WriteADConfigBaF2();
 
     void PrintStatus();
 

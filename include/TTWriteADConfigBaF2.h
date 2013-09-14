@@ -28,7 +28,7 @@ protected:
 
 public:
     TTWriteADConfigBaF2(const Int_t crate)
-       : TTWriteADConfig(crate, "BaF2") { };
+       : TTWriteADConfig(crate, "BaF2", "Map.BaF2") { };
     virtual ~TTWriteADConfigBaF2() {};
 
     ClassDef(TTWriteADConfigBaF2, 0) // Write AcquDAQ BaF2 configuration files

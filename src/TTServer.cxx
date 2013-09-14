@@ -19,11 +19,12 @@ ClassImp(TTServer)
 
 
 //______________________________________________________________________________
-TTServer::TTServer(TServerType_t type, Int_t port)
+TTServer::TTServer(TServerType_t type, Int_t port, Int_t id)
     : TTNetServer(port)
 {
     // Constructor.
     
+    fID = id;
     fType = type;
 }
 

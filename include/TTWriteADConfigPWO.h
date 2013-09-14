@@ -28,7 +28,7 @@ protected:
 
 public:
     TTWriteADConfigPWO(const Int_t crate)
-       : TTWriteADConfig(crate, "PWO") { };
+       : TTWriteADConfig(crate, "PWO", "Map.PWO") { };
     virtual ~TTWriteADConfigPWO() {};
 
     ClassDef(TTWriteADConfigPWO, 0) // Write AcquDAQ PWO configuration files

@@ -17,18 +17,25 @@
 #define TTSERVERBAF2_H
 
 #include "TTServer.h"
+#include "TTWriteADConfigBaF2.h"
 
 
 class TTServerBaF2 : public TTServer
 {
 
+private:
+    TTWriteADConfigBaF2* fWriter;           // AcquDAQ config file writer
+
+    Bool_t WriteADConfig(const Char_t* cmd, TSocket* s);
+    
 protected:
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 
 public:
-    TTServerBaF2() : TTServer() { }
-    TTServerBaF2(Int_t port);
-    virtual ~TTServerBaF2() { }
+    TTServerBaF2() : TTServer(),
+                     fWriter(0) { }
+    TTServerBaF2(Int_t port, Int_t id);
+    virtual ~TTServerBaF2();
 
     ClassDef(TTServerBaF2, 0) // BaF2 TAPS server
 };

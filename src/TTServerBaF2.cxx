@@ -19,11 +19,56 @@ ClassImp(TTServerBaF2)
 
 
 //______________________________________________________________________________
-TTServerBaF2::TTServerBaF2(Int_t port)
-    : TTServer(kBaF2Server, port)
+TTServerBaF2::TTServerBaF2(Int_t port, Int_t id)
+    : TTServer(kBaF2Server, port, id)
 {
     // Constructor.
+        
+    // init members
+    fWriter = new TTWriteADConfigBaF2(GetID());
+}
+
+//______________________________________________________________________________
+TTServerBaF2::~TTServerBaF2()
+{
+    // Destructor.
+
+    if (fWriter) delete fWriter;
+}
+
+//______________________________________________________________________________
+Bool_t TTServerBaF2::WriteADConfig(const Char_t* cmd, TSocket* s)
+{
+    // Handler method for the write AcquDAQ config command found in 'cmd' sent via 's'.
+    // Return value as in ProcessCommand().
     
+    // mount /opt read-write
+    // workaround for busy /opt when unmounting again -> pre-load MySQL libraries 
+    TTMySQLManager::GetManager();
+    system("mount /opt");
+
+    // try to write all configuration files
+    Bool_t ret = kTRUE;
+    for (Int_t i = 0; i < 16; i++)
+    {
+        if (!fWriter->Write(i)) ret = kFALSE;
+    }
+
+    // unmount /opt
+    system("sync");
+    system("umount /opt");
+    
+    // check result
+    if (ret)
+    {
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCWriteARCfgBaF2Success);
+        return kTRUE;
+    }
+    else
+    {
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCWriteARCfgBaF2Failed);
+        return kTRUE;
+    }
 }
 
 //______________________________________________________________________________
@@ -35,11 +80,8 @@ Bool_t TTServerBaF2::ProcessCommand(const Char_t* cmd, TSocket* s)
     // get the network command
     Int_t nc = TTUtils::GetNetworkCmd(cmd);
     
-    // write AcquDAQ command: write AcquDAQ config files
-    if (nc == TTConfig::kNCWriteAR)
-    {
-        return kTRUE;
-    }
+    // write AcquDAQ config command: write AcquDAQ config files
+    if (nc == TTConfig::kNCWriteARCfgBaF2) return WriteADConfig(cmd, s);
     else
     {
         // call parent method

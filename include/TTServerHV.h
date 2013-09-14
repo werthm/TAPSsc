@@ -38,7 +38,7 @@ protected:
 public:
     TTServerHV() : TTServer(),
                    fLeCroy(0) { }
-    TTServerHV(Int_t port);
+    TTServerHV(Int_t port, Int_t id);
     virtual ~TTServerHV();
 
     ClassDef(TTServerHV, 0) // HV TAPS server

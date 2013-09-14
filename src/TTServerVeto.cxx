@@ -19,8 +19,8 @@ ClassImp(TTServerVeto)
 
 
 //______________________________________________________________________________
-TTServerVeto::TTServerVeto(Int_t port)
-    : TTServer(kVetoServer, port)
+TTServerVeto::TTServerVeto(Int_t port, Int_t id)
+    : TTServer(kVetoServer, port, id)
 {
     // Constructor.
     
@@ -35,11 +35,8 @@ Bool_t TTServerVeto::ProcessCommand(const Char_t* cmd, TSocket* s)
     // get the network command
     Int_t nc = TTUtils::GetNetworkCmd(cmd);
     
-    // write AcquDAQ command: write AcquDAQ config files
-    if (nc == TTConfig::kNCWriteAR)
-    {
-        return kTRUE;
-    }
+    // write AcquDAQ config command: write AcquDAQ config files
+    if (nc == TTConfig::kNCWriteARCfgVeto) return kTRUE;
     else
     {
         // call parent method

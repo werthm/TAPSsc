@@ -27,11 +27,27 @@ Bool_t TTWriteADConfigBaF2::ParseLine()
     // parse key line: 'Hardware-ID'
     if (TTUtils::IndexOf(fLineIn, "Hardware-ID:") != -1)
     {
+        Int_t elem;
+        Double_t tmp;
+        
+        // get map info from data base
+        if (TTMySQLManager::GetManager()->GetElements("Map.BaF2.HWID", fCrate, fModule, &elem) != 1)
+        {
+            Error("ParseLine", "MySQLManager reported an error when trying to get 'Map.BaF2.HWID' values.");
+            return kFALSE;
+        }
+  
         // get info from data base
-        //Double_t tmp = TTMySQLManager::GetManager()->GetHardwareID(fCrate, fModule);
-
-        // prepare output line
-        sprintf(fLineOut, "Hardware-ID: %s", "1010");
+        if (!TTMySQLManager::GetManager()->ReadParameters("Par.BaF2.HWID", 1, &elem, &tmp))
+        {
+            Error("ParseLine", "MySQLManager reported an error when trying to get 'Par.BaF2.HWID' values.");
+            return kFALSE;
+        }
+        else
+        {
+            // prepare output line
+            sprintf(fLineOut, "Hardware-ID: %04d", (Int_t)tmp);
+        }
     }
 
     // parse key line: 'Thr-CFD'

@@ -232,7 +232,8 @@ Bool_t TTServerManager::ReadHV(TTDataTypePar* d, Int_t elem, Int_t* outHV)
     // check of HV server connection
     if (fServerHV->GetStatus() != TTNetClient::kReady)
     {
-        Error("ReadHV", "No connection to HV server!");
+        Error("ReadHV", "No connection to HV server '%s'!", 
+              fServerHV->GetHost().GetHostName());
         return kFALSE;
     }
 
@@ -257,7 +258,8 @@ Bool_t TTServerManager::WriteHV(TTDataTypePar* d, Int_t elem)
     // check of HV server connection
     if (fServerHV->GetStatus() != TTNetClient::kReady)
     {
-        Error("WriteHV", "No connection to HV server!");
+        Error("WriteHV", "No connection to HV server '%s'!",
+              fServerHV->GetHost().GetHostName());
         return kFALSE;
     }
 
@@ -295,7 +297,8 @@ Bool_t TTServerManager::GetStatusHV(Int_t mainframe, Bool_t* outSt)
     // check of HV server connection
     if (fServerHV->GetStatus() != TTNetClient::kReady)
     {
-        Error("GetStatusHV", "No connection to HV server!");
+        Error("GetStatusHV", "No connection to HV server '%s'!", 
+              fServerHV->GetHost().GetHostName());
         return kFALSE;
     }
 
@@ -319,11 +322,47 @@ Bool_t TTServerManager::SetStatusHV(Int_t mainframe, Bool_t status)
     // check of HV server connection
     if (fServerHV->GetStatus() != TTNetClient::kReady)
     {
-        Error("SetStatusHV", "No connection to HV server!");
+        Error("SetStatusHV", "No connection to HV server '%s'!",
+              fServerHV->GetHost().GetHostName());
         return kFALSE;
     }
 
     // return return-value
     return fServerHV->SetStatusHV(mainframe, status);
+}
+
+//______________________________________________________________________________
+Bool_t TTServerManager::WriteADConfigBaF2()
+{
+    // Command all BaF2 servers to write the AcquDAQ configuration files.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // loop over BaF2 servers
+    for (Int_t i = 0; i < fServerBaF2->GetSize(); i++)
+    {
+        // get server
+        TTClientBaF2* s = (TTClientBaF2*) fServerBaF2->At(i);
+
+        // check of server connection
+        if (s->GetStatus() != TTNetClient::kReady)
+        {
+            Error("WriteADConfigBaF2", "No connection to BaF2 server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        // command config file writing
+        if (!s->WriteADConfig())
+        {
+            Error("WriteADConfigBaF2", "Error during configuration file writing on server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        Info("WriteADConfigBaF2", "Wrote configuration files on server '%s'",
+             s->GetHost().GetHostName());
+    }
+
+    return kTRUE;
 }
 

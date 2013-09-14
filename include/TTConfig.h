@@ -51,7 +51,15 @@ namespace TTConfig
         kNCSetStatusHV,
         kNCSetStatusHVFailed,
         kNCSetStatusHVSuccess,
-        kNCWriteAR
+        kNCWriteARCfgBaF2,
+        kNCWriteARCfgBaF2Failed,
+        kNCWriteARCfgBaF2Success,
+        kNCWriteARCfgVeto,
+        kNCWriteARCfgVetoFailed,
+        kNCWriteARCfgVetoSuccess,
+        kNCWriteARCfgPWO,
+        kNCWriteARCfgPWOFailed,
+        kNCWriteARCfgPWOSuccess,
     };
 }
 

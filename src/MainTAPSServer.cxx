@@ -215,11 +215,17 @@ Int_t main(Int_t argc, Char_t* argv[])
     signal(SIGINT, server_shutdown);
     signal(SIGTERM, server_shutdown);
 
-    // create network server and listen
-    if (serverType == kBaF2Server) gTAPSServer = new TTServerBaF2(TTConfig::kTAPSServerPort);
-    else if (serverType == kVetoServer) gTAPSServer = new TTServerVeto(TTConfig::kTAPSServerPort);
-    else if (serverType == kPWOServer) gTAPSServer = new TTServerPWO(TTConfig::kTAPSServerPort);
-    else if (serverType == kHVServer) gTAPSServer = new TTServerHV(TTConfig::kTAPSServerPort);
+    // create network server
+    if (serverType == kBaF2Server) 
+        gTAPSServer = new TTServerBaF2(TTConfig::kTAPSServerPort, gTAPSServerID);
+    else if (serverType == kVetoServer) 
+        gTAPSServer = new TTServerVeto(TTConfig::kTAPSServerPort, gTAPSServerID);
+    else if (serverType == kPWOServer) 
+        gTAPSServer = new TTServerPWO(TTConfig::kTAPSServerPort, gTAPSServerID);
+    else if (serverType == kHVServer) 
+        gTAPSServer = new TTServerHV(TTConfig::kTAPSServerPort, gTAPSServerID);
+    
+    // listen to network connections
     gTAPSServer->Listen();
     
     // clean-up

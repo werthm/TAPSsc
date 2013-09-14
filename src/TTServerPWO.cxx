@@ -19,8 +19,8 @@ ClassImp(TTServerPWO)
 
 
 //______________________________________________________________________________
-TTServerPWO::TTServerPWO(Int_t port)
-    : TTServer(kPWOServer, port)
+TTServerPWO::TTServerPWO(Int_t port, Int_t id)
+    : TTServer(kPWOServer, port, id)
 {
     // Constructor.
     
@@ -35,11 +35,8 @@ Bool_t TTServerPWO::ProcessCommand(const Char_t* cmd, TSocket* s)
     // get the network command
     Int_t nc = TTUtils::GetNetworkCmd(cmd);
     
-    // write AcquDAQ command: write AcquDAQ config files
-    if (nc == TTConfig::kNCWriteAR)
-    {
-        return kTRUE;
-    }
+    // write AcquDAQ config command: write AcquDAQ config files
+    if (nc == TTConfig::kNCWriteARCfgPWO) return kTRUE;
     else
     {
         // call parent method

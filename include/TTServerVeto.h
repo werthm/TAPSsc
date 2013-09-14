@@ -27,7 +27,7 @@ protected:
 
 public:
     TTServerVeto() : TTServer() { }
-    TTServerVeto(Int_t port);
+    TTServerVeto(Int_t port, Int_t id);
     virtual ~TTServerVeto() { }
 
     ClassDef(TTServerVeto, 0) // Veto TAPS server

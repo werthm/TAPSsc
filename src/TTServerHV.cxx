@@ -19,8 +19,8 @@ ClassImp(TTServerHV)
 
 
 //______________________________________________________________________________
-TTServerHV::TTServerHV(Int_t port)
-    : TTServer(kHVServer, port)
+TTServerHV::TTServerHV(Int_t port, Int_t id)
+    : TTServer(kHVServer, port, id)
 {
     // Constructor.
     

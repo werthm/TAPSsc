@@ -27,6 +27,8 @@ public:
     TTClientBaF2(const Char_t* server, Int_t port);
     virtual ~TTClientBaF2() { }
     
+    Bool_t WriteADConfig();
+
     ClassDef(TTClientBaF2, 0) // BaF2 TAPS client
 };
 

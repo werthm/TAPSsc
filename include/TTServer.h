@@ -34,16 +34,20 @@ class TTServer : public TTNetServer
 {
 
 private:
-    TServerType_t fType;                // TAPS server type
+    Int_t fID;                      // server ID
+    TServerType_t fType;            // TAPS server type
 
 protected:
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 
 public:
     TTServer() : TTNetServer(),
-                 fType(kNoServer) { }
-    TTServer(TServerType_t type, Int_t port);
+                 fID(-1), fType(kNoServer) { }
+    TTServer(TServerType_t type, Int_t port, Int_t id);
     virtual ~TTServer();
+    
+    Int_t GetID() const { return fID; }
+    TServerType_t GetType() const { return fType; }
 
     ClassDef(TTServer, 0) // Parent TAPS server
 };

@@ -44,9 +44,7 @@ private:
     static TTMySQLManager* fgMySQLManager;      // pointer to static instance of this class
     
     Bool_t ReadDataTypes(TDataType_t type);
-   
     TSQLResult* SendQuery(const Char_t* query);
-    TTDataTypeMap* SearchCrate(Int_t crate);
 
 public:
     TTMySQLManager();
@@ -67,8 +65,8 @@ public:
                            Int_t* elem, Double_t* par);
     Bool_t WriteMaps(const Char_t* data, Int_t length, Int_t* elem, 
                      Int_t* crate, Int_t* module, Int_t* channel);
-    Int_t GetNmodules(Int_t crate);
-    Int_t GetElements(Int_t crate, Int_t module, Int_t* outElem);
+    Int_t GetElements(const Char_t* data, Int_t crate, Int_t module, 
+                      Int_t* outElem);
     
     void CreateTable(TTDataType* d);
     Bool_t InitDatabase();

@@ -44,6 +44,8 @@ private:
 protected:
     Int_t fCrate;                       // vme crate number
     Char_t* fType;                      // crate type (i.e. BaF2, Veto, PWO)
+    Char_t* fMap;                       // map data type
+    Int_t fModule;                      // number of currently processed module
 
     Int_t fNElements;                   // number of elements (i.e. channels) on module
     Int_t* fElements;                   // list of element numbers on module
@@ -54,10 +56,10 @@ protected:
     virtual Bool_t ParseLine() = 0;
 
 public:
-    TTWriteADConfig(const Int_t crate, const Char_t* const type);
+    TTWriteADConfig(const Int_t crate, const Char_t* const type,
+                    const Char_t* map);
     virtual ~TTWriteADConfig();
 
-    Bool_t Write();
     Bool_t Write(const Int_t module);
 
     ClassDef(TTWriteADConfig, 0) // Write AcquDAQ coniguration files base

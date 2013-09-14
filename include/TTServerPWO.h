@@ -27,7 +27,7 @@ protected:
 
 public:
     TTServerPWO() : TTServer() { }
-    TTServerPWO(Int_t port);
+    TTServerPWO(Int_t port, Int_t id);
     virtual ~TTServerPWO() { }
 
     ClassDef(TTServerPWO, 0) // PWO TAPS server
