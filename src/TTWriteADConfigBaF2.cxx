@@ -47,72 +47,43 @@ Bool_t TTWriteADConfigBaF2::ParseLine()
         {
             // prepare output line
             sprintf(fLineOut, "Hardware-ID: %04d", (Int_t)tmp);
+            return kTRUE;
         }
     }
-
-    // parse key line: 'Thr-CFD'
-    else if (TTUtils::IndexOf(fLineIn, "Thr-CFD:") != -1)
+    
+    // keys for channel-wise configuration
+    const Int_t keyN = 7;
+    const Char_t* keySt[keyN] = { "Thr-CFD-Raw:", "Thr-LED1:", "Thr-LED2:",
+                                  "Ped-LG:", "Ped-LGS:", "Ped-SG:", "Ped-SGS:" };
+    const Char_t* keyID[keyN] = { "Par.BaF2.Thr.CFD", "Par.BaF2.Thr.LED1", "Par.BaF2.Thr.LED2",
+                                  "Par.BaF2.QAC.LG", "Par.BaF2.QAC.LGS", "Par.BaF2.QAC.SG", "Par.BaF2.QAC.SGS" };
+    
+    // loop over keys
+    for (Int_t i = 0; i < keyN; i++)
     {
-        Double_t tmp[fNElements];
+        // check for key
+        if (TTUtils::IndexOf(fLineIn, keySt[i]) != -1)
+        {
+            Double_t tmp[fNElements];
 
-        // get info from data base
-        if (!TTMySQLManager::GetManager()->ReadParameters("Par.BaF2.Thr.CFD", fNElements, fElements, tmp))
-        {
-            Error("ParseLine", "MySQLManager reported an error when trying to get 'Par.BaF2.Thr.CFD' values.");
-            return kFALSE;
-        }
-        else
-        {
-            // prepare output line
-            sprintf(fLineOut, "Thr-CFD:");            
-            for (Int_t i = 0; i < fNElements; i++) sprintf(fLineOut, "%s %.f", fLineOut, tmp[i]);
-        }
-    }
-
-    // parse key line: 'Thr-LED1'
-    else if (TTUtils::IndexOf(fLineIn, "Thr-LED1:") != -1)
-    {
-        Double_t tmp[fNElements];
-
-        // get info from data base
-        if (!TTMySQLManager::GetManager()->ReadParameters("Par.BaF2.Thr.LED1", fNElements, fElements, tmp))
-        {
-            Error("ParseLine", "MySQLManager reported an error when trying to get 'Par.BaF2.Thr.LED1' values.");
-            return kFALSE;
-        }
-        else
-        {
-            // prepare output line
-            sprintf(fLineOut, "Thr-LED1:");            
-            for (Int_t i = 0; i < fNElements; i++) sprintf(fLineOut, "%s %.f", fLineOut, tmp[i]);
+            // get info from data base
+            if (!TTMySQLManager::GetManager()->ReadParameters(keyID[i], fNElements, fElements, tmp))
+            {
+                Error("ParseLine", "MySQLManager reported an error when trying to get '%s' values.", keyID[i]);
+                return kFALSE;
+            }
+            else
+            {
+                // prepare output line
+                sprintf(fLineOut, keySt[i]);            
+                for (Int_t j = 0; j < fNElements; j++) sprintf(fLineOut, "%s %.f", fLineOut, tmp[j]);
+                return kTRUE;
+            }
         }
     }
-
-    // parse key line: 'Thr-LED2'
-    else if (TTUtils::IndexOf(fLineIn, "Thr-LED2:") != -1)
-    {
-        Double_t tmp[fNElements];
-
-        // get info from data base
-        if (!TTMySQLManager::GetManager()->ReadParameters("Par.BaF2.Thr.LED2", fNElements, fElements, tmp))
-        {
-            Error("ParseLine", "MySQLManager reported an error when trying to get 'Par.BaF2.Thr.LED2' values.");
-            return kFALSE;
-        }
-        else
-        {
-            // prepare output line
-            sprintf(fLineOut, "Thr-LED2:");            
-            for (Int_t i = 0; i < fNElements; i++) sprintf(fLineOut, "%s %.f", fLineOut, tmp[i]);
-        }
-    }
-
-    // parse default line
-    else
-    {
-        // copy input to output line
-        sprintf(fLineOut,"%s", fLineIn);
-    }
+    
+    // no key to be overwritten found -> copy input to output line
+    sprintf(fLineOut,"%s", fLineIn);
 
     return kTRUE;
 }
