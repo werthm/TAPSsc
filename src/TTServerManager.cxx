@@ -366,3 +366,38 @@ Bool_t TTServerManager::WriteADConfigBaF2()
     return kTRUE;
 }
 
+//______________________________________________________________________________
+Bool_t TTServerManager::WriteADConfigVeto()
+{
+    // Command all Veto servers to write the AcquDAQ configuration files.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // loop over Veto servers
+    for (Int_t i = 0; i < fServerVeto->GetSize(); i++)
+    {
+        // get server
+        TTClientVeto* s = (TTClientVeto*) fServerVeto->At(i);
+
+        // check of server connection
+        if (s->GetStatus() != TTNetClient::kReady)
+        {
+            Error("WriteADConfigVeto", "No connection to Veto server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        // command config file writing
+        if (!s->WriteADConfig())
+        {
+            Error("WriteADConfigVeto", "Error during configuration file writing on server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        Info("WriteADConfigVeto", "Wrote configuration files on server '%s'",
+             s->GetHost().GetHostName());
+    }
+
+    return kTRUE;
+}
+

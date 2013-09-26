@@ -24,50 +24,64 @@ Bool_t TTWriteADConfigVeto::ParseLine()
 {
     // Parses the line 'fLineIn' from the template file. 
 
-    // parse key line: 'Thr-LED'
-    if (TTUtils::IndexOf(fLineIn, "Thr-LED:") != -1)
+    // parse key line: 'Hardware-ID'
+    if (TTUtils::IndexOf(fLineIn, "Hardware-ID:") != -1)
     {
-        Double_t tmp[fNElements];
-
-        // get info from data base
-        if (!TTMySQLManager::GetManager()->ReadParameters("Par.Veto.Thr.LED", fNElements, fElements, tmp))
+        Int_t elem;
+        Double_t tmp;
+        
+        // get map info from data base
+        if (TTMySQLManager::GetManager()->GetElements("Map.Veto.HWID", fCrate, fModule, &elem) != 1)
         {
-            Error("ParseLine", "MySQLManager reported an error when trying to get 'Par.Veto.Thr.LED' values.");
+            Error("ParseLine", "MySQLManager reported an error when trying to get 'Map.Veto.HWID' values.");
+            return kFALSE;
+        }
+  
+        // get info from data base
+        if (!TTMySQLManager::GetManager()->ReadParameters("Par.Veto.HWID", 1, &elem, &tmp))
+        {
+            Error("ParseLine", "MySQLManager reported an error when trying to get 'Par.Veto.HWID' values.");
             return kFALSE;
         }
         else
         {
             // prepare output line
-            sprintf(fLineOut, "Thr-LED:");            
-            for (Int_t i = 0; i < fNElements; i++) sprintf(fLineOut, "%s %.f", fLineOut, tmp[i]);
+            sprintf(fLineOut, "Hardware-ID: %04d", (Int_t)tmp);
+            return kTRUE;
         }
     }
-
-    // parse key line: 'Thr-LED1'
-    else if (TTUtils::IndexOf(fLineIn, "QAC:") != -1)
+    
+    // keys for channel-wise configuration
+    const Int_t keyN = 2;
+    const Char_t* keySt[keyN] = { "Thr-VLED:", "Ped-VG:" };
+    const Char_t* keyID[keyN] = { "Par.Veto.Thr.LED", "Par.Veto.QAC" };
+    
+    // loop over keys
+    for (Int_t i = 0; i < keyN; i++)
     {
-        Double_t tmp[fNElements];
+        // check for key
+        if (TTUtils::IndexOf(fLineIn, keySt[i]) != -1)
+        {
+            Double_t tmp[fNElements];
 
-        // get info from data base
-        if (!TTMySQLManager::GetManager()->ReadParameters("Par.Veto.QAC", fNElements, fElements, tmp))
-        {
-            Error("ParseLine", "MySQLManager reported an error when trying to get 'Par.Veto.QAC' values.");
-            return kFALSE;
-        }
-        else
-        {
-            // prepare output line
-            sprintf(fLineOut, "QAC:");            
-            for (Int_t i = 0; i < fNElements; i++) sprintf(fLineOut, "%s %.f", fLineOut, tmp[i]);
+            // get info from data base
+            if (!TTMySQLManager::GetManager()->ReadParameters(keyID[i], fNElements, fElements, tmp))
+            {
+                Error("ParseLine", "MySQLManager reported an error when trying to get '%s' values.", keyID[i]);
+                return kFALSE;
+            }
+            else
+            {
+                // prepare output line
+                sprintf(fLineOut, keySt[i]);            
+                for (Int_t j = 0; j < fNElements; j++) sprintf(fLineOut, "%s %.f", fLineOut, tmp[j]);
+                return kTRUE;
+            }
         }
     }
-
-    // parse default line
-    else
-    {
-        // copy input to output line
-        sprintf(fLineOut,"%s", fLineIn);
-    }
+    
+    // no key to be overwritten found -> copy input to output line
+    sprintf(fLineOut,"%s", fLineIn);
 
     return kTRUE;
 }

@@ -18,6 +18,7 @@ Par.BaF2.HWID,               BaF2 module hardware ID,            par_baf2_hwid, 
 Par.Veto.HV,                 Veto high voltage,                  par_veto_hv,       24,             0,      1010,       Map.Veto.HV
 Par.Veto.Thr.LED,            Veto LED thresholds,                par_veto_thr_led,  384,            10,     1100,       Map.Veto
 Par.Veto.QAC,                Veto QAC pedestals,                 par_veto_qac,      384,            1,      10000,      Map.Veto
+Par.Veto.HWID,               Veto module hardware ID,            par_veto_hwid,     48,             404,    406,        Map.Veto.HWID
 
 Par.PWO.HV,                  PbWO4 high voltage,                 par_pwo_hv,        72,             0,      2000,       Map.PWO.HV
 

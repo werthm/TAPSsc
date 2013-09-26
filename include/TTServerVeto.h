@@ -17,18 +17,25 @@
 #define TTSERVERVETO_H
 
 #include "TTServer.h"
+#include "TTWriteADConfigVeto.h"
 
 
 class TTServerVeto : public TTServer
 {
 
+private:
+    TTWriteADConfigVeto* fWriter;           // AcquDAQ config file writer
+
+    Bool_t WriteADConfig(const Char_t* cmd, TSocket* s);
+    
 protected:
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 
 public:
-    TTServerVeto() : TTServer() { }
+    TTServerVeto() : TTServer(),
+                     fWriter(0) { }
     TTServerVeto(Int_t port, Int_t id);
-    virtual ~TTServerVeto() { }
+    virtual ~TTServerVeto();
 
     ClassDef(TTServerVeto, 0) // Veto TAPS server
 };

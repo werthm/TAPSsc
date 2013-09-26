@@ -27,6 +27,8 @@ public:
     TTClientVeto(const Char_t* server, Int_t port);
     virtual ~TTClientVeto() { }
     
+    Bool_t WriteADConfig();
+    
     ClassDef(TTClientVeto, 0) // Veto TAPS client
 };
 

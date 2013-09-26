@@ -54,6 +54,7 @@ public:
     Bool_t SetStatusHV(Int_t mainframe, Bool_t status);
     
     Bool_t WriteADConfigBaF2();
+    Bool_t WriteADConfigVeto();
 
     void PrintStatus();
 

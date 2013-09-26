@@ -11,6 +11,7 @@ Map.BaF2.HWID,               BaF2 module hardware ID,            map_baf2_hwid, 
 
 Map.Veto,                    Veto modules,                       map_veto,       384
 Map.Veto.HV,                 Veto high voltage,                  map_veto_hv,    24
+Map.Veto.HWID,               Veto module hardware ID,            map_veto_hwid,  48
 
 Map.PWO.HV,                  PbWO4 high voltage,                 map_pwo_hv,     72
 

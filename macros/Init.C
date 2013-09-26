@@ -146,6 +146,7 @@ void Init()
         WritePar("Par.Veto.HV", "data/init/par_veto_hv");
         WritePar("Par.Veto.Thr.LED", "data/init/par_veto_led");
         WritePar("Par.Veto.QAC", "data/init/par_veto_qac_ped");
+        WritePar("Par.Veto.HWID", "data/init/par_veto_hwid", kFALSE);
 
         // write default map data
         WriteMap("Map.BaF2", "data/init/map_baf2");
@@ -154,6 +155,7 @@ void Init()
         WriteMapHV("Map.BaF2.HV", "data/init/map_baf2_hv");
         WriteMapHV("Map.PWO.HV", "data/init/map_pwo_hv");
         WriteMap("Map.BaF2.HWID", "data/init/map_baf2_hwid");
+        WriteMap("Map.Veto.HWID", "data/init/map_veto_hwid");
     }
 
     gSystem->Exit(0);
