@@ -8,16 +8,16 @@
 //                                                                      //
 // CalcADC.C                                                            //
 //                                                                      //
-// Calculate TAPS ADC numbers.                                          //
+// Calculate BaF2 ADC numbers.                                          //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
 
 //______________________________________________________________________________
-void CalcADC()
+void CalcADCBaF2()
 {
     // TAPS block start indices
-    const Int_t idBlock[6]    = { 20000, 21000, 22000, 23000, 24000, 25000 } ;
+    const Int_t idBlock[6]    = { 20000, 21000, 22000, 23000, 24000, 25000 };
     
     // module offsets (+32 per module)
     const Int_t offModule[16] = {   0,  32,  64,  96, 128, 160, 192, 224, 
@@ -73,7 +73,6 @@ void CalcADC()
             }
         }
     }
-
 
     gSystem->Exit(0);
 }
