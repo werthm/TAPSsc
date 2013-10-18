@@ -53,8 +53,8 @@ void CalcADCVeto()
         // loop over modules
         for (Int_t m = 0; m < 16; m++)
         {
-            // loop over pattern units
-            for (Int_t c = 0; c < 1; c++)
+            // loop over pattern units (BP[1] is not used)
+            for (Int_t c = 0; c < 1; c++)   
             {
                 // calculate pattern units
                 Int_t pu = idBlock[b] + offModule[m] + offBP[c];
