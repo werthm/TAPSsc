@@ -2,7 +2,7 @@
 
 #####################################################################
 ##                                                                 ##
-## Script to restart all TAPSServer instances                      ##
+## Script to control all TAPSServer instances                      ##
 ##                                                                 ##
 #####################################################################
 

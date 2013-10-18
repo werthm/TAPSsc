@@ -41,14 +41,39 @@ void CalcADC()
             for (Int_t c = 0; c < 4; c++)
             {
                 // calculate LG, SG and TDC
-                Int_t lg  = idBlock[b] + offModule[m] + offLG[c];
-                Int_t sg  = idBlock[b] + offModule[m] + offSG[c];
+                //Int_t lg  = idBlock[b] + offModule[m] + offLG[c];
+                //Int_t sg  = idBlock[b] + offModule[m] + offSG[c];
+                //Int_t tdc = idBlock[b] + offModule[m] + offTDC[c];
+                //printf("%d      %d      %d\n", lg, sg, tdc);
+                
+                // calculate LGS, SGS and TDC
+                Int_t lg  = idBlock[b] + offModule[m] + offLGS[c];
+                Int_t sg  = idBlock[b] + offModule[m] + offSGS[c];
                 Int_t tdc = idBlock[b] + offModule[m] + offTDC[c];
-
                 printf("%d      %d      %d\n", lg, sg, tdc);
             }
         }
     }
+    
+    printf("\n\n");
+    
+    // loop over blocks
+    for (Int_t b = 0; b < 6; b++)
+    {
+        // loop over modules
+        for (Int_t m = 0; m < 16; m++)
+        {
+            // loop over pattern units
+            for (Int_t c = 0; c < 2; c++)
+            {
+                // calculate pattern units
+                Int_t pu = idBlock[b] + offModule[m] + offBP[c];
+
+                printf("%d\n", pu);
+            }
+        }
+    }
+
 
     gSystem->Exit(0);
 }

@@ -25,6 +25,7 @@ scp $HOME/TAPSsc/config/map.def root@$SYNC_HOST:$LOC/TAPSsc/config
 scp $HOME/TAPSsc/config/Module_Template_BaF2 root@$SYNC_HOST:$LOC/TAPSsc/config
 scp $HOME/TAPSsc/config/Module_Template_Veto root@$SYNC_HOST:$LOC/TAPSsc/config
 scp $HOME/TAPSsc/scripts/control_TAPSServer.sh root@$SYNC_HOST:$LOC/TAPSsc/scripts 
+scp $HOME/TAPSsc/scripts/control_DAQ.sh root@$SYNC_HOST:$LOC/TAPSsc/scripts 
 scp $HOME/TAPSsc/lib/libTAPSsc.so root@$SYNC_HOST:$LOC/TAPSsc/lib
 ssh root@$SYNC_HOST umount /opt
 
