@@ -20,7 +20,6 @@
 #include <fstream>
 
 #include "TEnv.h"
-#include "TTimeStamp.h"
 #include "TError.h"
 
 #include "TTMySQLManager.h"

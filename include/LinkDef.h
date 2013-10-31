@@ -58,6 +58,11 @@
 #pragma link C++ class TTWriteADConfigBaF2+;
 #pragma link C++ class TTWriteADConfigVeto+;
 #pragma link C++ class TTWriteADConfigPWO+;
+#pragma link C++ class TTVMEKPh+;
+#pragma link C++ class TTVMEModule+;
+#pragma link C++ class TTVMEV874+;
+#pragma link C++ class TTVMEBaF2+;
+#pragma link C++ class TTVMEVeto+;
 
 #endif
 

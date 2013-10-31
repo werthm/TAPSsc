@@ -2,21 +2,20 @@
 ##              Hex Base    #Registers  Module type MapSize
 BaseSetup:  0       0       ADC     4000
 Hardware-ID: 0404
-## Pedestal and overflow suppression enabled
 ###
-#Suppress-Pedestal:
+Enable-Thresholds:
 #Suppress-Overflow:
 ###
 ## Set TDCs to common-stop mode
 Common-Stop:
-## Long-gate QDC pedestal thresholds
-Thr-LG:      150    150 150 150
-## Long-gate-S QDC pedestal thresholds
-Thr-LGS:     150    150 150 150
-## Short-gate QDC pedestal thresholds
-Thr-SG:      150    150 150 150
-## Short-gate-S QDC pedestal thresholds
-Thr-SGS:     150    150 150 150
+## Long-gate QDC thresholds
+Thr-LG:       0x1  0x1  0x1  0x1
+## Long-gate-S QDC thresholds
+Thr-LGS:      0x1  0x1  0x1  0x1
+## Short-gate QDC thresholds
+Thr-SG:       0x1  0x1  0x1  0x1
+## Short-gate-S QDC thresholds
+Thr-SGS:      0x1  0x1  0x1  0x1
 ## Bit Pattern enable, by default they are turned off. Set to zero to turn on
 #Thr-BP:       0x1ff    0x1ff
 Thr-BP:       0x0   0x0
