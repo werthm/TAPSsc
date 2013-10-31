@@ -41,7 +41,7 @@ then
             then
                 killall -q AcquDAQ
                 cd $HOME/acqu
-                DISPLAY=localhost:10.0 nohup /opt/acqu_debug_dw/build/bin/AcquDAQ &> /dev/null &
+                DISPLAY=localhost:10.0 nohup /opt/acqu/build/bin/AcquDAQ &> /dev/null &
             fi
         fi
     else

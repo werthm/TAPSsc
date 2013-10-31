@@ -37,6 +37,7 @@ then
             if [ "$CMD" == "restart" ] || [ "$CMD" == "stop" ]
             then
                 killall -q TAPSServer
+                rm -f /run/lock/TAPSServer.pid
             fi
             
             # get server ID
