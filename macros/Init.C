@@ -48,6 +48,38 @@ void WritePar(const Char_t* data, const Char_t* file, Bool_t startsWithOne = kTR
 }
 
 //______________________________________________________________________________
+void WriteParRaw(const Char_t* data, const Char_t* file)
+{
+    // Write the parameter data type 'data' to the database using the values in the
+    // ASCII file 'file'.
+  
+    Int_t elem[1000];
+    Double_t par[1000];
+    Int_t nPar = 0;
+
+    // read from file
+    Char_t* line[256];
+    FILE* f = fopen(file, "r");
+    while (fgets(line, 256, f)) 
+    {
+        TString l((const Char_t*)line);
+        l.Remove(TString::kBoth, ' ');
+        l.Remove(TString::kBoth, '\n');
+        if (l.BeginsWith("#") || l == "") continue;
+        else 
+        {
+            sscanf(l.Data(), "%lf", &par[nPar]);
+            elem[nPar] = nPar;
+            nPar++;
+        }
+    }
+    fclose(f);
+
+    // write to database
+    TTMySQLManager::GetManager()->WriteParameters(data, nPar, elem, par);
+}
+
+//______________________________________________________________________________
 void WriteMap(const Char_t* data, const Char_t* file)
 {
     // Write the map data type 'data' to the database using the values in the
@@ -137,10 +169,10 @@ void Init()
         WritePar("Par.BaF2.Thr.CFD", "data/init/par_baf2_cfd");
         WritePar("Par.BaF2.Thr.LED1", "data/init/par_baf2_led1");
         WritePar("Par.BaF2.Thr.LED2", "data/init/par_baf2_led2");
-        WritePar("Par.BaF2.QAC.LG", "data/init/par_baf2_qac_ped_lg");
-        WritePar("Par.BaF2.QAC.LGS", "data/init/par_baf2_qac_ped_lgs");
-        WritePar("Par.BaF2.QAC.SG", "data/init/par_baf2_qac_ped_sg");
-        WritePar("Par.BaF2.QAC.SGS", "data/init/par_baf2_qac_ped_sgs");
+        WriteParRaw("Par.BaF2.QAC.LG", "data/init/par_baf2_qac_ped_lg");
+        WriteParRaw("Par.BaF2.QAC.LGS", "data/init/par_baf2_qac_ped_lgs");
+        WriteParRaw("Par.BaF2.QAC.SG", "data/init/par_baf2_qac_ped_sg");
+        WriteParRaw("Par.BaF2.QAC.SGS", "data/init/par_baf2_qac_ped_sgs");
         WritePar("Par.BaF2.HWID", "data/init/par_baf2_hwid", kFALSE);
         WritePar("Par.PWO.HV", "data/init/par_pwo_hv");
         WritePar("Par.Veto.HV", "data/init/par_veto_hv");
