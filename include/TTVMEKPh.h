@@ -37,7 +37,9 @@ public:
     virtual ~TTVMEKPh();
     
     void AddModule(TTVMEModule* m);
-    
+ 
+    TTVMEModule* GetModule(Int_t i) const { return fModule[i]; }
+
     ClassDef(TTVMEKPh, 0) // VME access via Kernph controller
 };
 

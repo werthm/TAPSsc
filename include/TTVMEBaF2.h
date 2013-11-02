@@ -53,6 +53,11 @@ public:
     TTVMEBaF2(Long_t adr, Int_t len);
     virtual ~TTVMEBaF2();
     
+    void SetAllPedestals(UInt_t p);
+    void SetThresholdsCFD(UInt_t t);
+    void SetThresholdsLED1(UInt_t t);
+    void SetThresholdsLED2(UInt_t t);
+
     ClassDef(TTVMEBaF2, 0) // TAPS CAEN VME BaF2 board
 };
 

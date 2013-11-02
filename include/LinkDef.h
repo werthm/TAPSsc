@@ -26,9 +26,11 @@
 
 // enums
 #pragma link C++ enum ETServerType;
+#pragma link C++ enum ETCrateType;
 
 // typedefs
 #pragma link C++ typedef TServerType_t;
+#pragma link C++ typedef TCrateType_t;
 
 // namespaces
 #pragma link C++ namespace TTConfig;
@@ -63,6 +65,10 @@
 #pragma link C++ class TTVMEV874+;
 #pragma link C++ class TTVMEBaF2+;
 #pragma link C++ class TTVMEVeto+;
+#pragma link C++ class TTVMECrate+;
+#pragma link C++ class TTVMECrateBaF2+;
+#pragma link C++ class TTVMECrateVeto+;
+#pragma link C++ class TTCalibQAC+;
 
 #endif
 

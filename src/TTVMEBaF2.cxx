@@ -30,7 +30,7 @@ const Long_t TTVMEBaF2::fgRegThrLED2[] = { 0x23, 0x1b, 0x13, 0x0b };
 
 //______________________________________________________________________________
 TTVMEBaF2::TTVMEBaF2(Long_t adr, Int_t len)
-    : TTVMEV874(adr, len)
+    : TTVMEV874(adr, len, 4)
 {
     // Constructor.
     
@@ -38,13 +38,13 @@ TTVMEBaF2::TTVMEBaF2(Long_t adr, Int_t len)
     fVOff = 165;
 
     // init members
-    fPedLG   = new UInt_t[4];
-    fPedLGS  = new UInt_t[4];
-    fPedSG   = new UInt_t[4];
-    fPedSGS  = new UInt_t[4];
-    fThrCFD  = new UInt_t[4];
-    fThrLED1 = new UInt_t[4];
-    fThrLED2 = new UInt_t[4];
+    fPedLG   = new UInt_t[fNCh];
+    fPedLGS  = new UInt_t[fNCh];
+    fPedSG   = new UInt_t[fNCh];
+    fPedSGS  = new UInt_t[fNCh];
+    fThrCFD  = new UInt_t[fNCh];
+    fThrLED1 = new UInt_t[fNCh];
+    fThrLED2 = new UInt_t[fNCh];
 
     // set default thresholds
     SetDefaultThresholds();
@@ -68,13 +68,26 @@ TTVMEBaF2::~TTVMEBaF2()
 void TTVMEBaF2::SetDefaultThresholds()
 {
     // Set default thresholds.
-    
-    for (Int_t i = 0; i < 32; i++)
+        
+    // baseboard thresholds
+    for (Int_t i = 0; i < fNADC; i++)
     {
         if (i >=  0 && i <=  7) fThres[i] = 0x1ff;
         if (i >=  8 && i <= 27) fThres[i] = 0x1;
         if (i >= 28 && i <= 29) fThres[i] = 0x0;
         if (i >= 30 && i <= 31) fThres[i] = 0x1ff;
+    }
+
+    // piggyback thresholds
+    for (Int_t i = 0; i < fNCh; i++)
+    {
+        fPedLG[i]   = 4000;
+        fPedLGS[i]  = 4000;
+        fPedSG[i]   = 4000;
+        fPedSGS[i]  = 4000;
+        fThrCFD[i]  = 7820;
+        fThrLED1[i] = 7820;
+        fThrLED2[i] = 7820;
     }
 }
 
@@ -84,7 +97,7 @@ void TTVMEBaF2::WritePed()
     // Write the pedestal values to the piggyback board.
     
     // write pedestals
-    for (Int_t i = 0; i < 4; i++)
+    for (Int_t i = 0; i < fNCh; i++)
     {
         WritePiggyback(fgRegPedLG[i], fPedLG[i]);
         WritePiggyback(fgRegPedLGS[i], fPedLGS[i]);
@@ -102,11 +115,49 @@ void TTVMEBaF2::InitPiggyback()
     WritePed();
     
     // write discriminator thresholds
-    for (Int_t i = 0; i < 4; i++)
+    for (Int_t i = 0; i < fNCh; i++)
     {
         WritePiggyback(fgRegThrCFD[i], fThrCFD[i]);
         WritePiggyback(fgRegThrLED1[i], fThrLED1[i]);
         WritePiggyback(fgRegThrLED2[i], fThrLED2[i]);
     }
+}
+
+//______________________________________________________________________________
+void TTVMEBaF2::SetAllPedestals(UInt_t p)
+{
+    // Set all pedestals (LG/LGS/SG/SGS) of all channels to 'p'.
+
+    for (Int_t i = 0; i < fNCh; i++) 
+    {
+        fPedLG[i]  = p;
+        fPedLGS[i] = p;
+        fPedSG[i]  = p;
+        fPedSGS[i] = p;
+    }
+}
+
+//______________________________________________________________________________
+void TTVMEBaF2::SetThresholdsCFD(UInt_t t)
+{
+    // Set the CFD thresholds of all channels to 't'.
+
+    for (Int_t i = 0; i < fNCh; i++) fThrCFD[i] = t;
+}
+
+//______________________________________________________________________________
+void TTVMEBaF2::SetThresholdsLED1(UInt_t t)
+{
+    // Set the LED1 thresholds of all channels to 't'.
+
+    for (Int_t i = 0; i < fNCh; i++) fThrLED1[i] = t;
+}
+
+//______________________________________________________________________________
+void TTVMEBaF2::SetThresholdsLED2(UInt_t t)
+{
+    // Set the LED2 thresholds of all channels to 't'.
+
+    for (Int_t i = 0; i < fNCh; i++) fThrLED2[i] = t;
 }
 

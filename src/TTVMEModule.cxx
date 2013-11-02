@@ -19,7 +19,7 @@ ClassImp(TTVMEModule)
 
 
 //______________________________________________________________________________
-TTVMEModule::TTVMEModule(Long_t adr, Int_t len)
+TTVMEModule::TTVMEModule(Long_t adr, Int_t len, Int_t nCh, Int_t nADC)
 {
     // Constructor.
     
@@ -27,6 +27,11 @@ TTVMEModule::TTVMEModule(Long_t adr, Int_t len)
     fAdr = adr;
     fMap = 0;
     fMapLen = len;
+    fNCh = nCh;
+    fNADC = nADC;
+    fNData = 0;
+    fADC = new UShort_t[fNADC];
+    fData = new UShort_t[fNADC];
 }
 
 //______________________________________________________________________________
@@ -35,6 +40,8 @@ TTVMEModule::~TTVMEModule()
     // Destructor.
 
     if (fMap) UnMapMemory();
+    if (fADC) delete [] fADC;
+    if (fData) delete [] fData;
 }
 
 //______________________________________________________________________________

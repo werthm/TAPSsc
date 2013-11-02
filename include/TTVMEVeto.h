@@ -42,6 +42,9 @@ public:
     TTVMEVeto(Long_t adr, Int_t len);
     virtual ~TTVMEVeto();
     
+    void SetPedestals(UInt_t p);
+    void SetThresholds(UInt_t t);
+    
     ClassDef(TTVMEVeto, 0) // TAPS CAEN VME Veto board
 };
 

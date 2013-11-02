@@ -21,18 +21,19 @@ ClassImp(TTVMEV874)
 // init static class members
 const Long_t TTVMEV874::fgReg[] = { 0x1000, 0x1006, 0x1008, 0x1032, 0x1034,
                                     0x102e, 0x1066, 0x1060, 0x1062, 0x1010,
-                                    0x1080, 0x1200 };
+                                    0x1080, 0x1200, 0x100e, 0x30 };
 
 
 //______________________________________________________________________________
-TTVMEV874::TTVMEV874(Long_t adr, Int_t len)
-    : TTVMEModule(adr, len)
+TTVMEV874::TTVMEV874(Long_t adr, Int_t len, Int_t nCh)
+    : TTVMEModule(adr, len, nCh, 32)
 {
     // Constructor.
     
     // init members
-    fThres = new UInt_t[32];
+    fThres = new UInt_t[fNADC];
     fVOff = 165;
+    fUseDTP = kFALSE;
 
     // set default thresholds
     SetDefaultThresholds();
@@ -81,8 +82,9 @@ void TTVMEV874::WritePiggyback(Long_t reg, UShort_t val)
 void TTVMEV874::SetDefaultThresholds()
 {
     // Set default thresholds.
-
-    for (Int_t i = 0; i < 32; i++)
+    
+    // baseboard thresholds
+    for (Int_t i = 0; i < fNADC; i++)
     {
         fThres[i] = 0x0;
     }
@@ -130,13 +132,16 @@ void TTVMEV874::Init()
     Write(fgReg[kCtrlReg1], 0);
         
     // write channel thresholds
-    for (Int_t i = 0; i < 32; i++)
+    for (Int_t i = 0; i < fNADC; i++)
     {
         Write(fgReg[kThres]+2*i, fThres[i]);
     }
     
     // init the piggyback board
     InitPiggyback();
+
+    // switch on digital test puls
+    if (fUseDTP) WritePiggyback(fgReg[kPiggTP], 0x1);
 
     // set to readout mode
     Write(fgReg[kBitSet2], 0x100);
@@ -148,3 +153,89 @@ void TTVMEV874::Init()
     ResetData();
 }
 
+//______________________________________________________________________________
+void TTVMEV874::Readout()
+{
+    // Read-out the module.
+    
+    // get the status of the module
+    UShort_t status = Read(fgReg[kStatusReg]);
+    
+    // wait if module is busy
+    Int_t i;
+    for (i = 0; i < 100; i++)
+    {
+        status = Read(fgReg[kStatusReg]);
+        if (!(status & 0x4)) break;
+    }
+
+    // exit when no data arrived 
+    if (i == 100)
+    {
+        ResetData();
+        return;
+    }
+
+    // check if data are there - exit if no data
+    if (!(status & 0x1)) 
+    {
+        ResetData();
+        return;
+    }
+            
+    // read data buffer
+    UInt_t datum = Read32();
+
+    // check if header is valid
+    if ((datum & 0x7000000) != 0x2000000)
+    {
+        ResetData();
+        return;
+    }
+
+    // get number of recorded ADCs
+    Int_t nch = (datum & 0x3f00) >> 8;
+    
+    // reset number of recorded data
+    fNData = 0;
+
+    // loop over recorded ADCs
+    Int_t badDatum = 0;
+    for (i = 0; i < nch; i++)
+    {
+        // read next buffer
+        datum = Read32();
+
+        // check if datum is a datum word
+        if ((datum & 0x7000000)) 
+        {
+            badDatum = 1;
+            ResetData();
+            break;
+        }
+        
+        // decode ADC number and value and store them
+        fADC[fNData] = ((datum & 0x3f0000) >> 16);
+        fData[fNData] = datum & 0x1fff;
+        fNData++;
+    }
+    
+    // check bad datum
+    if (badDatum) 
+    {
+        ResetData();
+        return;
+    }
+    
+    // check trailer word
+    datum = Read32();
+    if ((datum & 0x7000000) != 0x4000000)
+    {
+        ResetData();
+        return;
+    }
+    
+    // reset data buffer
+    ResetData();
+}
+ 

@@ -24,8 +24,10 @@ TTServer::TTServer(TServerType_t type, Int_t port, Int_t id)
 {
     // Constructor.
     
+    // init members
     fID = id;
     fType = type;
+    fVMERange = 0;
 }
 
 //______________________________________________________________________________

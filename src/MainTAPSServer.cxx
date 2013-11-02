@@ -183,6 +183,20 @@ Int_t main(Int_t argc, Char_t* argv[])
             return -1;
         }
     }
+    
+    // get VME range
+    Long_t vmeRange = 0;
+    sprintf(tmp, "Server-%d.VME.Range", gTAPSServerID);
+    const Char_t* sVMERange = gEnv->GetValue(tmp, "null");
+    if (!strcmp(sVMERange, "null"))
+    {
+        if (serverType == kBaF2Server || serverType == kVetoServer)
+            Warning("main", "Could not find VME range value for server with ID %d!", gTAPSServerID);
+    }
+    else
+    {
+        sscanf(sVMERange, "%lx", &vmeRange);
+    }
 
     //
     // locking (inspired by http://www.enderunix.org/docs/eng/daemon.php)
@@ -225,6 +239,9 @@ Int_t main(Int_t argc, Char_t* argv[])
     else if (serverType == kHVServer) 
         gTAPSServer = new TTServerHV(TTConfig::kTAPSServerPort, gTAPSServerID);
     
+    // set VME range
+    if (vmeRange) gTAPSServer->SetVMERange(vmeRange);
+
     // listen to network connections
     gTAPSServer->Listen();
     
