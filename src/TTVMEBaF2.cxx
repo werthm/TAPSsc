@@ -124,7 +124,7 @@ void TTVMEBaF2::InitPiggyback()
 }
 
 //______________________________________________________________________________
-void TTVMEBaF2::SetAllPedestals(UInt_t p)
+void TTVMEBaF2::SetPedestalAll(UInt_t p)
 {
     // Set all pedestals (LG/LGS/SG/SGS) of all channels to 'p'.
 
@@ -138,7 +138,19 @@ void TTVMEBaF2::SetAllPedestals(UInt_t p)
 }
 
 //______________________________________________________________________________
-void TTVMEBaF2::SetThresholdsCFD(UInt_t t)
+void TTVMEBaF2::SetPedestalChannel(Int_t c, UInt_t* p)
+{
+    // Set all pedestals (LG/LGS/SG/SGS) of the channel 'c' to the values 
+    // stored in the array 'p'.
+
+    fPedLG[c]  = p[0];
+    fPedLGS[c] = p[1];
+    fPedSG[c]  = p[2];
+    fPedSGS[c] = p[3];
+}
+
+//______________________________________________________________________________
+void TTVMEBaF2::SetThresholdCFD(UInt_t t)
 {
     // Set the CFD thresholds of all channels to 't'.
 
@@ -146,7 +158,7 @@ void TTVMEBaF2::SetThresholdsCFD(UInt_t t)
 }
 
 //______________________________________________________________________________
-void TTVMEBaF2::SetThresholdsLED1(UInt_t t)
+void TTVMEBaF2::SetThresholdLED1(UInt_t t)
 {
     // Set the LED1 thresholds of all channels to 't'.
 
@@ -154,7 +166,7 @@ void TTVMEBaF2::SetThresholdsLED1(UInt_t t)
 }
 
 //______________________________________________________________________________
-void TTVMEBaF2::SetThresholdsLED2(UInt_t t)
+void TTVMEBaF2::SetThresholdLED2(UInt_t t)
 {
     // Set the LED2 thresholds of all channels to 't'.
 

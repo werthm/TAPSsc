@@ -401,3 +401,73 @@ Bool_t TTServerManager::WriteADConfigVeto()
     return kTRUE;
 }
 
+//______________________________________________________________________________
+Bool_t TTServerManager::StartCalibQAC()
+{
+    // Command all TAPS servers to start a QAC pedestal calibration.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // loop over BaF2 servers
+    for (Int_t i = 0; i < fServerBaF2->GetSize(); i++)
+    {
+        // get server
+        TTClientBaF2* s = (TTClientBaF2*) fServerBaF2->At(i);
+
+        // check of server connection
+        if (s->GetStatus() != TTNetClient::kReady)
+        {
+            Error("StartCalibQAC", "No connection to BaF2 server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        // command start of QAC calibration
+        if (!s->StartCalibQAC())
+        {
+            Error("StartCalibQAC", "Error during starting of QAC calibration on server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        Info("StartCalibQAC", "Started QAC calibration on server '%s'",
+             s->GetHost().GetHostName());
+    }
+
+    return kTRUE;
+}
+
+//______________________________________________________________________________
+Bool_t TTServerManager::StopCalibQAC()
+{
+    // Command all TAPS servers to stop the QAC pedestal calibration.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // loop over BaF2 servers
+    for (Int_t i = 0; i < fServerBaF2->GetSize(); i++)
+    {
+        // get server
+        TTClientBaF2* s = (TTClientBaF2*) fServerBaF2->At(i);
+
+        // check of server connection
+        if (s->GetStatus() != TTNetClient::kReady)
+        {
+            Error("StopCalibQAC", "No connection to BaF2 server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        // command stop of QAC calibration
+        if (!s->StopCalibQAC())
+        {
+            Error("StopCalibQAC", "Error during stopping of QAC calibration on server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        Info("StopCalibQAC", "Stopped QAC calibration on server '%s'",
+             s->GetHost().GetHostName());
+    }
+
+    return kTRUE;
+}
+

@@ -17,6 +17,7 @@
 #define TTCLIENTBAF2_H
 
 #include "TTClient.h"
+#include "TTCalibQAC.h"
 
 
 class TTClientBaF2 : public TTClient
@@ -28,6 +29,8 @@ public:
     virtual ~TTClientBaF2() { }
     
     Bool_t WriteADConfig();
+    Bool_t StartCalibQAC();
+    Bool_t StopCalibQAC();
 
     ClassDef(TTClientBaF2, 0) // BaF2 TAPS client
 };

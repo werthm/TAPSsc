@@ -56,6 +56,9 @@ public:
     Bool_t WriteADConfigBaF2();
     Bool_t WriteADConfigVeto();
 
+    Bool_t StartCalibQAC();
+    Bool_t StopCalibQAC();
+
     void PrintStatus();
 
     static TTServerManager* GetManager()

@@ -17,28 +17,49 @@
 #define TTVMECALIBQAC_H
 
 
-#include "Rtypes.h"
+#include "TObject.h"
+#include "TMath.h"
 
 
-class TTCalibQAC
+class TTCalibQAC : public TObject
 {
 
 private:
+    Bool_t fIsVeto;             // Veto flag
     Int_t fNModule;             // number of modules
     Int_t fNADC;                // number of ADCs
-    Double_t** fDataMean;       //[fNModule][fNADC] channel sum/mean
+    Int_t fNCh;                 // number of channels per module
+    Int_t fNPed;                // number of pedestal values per channel
+    Double_t** fDataSum;        //[fNModule][fNADC] channel sum
     Int_t** fDataRead;          //[fNModule][fNADC] number of channel read events
+    UInt_t*** fPed;             //[fNModule][fNCh][fNPed] current pedestal values
+    UInt_t*** fPedPos;          //[fNModule][fNCh][fNPed] current pedestal values
+    
+    static const Int_t fgPedPos;
+    static const Int_t fgEvMinStat;
+    static const Int_t fgADCBaF2[][4];
+    static const Int_t fgADCVeto[][1];
+    
+    void CalculatePed();
+    void ClearData();
 
 public:
-    TTCalibQAC() : fNModule(0), fNADC(0),
-                   fDataMean(0), fDataRead(0) { }
-    TTCalibQAC(Int_t nMod, Int_t nADC);
+    TTCalibQAC() : TObject(),
+                   fIsVeto(kFALSE), 
+                   fNModule(0), fNADC(0), fNCh(0), fNPed(0),
+                   fDataSum(0), fDataRead(0), fPed(0), fPedPos(0) { }
+    TTCalibQAC(Bool_t isVeto, UInt_t pedInit);
     virtual ~TTCalibQAC();
 
+    UInt_t* GetPedestal(Int_t mod, Int_t ch) const { return fPed[mod][ch]; }
+
     void AddData(Int_t mod, Int_t adc, Int_t val);
-    void ClearData();
     
-    ClassDef(TTCalibQAC, 0) // BaF2/Veto board QAC calibration
+    Bool_t UpdateCalib();
+    void PrintPedPos();
+    void Print();
+
+    ClassDef(TTCalibQAC, 1) // BaF2/Veto board QAC calibration
 };
 
 #endif

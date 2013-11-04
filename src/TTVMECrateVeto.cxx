@@ -29,7 +29,7 @@ const Long_t TTVMECrateVeto::fgBoardBase[] = { 0x50000000, 0x41000000, 0x4200000
 
 //______________________________________________________________________________
 TTVMECrateVeto::TTVMECrateVeto(Int_t id, Long_t vmeRange)
-    : TTVMECrate(id, kVetoCrate, vmeRange)
+    : TTVMECrate(id, kVetoCrate, vmeRange, 16, 8)
 {
     // Constructor.
     

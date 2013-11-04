@@ -29,8 +29,6 @@ private:
     // registers
     static const Long_t fgRegPed[];
     static const Long_t fgRegThr[];
-    
-    void WritePed();
 
 protected:
     virtual void SetDefaultThresholds();
@@ -42,8 +40,10 @@ public:
     TTVMEVeto(Long_t adr, Int_t len);
     virtual ~TTVMEVeto();
     
-    void SetPedestals(UInt_t p);
-    void SetThresholds(UInt_t t);
+    void SetPedestal(UInt_t p);
+    void SetThreshold(UInt_t t);
+    
+    void WritePed();
     
     ClassDef(TTVMEVeto, 0) // TAPS CAEN VME Veto board
 };

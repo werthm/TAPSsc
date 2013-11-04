@@ -32,6 +32,9 @@ TTVMEModule::TTVMEModule(Long_t adr, Int_t len, Int_t nCh, Int_t nADC)
     fNData = 0;
     fADC = new UShort_t[fNADC];
     fData = new UShort_t[fNADC];
+
+    // clear data arrays
+    ClearData();
 }
 
 //______________________________________________________________________________
@@ -78,5 +81,18 @@ void TTVMEModule::UnMapMemory()
         fMap = 0;
     else
         Error("UnMapMemory", "Could not unmap memory map!");
+}
+
+//______________________________________________________________________________
+void TTVMEModule::ClearData()
+{
+    // Clear the data arrays.
+    
+    fNData = 0;
+    for (Int_t i = 0; i < fNADC; i++)
+    {
+        fADC[i] = 0;
+        fData[i] = 0;
+    }   
 }
 

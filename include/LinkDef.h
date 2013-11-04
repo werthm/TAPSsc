@@ -68,7 +68,7 @@
 #pragma link C++ class TTVMECrate+;
 #pragma link C++ class TTVMECrateBaF2+;
 #pragma link C++ class TTVMECrateVeto+;
-#pragma link C++ class TTCalibQAC+;
+#pragma link C++ class TTCalibQAC-;
 
 #endif
 

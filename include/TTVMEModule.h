@@ -55,17 +55,21 @@ public:
 
     void MapMemory(Long_t adr, Int_t desc);
     void UnMapMemory();
-    
+       
     UShort_t Read(Long_t reg = 0);
     UInt_t Read32(Long_t reg = 0);
     void Write(Long_t reg, UShort_t val);
     
+    void ClearData();
+
     ClassDef(TTVMEModule, 0) // Parent VME module class
 };
 
 //______________________________________________________________________________
 inline UShort_t TTVMEModule::Read(Long_t reg)
 {
+    // VME 16-bit read function.
+
     if (fMap)
         return *((volatile UShort_t*)((Long_t)fMap + reg));
     else 
@@ -75,6 +79,8 @@ inline UShort_t TTVMEModule::Read(Long_t reg)
 //______________________________________________________________________________
 inline UInt_t TTVMEModule::Read32(Long_t reg)
 {
+    // VME 32-bit read function.
+
     if (fMap)
         return *((volatile UInt_t*)((Long_t)fMap + reg));
     else 
@@ -84,6 +90,8 @@ inline UInt_t TTVMEModule::Read32(Long_t reg)
 //______________________________________________________________________________
 inline void TTVMEModule::Write(Long_t reg, UShort_t val)
 {
+    // VME 16-bit write function.
+
     if (fMap)
     {
         *((volatile UShort_t*)((Long_t)fMap + reg)) = val;

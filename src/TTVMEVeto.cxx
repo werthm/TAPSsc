@@ -101,7 +101,7 @@ void TTVMEVeto::InitPiggyback()
 }
 
 //______________________________________________________________________________
-void TTVMEVeto::SetPedestals(UInt_t p)
+void TTVMEVeto::SetPedestal(UInt_t p)
 {
     // Set the pedestals of all channels to 'p'.
 
@@ -109,7 +109,7 @@ void TTVMEVeto::SetPedestals(UInt_t p)
 }
 
 //______________________________________________________________________________
-void TTVMEVeto::SetThresholds(UInt_t t)
+void TTVMEVeto::SetThreshold(UInt_t t)
 {
     // Set the LED thresholds of all channels to 't'.
 

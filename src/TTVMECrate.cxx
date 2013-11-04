@@ -19,7 +19,8 @@ ClassImp(TTVMECrate)
 
 
 //______________________________________________________________________________
-TTVMECrate::TTVMECrate(Int_t id, TCrateType_t type, Long_t vmeRange)
+TTVMECrate::TTVMECrate(Int_t id, TCrateType_t type, Long_t vmeRange,
+                       Int_t nMod, Int_t nCh)
 {
     // Constructor.
     
@@ -27,6 +28,8 @@ TTVMECrate::TTVMECrate(Int_t id, TCrateType_t type, Long_t vmeRange)
     fID = id;
     fType = type;
     fCtrl = 0;
+    fNMod = nMod;
+    fNCh = nCh;
 
     // create VME controller
     fCtrl = new TTVMEKPh(vmeRange);

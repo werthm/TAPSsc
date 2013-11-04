@@ -28,20 +28,23 @@ class TTVMECrateBaF2 : public TTVMECrate
 
 private:
     Bool_t fIsCalQACRunning;            // flag for QAC calibration run state
+    TTCalibQAC* fCalibQAC;              // QAC pedestal calibration
 
+    static const UShort_t fgPedInit;
     static const Long_t fgBoardBase[];
 
 public:
     TTVMECrateBaF2() : TTVMECrate(),
-                       fIsCalQACRunning(kFALSE) { }
+                       fIsCalQACRunning(kFALSE), fCalibQAC(0) { }
     TTVMECrateBaF2(Int_t id, Long_t vmeRange);
-    virtual ~TTVMECrateBaF2() { }
+    virtual ~TTVMECrateBaF2();
     
     void Init();
-    void StartCalibQAC(Int_t pedCh);
-    void StopCalibQAC(Int_t pedCh) { fIsCalQACRunning = kFALSE; }
+    void StartCalibQAC();
+    void StopCalibQAC();
     
     Bool_t IsCalQACRunning() const { return fIsCalQACRunning; }
+    TTCalibQAC* GetCalibQAC() const { return fCalibQAC; }
 
     static void* RunCalibQAC(void* arg);
 

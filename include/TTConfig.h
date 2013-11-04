@@ -60,6 +60,11 @@ namespace TTConfig
         kNCWriteARCfgPWO,
         kNCWriteARCfgPWOFailed,
         kNCWriteARCfgPWOSuccess,
+        kNCStartCalibQAC,
+        kNCStartCalibQACSuccess,
+        kNCStopCalibQAC,
+        kNCStopCalibQACSuccess,
+        kNCStopCalibQACFailed
     };
 }
 

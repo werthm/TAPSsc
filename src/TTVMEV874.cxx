@@ -158,6 +158,9 @@ void TTVMEV874::Readout()
 {
     // Read-out the module.
     
+    // clear recoreded data
+    ClearData();
+
     // get the status of the module
     UShort_t status = Read(fgReg[kStatusReg]);
     
@@ -196,9 +199,6 @@ void TTVMEV874::Readout()
     // get number of recorded ADCs
     Int_t nch = (datum & 0x3f00) >> 8;
     
-    // reset number of recorded data
-    fNData = 0;
-
     // loop over recorded ADCs
     Int_t badDatum = 0;
     for (i = 0; i < nch; i++)
@@ -210,7 +210,6 @@ void TTVMEV874::Readout()
         if ((datum & 0x7000000)) 
         {
             badDatum = 1;
-            ResetData();
             break;
         }
         

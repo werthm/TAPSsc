@@ -18,6 +18,10 @@
 ClassImp(TTServerBaF2)
 
 
+// init static class members
+const Long_t TTServerBaF2::fgVMEBase = 0x30000000;
+
+
 //______________________________________________________________________________
 TTServerBaF2::TTServerBaF2(Int_t port, Int_t id)
     : TTServer(kBaF2Server, port, id)
@@ -26,6 +30,7 @@ TTServerBaF2::TTServerBaF2(Int_t port, Int_t id)
         
     // init members
     fWriter = new TTWriteADConfigBaF2(GetID());
+    fCrate = new TTVMECrateBaF2(GetID(), fgVMEBase);
 }
 
 //______________________________________________________________________________
@@ -34,6 +39,7 @@ TTServerBaF2::~TTServerBaF2()
     // Destructor.
 
     if (fWriter) delete fWriter;
+    if (fCrate) delete fCrate;
 }
 
 //______________________________________________________________________________
@@ -82,6 +88,36 @@ Bool_t TTServerBaF2::ProcessCommand(const Char_t* cmd, TSocket* s)
     
     // write AcquDAQ config command: write AcquDAQ config files
     if (nc == TTConfig::kNCWriteARCfgBaF2) return WriteADConfig(cmd, s);
+    else if (nc == TTConfig::kNCStartCalibQAC)
+    {
+        // start QAC calibration
+        fCrate->StartCalibQAC();
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCStartCalibQACSuccess);
+        return kTRUE;
+    }
+    else if (nc == TTConfig::kNCStopCalibQAC)
+    {
+        // check if QAC calibration is running
+        if (!fCrate->IsCalQACRunning())
+        {
+            // send failed because calibration cannot be stopped
+            TTUtils::SendNetworkCmd(s, TTConfig::kNCStopCalibQACFailed);
+            return kTRUE;
+        }
+
+        // stop QAC calibration
+        fCrate->StopCalibQAC();
+    
+        // send Ok
+        TTUtils::SendNetworkCmd(s, TTConfig::kNCStopCalibQACSuccess);
+        
+        // send QAC calibration
+        TMessage mes(kMESS_OBJECT | kMESS_ACK);
+        mes.WriteObject(fCrate->GetCalibQAC());
+        s->Send(mes);
+        
+        return kTRUE;
+    }
     else
     {
         // call parent method
