@@ -20,10 +20,10 @@ void CalcADCPWO()
     const Int_t idBlock[1]    = { 29000 };
     
     // module offsets (+32 per module)
-    const Int_t offModule[5] = { 0,  32,  64,  96, 128 };
+    const Int_t offModule[5] = { 0, 32, 64, 96, 128 };
     
-    // TDC offset
-    Int_t tdc = 29193;
+    // TDC offset (PWO TDCs start in input B of Caen V1190A)
+    Int_t tdc = 29192 + 32;
 
     // loop over blocks
     for (Int_t b = 0; b < 1; b++)
@@ -34,7 +34,7 @@ void CalcADCPWO()
             // loop over channels
             for (Int_t c = 0; c < 16; c++)
             {
-                // only 10 channels in the last module
+                // only 8 channels in the last module
                 if (m == 4 && c == 8) break;
 
                 // calculate ADC, ADCS and TDC
