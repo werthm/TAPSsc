@@ -65,7 +65,7 @@ Bool_t TTClientHV::ReadHV(TTDataTypePar* d, Int_t elem, Int_t* outHV)
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCReadHV, d->GetName(), elem);
     
     // wait for the response
-    if (fSocket->Select(TSocket::kRead, 5000) == 1)
+    if (fSocket->Select(TSocket::kRead, TTConfig::kHVNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);
@@ -127,7 +127,7 @@ Bool_t TTClientHV::WriteHV(TTDataTypePar* d, Int_t elem)
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCWriteHV, d->GetName(), elem);
     
     // wait for the response
-    if (fSocket->Select(TSocket::kRead, 5000) == 1)
+    if (fSocket->Select(TSocket::kRead, TTConfig::kHVNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);
@@ -162,7 +162,7 @@ Bool_t TTClientHV::GetStatusHV(Int_t mainframe, Bool_t* outSt)
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCStatusHV, mainframe);
     
     // wait for the response
-    if (fSocket->Select(TSocket::kRead, 5000) == 1)
+    if (fSocket->Select(TSocket::kRead, TTConfig::kHVNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);
@@ -205,7 +205,7 @@ Bool_t TTClientHV::SetStatusHV(Int_t mainframe, Bool_t status)
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCSetStatusHV, mainframe, status);
     
     // wait for the response
-    if (fSocket->Select(TSocket::kRead, 10000) == 1)
+    if (fSocket->Select(TSocket::kRead, 2*TTConfig::kHVNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);

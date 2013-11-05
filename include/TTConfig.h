@@ -30,6 +30,9 @@ namespace TTConfig
 
     // networking
     extern const Int_t kTAPSServerPort;
+    extern const Int_t kStdNetTimeout;
+    extern const Int_t kHVNetTimeout;
+    extern const Int_t kLongNetTimeout;
 
     // network commands
     enum ETTNetCmd
@@ -62,6 +65,7 @@ namespace TTConfig
         kNCWriteARCfgPWOSuccess,
         kNCStartCalibQAC,
         kNCStartCalibQACSuccess,
+        kNCStartCalibQACFailed,
         kNCStopCalibQAC,
         kNCStopCalibQACSuccess,
         kNCStopCalibQACFailed

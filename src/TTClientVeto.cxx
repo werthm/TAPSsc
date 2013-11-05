@@ -46,7 +46,7 @@ Bool_t TTClientVeto::WriteADConfig()
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCWriteARCfgVeto);
     
     // wait for the response
-    if (fSocket->Select(TSocket::kRead, 60000) == 1)
+    if (fSocket->Select(TSocket::kRead, TTConfig::kLongNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);

@@ -23,11 +23,17 @@
 class TTClientBaF2 : public TTClient
 {
 
+private:
+    TTCalibQAC* fCalibQAC;          // QAC pedestal calibration
+
 public:
-    TTClientBaF2() : TTClient() { }
+    TTClientBaF2() : TTClient(),
+                     fCalibQAC(0) { }
     TTClientBaF2(const Char_t* server, Int_t port);
-    virtual ~TTClientBaF2() { }
-    
+    virtual ~TTClientBaF2();
+ 
+    TTCalibQAC* GetCalibQAC() const { return fCalibQAC; }
+
     Bool_t WriteADConfig();
     Bool_t StartCalibQAC();
     Bool_t StopCalibQAC();

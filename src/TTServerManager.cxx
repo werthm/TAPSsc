@@ -463,10 +463,24 @@ Bool_t TTServerManager::StopCalibQAC()
                   s->GetHost().GetHostName());
             return kFALSE;
         }
-
-        Info("StopCalibQAC", "Stopped QAC calibration on server '%s'",
-             s->GetHost().GetHostName());
     }
+    
+    printf("\n\n");
+    printf("QAC pedestal calibration results");
+    printf("\n\n");
+
+    // loop over BaF2 servers
+    for (Int_t i = 0; i < fServerBaF2->GetSize(); i++)
+    {
+        // get server
+        TTClientBaF2* s = (TTClientBaF2*) fServerBaF2->At(i);
+
+        // show results and ask for saving to database
+        printf("%s\n", s->GetHost().GetHostName());
+        s->GetCalibQAC()->PrintPedPos();
+        s->GetCalibQAC()->SavePedToDB();
+    }
+
 
     return kTRUE;
 }

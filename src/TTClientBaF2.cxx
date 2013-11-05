@@ -24,6 +24,16 @@ TTClientBaF2::TTClientBaF2(const Char_t* host, Int_t port)
 {
     // Constructor.
     
+    // init members
+    fCalibQAC = 0;
+}
+
+//______________________________________________________________________________
+TTClientBaF2::~TTClientBaF2()
+{
+    // Destructor.
+    
+    if (fCalibQAC) delete fCalibQAC;
 }
 
 //______________________________________________________________________________
@@ -46,7 +56,7 @@ Bool_t TTClientBaF2::WriteADConfig()
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCWriteARCfgBaF2);
     
     // wait for the response
-    if (fSocket->Select(TSocket::kRead, 60000) == 1)
+    if (fSocket->Select(TSocket::kRead, TTConfig::kLongNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);
@@ -81,7 +91,7 @@ Bool_t TTClientBaF2::StartCalibQAC()
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCStartCalibQAC);
     
     // wait for the response
-    if (fSocket->Select(TSocket::kRead, 100) == 1)
+    if (fSocket->Select(TSocket::kRead, TTConfig::kLongNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);
@@ -116,7 +126,7 @@ Bool_t TTClientBaF2::StopCalibQAC()
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCStopCalibQAC);
     
     // wait for the response
-    if (fSocket->Select(TSocket::kRead, 100) == 1)
+    if (fSocket->Select(TSocket::kRead, TTConfig::kStdNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);
@@ -126,7 +136,7 @@ Bool_t TTClientBaF2::StopCalibQAC()
         if (nc == TTConfig::kNCStopCalibQACSuccess) 
         {
             // receive the QAC calibration
-            if (fSocket->Select(TSocket::kRead, 100) == 1)
+            if (fSocket->Select(TSocket::kRead, TTConfig::kStdNetTimeout) == 1)
             {
                 // receive object
                 TMessage* mes;
@@ -135,9 +145,12 @@ Bool_t TTClientBaF2::StopCalibQAC()
                 // read object
                 TTCalibQAC* calib = (TTCalibQAC*)mes->ReadObjectAny(TTCalibQAC::Class());
                 
+                // save new calibration
+                if (fCalibQAC) delete fCalibQAC;
+                fCalibQAC = calib;
+
                 // clean-up
                 delete mes;
-                delete calib;
 
                 return kTRUE;
             }

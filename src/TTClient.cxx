@@ -50,7 +50,7 @@ TServerType_t TTClient::GetType()
             TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCType);
             
             // wait for the response
-            if (fSocket->Select(TSocket::kRead, 100) == 1)
+            if (fSocket->Select(TSocket::kRead, TTConfig::kStdNetTimeout) == 1)
             {
                 // get response
                 Char_t res[256];

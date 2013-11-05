@@ -38,6 +38,9 @@ namespace TTConfig
     
     // version numbers
     const Char_t kTAPSscVersion[] = "0.0.1";
+    const Int_t kStdNetTimeout = 1000;
+    const Int_t kHVNetTimeout = 5000;
+    const Int_t kLongNetTimeout = 60000;
 
     // networking
     const Int_t kTAPSServerPort = 45000;

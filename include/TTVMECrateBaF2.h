@@ -39,8 +39,7 @@ public:
     TTVMECrateBaF2(Int_t id, Long_t vmeRange);
     virtual ~TTVMECrateBaF2();
     
-    void Init();
-    void StartCalibQAC();
+    Bool_t StartCalibQAC(Bool_t initFromDB = kTRUE);
     void StopCalibQAC();
     
     Bool_t IsCalQACRunning() const { return fIsCalQACRunning; }

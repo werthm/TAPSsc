@@ -20,19 +20,25 @@ ClassImp(TTCalibQAC)
 
 // init static class members
 const Int_t TTCalibQAC::fgPedPos = 100;
-const Int_t TTCalibQAC::fgEvMinStat = 1000;
+const Int_t TTCalibQAC::fgEvMinStat = 1500;
 const Int_t TTCalibQAC::fgADCBaF2[][4] = { { 10,  8, 11,  9 }, { 14, 12, 15, 13 },
                                            { 22, 20, 23, 21 }, { 26, 24, 27, 25 } };
 const Int_t TTCalibQAC::fgADCVeto[][1] = { { 20 }, { 21 }, { 22 }, { 23 }, 
                                            { 24 }, { 25 }, { 26 }, { 27 } };
+const Char_t TTCalibQAC::fgMapBaF2[] = "Map.BaF2";
+const Char_t TTCalibQAC::fgMapVeto[] = "Map.Veto";
+const Char_t* TTCalibQAC::fgParPedBaF2[] = { "Par.BaF2.QAC.LG", "Par.BaF2.QAC.LGS", 
+                                              "Par.BaF2.QAC.SG", "Par.BaF2.QAC.SGS" };
+const Char_t* TTCalibQAC::fgParPedVeto[] = { "Par.Veto.QAC" };
 
 
 //______________________________________________________________________________
-TTCalibQAC::TTCalibQAC(Bool_t isVeto, UInt_t pedInit)
+TTCalibQAC::TTCalibQAC(Int_t crateID, Bool_t isVeto, UInt_t pedInit)
 {
     // Constructor.
     
     // init members
+    fCrateID = crateID;
     fIsVeto = isVeto;
     fNModule = 16;
     fNADC = 32;
@@ -126,9 +132,9 @@ void TTCalibQAC::CalculatePed()
                 if ((Int_t)pos != fgPedPos) 
                 {
                     Double_t diff = pos - fgPedPos;
-                    if (TMath::Abs(diff) > 200) w = 100;
-                    else if (TMath::Abs(diff) > 100) w = 30;
-                    else w = 3;
+                    if (TMath::Abs(diff) > 200) w = 80;
+                    else if (TMath::Abs(diff) > 100) w = 10;
+                    else w = 2;
                     
                     if (pos) fPed[i][j][k] += diff / pos*w;
                     else fPed[i][j][k] -= 50;
@@ -152,6 +158,144 @@ void TTCalibQAC::ClearData()
         {
             fDataSum[i][j] = 0.;
             fDataRead[i][j] = 0;
+        }
+    }
+}
+
+//______________________________________________________________________________
+Bool_t TTCalibQAC::InitPedFromDB()
+{
+    // Init the pedestal values using the database.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
+
+    // map type
+    const Char_t* map = fIsVeto ? fgMapVeto : fgMapBaF2;
+
+    // loop over modules
+    for (Int_t i = 0; i < fNModule; i++)
+    {
+        Int_t elem[fNCh];
+
+        // get channels in the module
+        TTMySQLManager::GetManager()->GetElements(map, fCrateID, i, elem);
+        
+        // get pedestal values
+        for (Int_t j = 0; j < fNPed; j++)
+        {
+            Double_t val[fNCh];
+
+            // get parameter key
+            const Char_t* key = fIsVeto ? fgParPedVeto[j] : fgParPedBaF2[j];
+
+            // read from database
+            if (!TTMySQLManager::GetManager()->ReadParameters(key, fNCh, elem, val))
+            {
+                Error("InitPedFromDB", "Could not read the '%s' parameters from the database!", key);
+                return kFALSE;
+            }
+            else
+            {
+                // set pedestal values for all channels
+                for (Int_t k = 0; k < fNCh; k++) fPed[i][k][j] = val[k];
+            }
+        }
+    }
+
+    return kTRUE;
+}
+
+//______________________________________________________________________________
+void TTCalibQAC::SavePedToDB()
+{
+    // Save the saved pedestal positions to the database.
+    
+    // flat list of elements and pedestal values
+    const Int_t nElem = fNModule*fNCh;
+    Int_t elem[nElem];
+    Int_t newPed[fNPed][nElem];
+
+    // map type
+    const Char_t* map = fIsVeto ? fgMapVeto : fgMapBaF2;
+    
+    // fill flat lists with element indices and pedestal values
+    // loop over modules
+    for (Int_t i = 0; i < fNModule; i++)
+    {
+        // get channels in the module
+        TTMySQLManager::GetManager()->GetElements(map, fCrateID, i, elem+i*fNCh);
+        
+        // loop over channels
+        for (Int_t j = 0; j < fNCh; j++)
+        {
+            // loop over pedestal types
+            for (Int_t k = 0; k < fNPed; k++)
+            {
+                // copy pedestal values to the flat list
+                newPed[k][i*fNCh+j] = fPed[i][j][k];
+            }
+        }
+    }
+
+    // sort lists
+    Int_t elemSort[nElem];
+    Double_t newPedSort[fNPed][nElem];
+    Int_t sortIdx[nElem];
+    TMath::Sort(nElem, elem, sortIdx, kFALSE);
+    for (Int_t i = 0; i < nElem; i++)
+    {
+        elemSort[i] = elem[sortIdx[i]];
+        for (Int_t j = 0; j < fNPed; j++)
+        {
+            newPedSort[j][i] = newPed[j][sortIdx[i]];
+        }
+    }
+    
+    // read old values from database for comparison
+    Double_t oldPedSort[fNPed][nElem];
+    for (Int_t i = 0; i < fNPed; i++)
+    {
+        // get parameter key
+        const Char_t* key = fIsVeto ? fgParPedVeto[i] : fgParPedBaF2[i];
+
+        // read from database
+        if (!TTMySQLManager::GetManager()->ReadParameters(key, nElem, elemSort, oldPedSort[i]))
+        {
+            Error("SavePedToDB", "Could not read the '%s' parameters from the database!", key);
+            return;
+        }
+    }
+        
+    // print relative differences
+    // loop over modules
+    for (Int_t i = 0; i < nElem; i++)
+    {
+        printf("%03d:  ", elemSort[i]);
+        for (Int_t j = 0; j < fNPed; j++)
+            printf("%5.1f%%  ", 100.*(newPedSort[j][i]-oldPedSort[j][i])/oldPedSort[j][i]);
+        printf("\n");
+    }
+
+    // ask for user confirmation
+    Char_t answer[256];
+    printf("\nWould you like to write the new values to the database? (yes/no) : ");
+    scanf("%s", answer);
+    if (strcmp(answer, "yes")) 
+    {
+        printf("Aborted.\n");
+        return;
+    }
+    
+    // write to the database
+    for (Int_t i = 0; i < fNPed; i++)
+    {
+        // get parameter key
+        const Char_t* key = fIsVeto ? fgParPedVeto[i] : fgParPedBaF2[i];
+
+        // write to database
+        if (!TTMySQLManager::GetManager()->WriteParameters(key, nElem, elemSort, newPedSort[i]))
+        {
+            Error("SavePedToDB", "Could not write the '%s' parameters to the database!", key);
+            return;
         }
     }
 }
@@ -233,6 +377,7 @@ void TTCalibQAC::Print()
     // Print out the content of this class.
 
     printf("TTCalibQAC content:\n");
+    printf("Crate ID             : %d\n", fCrateID);
     printf("IsVeto               : ");
     fIsVeto ? printf("yes\n") : printf("no\n");
     printf("# of modules         : %d\n", fNModule);
@@ -299,6 +444,7 @@ void TTCalibQAC::Streamer(TBuffer& R__b)
         TObject::Streamer(R__b);
 
         // copy data members
+        R__b >> fCrateID;
         R__b >> fIsVeto;
         R__b >> fNModule;
         R__b >> fNADC;
@@ -346,6 +492,7 @@ void TTCalibQAC::Streamer(TBuffer& R__b)
         TObject::Streamer(R__b);
 
         // copy data members
+        R__b << fCrateID;
         R__b << fIsVeto;
         R__b << fNModule;
         R__b << fNADC;

@@ -20,11 +20,14 @@
 #include "TObject.h"
 #include "TMath.h"
 
+#include "TTMySQLManager.h"
+
 
 class TTCalibQAC : public TObject
 {
 
 private:
+    Int_t fCrateID;             // crate ID
     Bool_t fIsVeto;             // Veto flag
     Int_t fNModule;             // number of modules
     Int_t fNADC;                // number of ADCs
@@ -39,23 +42,29 @@ private:
     static const Int_t fgEvMinStat;
     static const Int_t fgADCBaF2[][4];
     static const Int_t fgADCVeto[][1];
-    
+    static const Char_t fgMapBaF2[];
+    static const Char_t fgMapVeto[];
+    static const Char_t* fgParPedBaF2[];
+    static const Char_t* fgParPedVeto[];
+ 
     void CalculatePed();
     void ClearData();
 
 public:
     TTCalibQAC() : TObject(),
+                   fCrateID(-1),
                    fIsVeto(kFALSE), 
                    fNModule(0), fNADC(0), fNCh(0), fNPed(0),
                    fDataSum(0), fDataRead(0), fPed(0), fPedPos(0) { }
-    TTCalibQAC(Bool_t isVeto, UInt_t pedInit);
+    TTCalibQAC(Int_t crateID, Bool_t isVeto, UInt_t pedInit);
     virtual ~TTCalibQAC();
 
     UInt_t* GetPedestal(Int_t mod, Int_t ch) const { return fPed[mod][ch]; }
 
     void AddData(Int_t mod, Int_t adc, Int_t val);
-    
     Bool_t UpdateCalib();
+    Bool_t InitPedFromDB();
+    void SavePedToDB();
     void PrintPedPos();
     void Print();
 

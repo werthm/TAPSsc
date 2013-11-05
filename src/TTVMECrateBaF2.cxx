@@ -58,24 +58,28 @@ TTVMECrateBaF2::~TTVMECrateBaF2()
 }
 
 //______________________________________________________________________________
-void TTVMECrateBaF2::Init()
-{
-    // Init this crate with default settings.
-
-    // init modules
-    for (Int_t i = 0; i < fNMod; i++)
-    {
-        ((TTVMEBaF2*)fCtrl->GetModule(i))->Init();
-    }
-}
-
-//______________________________________________________________________________
-void TTVMECrateBaF2::StartCalibQAC()
+Bool_t TTVMECrateBaF2::StartCalibQAC(Bool_t initFromDB)
 {
     // Start the calibration of the QAC pedestals.
-    
+    // If 'initFromDB' is kTRUE, initialize the pedestals using the database.
+    // Return kTRUE on success, otherwise kFALSE.
+
     // exit if QAC calibration is already running
-    if (fIsCalQACRunning) return;
+    if (fIsCalQACRunning) return kFALSE;
+    
+    // create QAC calibration
+    if (fCalibQAC) delete fCalibQAC;
+    fCalibQAC = new TTCalibQAC(fID, kFALSE, fgPedInit);
+
+    // try to init from database
+    if (initFromDB) 
+    {
+        if (!fCalibQAC->InitPedFromDB())
+        {
+            Error("StartCalibQAC", "Could not initialize pedestal values from database - aborting!");
+            return kFALSE;
+        }
+    }
 
     // configure modules
     for (Int_t i = 0; i < fNMod; i++)
@@ -90,8 +94,9 @@ void TTVMECrateBaF2::StartCalibQAC()
         m->SetThresholdLED1(0x1000);
         m->SetThresholdLED2(0x1000);
 
-        // set all pedestals to an initial value of 0x1000
-        m->SetPedestalAll(fgPedInit);
+        // set the initial pedestal values for all channels
+        for (Int_t j = 0; j < fNCh; j++)
+            m->SetPedestalChannel(j, fCalibQAC->GetPedestal(i, j));
         
         // enable digital test puls
         m->SetDigitalTestPuls(kTRUE);
@@ -100,14 +105,12 @@ void TTVMECrateBaF2::StartCalibQAC()
         m->Init();
     }
     
-    // create QAC calibration
-    if (fCalibQAC) delete fCalibQAC;
-    fCalibQAC = new TTCalibQAC(kFALSE, fgPedInit);
-
     // start QAC calibration thread
     fIsCalQACRunning = kTRUE;
     TThread* thread = new TThread("CalibQAC", (void(*)(void*))&RunCalibQAC, (void*) this);
     thread->Run();
+
+    return kTRUE;
 }
 
 //______________________________________________________________________________

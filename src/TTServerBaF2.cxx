@@ -91,8 +91,11 @@ Bool_t TTServerBaF2::ProcessCommand(const Char_t* cmd, TSocket* s)
     else if (nc == TTConfig::kNCStartCalibQAC)
     {
         // start QAC calibration
-        fCrate->StartCalibQAC();
-        TTUtils::SendNetworkCmd(s, TTConfig::kNCStartCalibQACSuccess);
+        if (fCrate->StartCalibQAC())
+            TTUtils::SendNetworkCmd(s, TTConfig::kNCStartCalibQACSuccess);
+        else
+            TTUtils::SendNetworkCmd(s, TTConfig::kNCStartCalibQACFailed);
+        
         return kTRUE;
     }
     else if (nc == TTConfig::kNCStopCalibQAC)
