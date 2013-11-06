@@ -41,6 +41,7 @@ public:
     virtual ~TTVMEVeto();
     
     void SetPedestal(UInt_t p);
+    void SetPedestalChannel(Int_t c, UInt_t* p);
     void SetThreshold(UInt_t t);
     
     void WritePed();

@@ -335,8 +335,10 @@ Bool_t TTServerManager::SetStatusHV(Int_t mainframe, Bool_t status)
 Bool_t TTServerManager::WriteADConfigBaF2()
 {
     // Command all BaF2 servers to write the AcquDAQ configuration files.
-    // Return kTRUE on success, otherwise kFALSE.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
     
+    Bool_t ret = kTRUE;
+     
     // loop over BaF2 servers
     for (Int_t i = 0; i < fServerBaF2->GetSize(); i++)
     {
@@ -348,7 +350,8 @@ Bool_t TTServerManager::WriteADConfigBaF2()
         {
             Error("WriteADConfigBaF2", "No connection to BaF2 server '%s'!",
                   s->GetHost().GetHostName());
-            return kFALSE;
+            ret = kFALSE;
+            continue;
         }
 
         // command config file writing
@@ -356,22 +359,25 @@ Bool_t TTServerManager::WriteADConfigBaF2()
         {
             Error("WriteADConfigBaF2", "Error during configuration file writing on server '%s'!",
                   s->GetHost().GetHostName());
-            return kFALSE;
+            ret = kFALSE;
+            continue;
         }
 
         Info("WriteADConfigBaF2", "Wrote configuration files on server '%s'",
              s->GetHost().GetHostName());
     }
 
-    return kTRUE;
+    return ret;
 }
 
 //______________________________________________________________________________
 Bool_t TTServerManager::WriteADConfigVeto()
 {
     // Command all Veto servers to write the AcquDAQ configuration files.
-    // Return kTRUE on success, otherwise kFALSE.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
     
+    Bool_t ret = kTRUE;
+  
     // loop over Veto servers
     for (Int_t i = 0; i < fServerVeto->GetSize(); i++)
     {
@@ -383,7 +389,8 @@ Bool_t TTServerManager::WriteADConfigVeto()
         {
             Error("WriteADConfigVeto", "No connection to Veto server '%s'!",
                   s->GetHost().GetHostName());
-            return kFALSE;
+            ret = kFALSE;
+            continue;
         }
 
         // command config file writing
@@ -391,22 +398,25 @@ Bool_t TTServerManager::WriteADConfigVeto()
         {
             Error("WriteADConfigVeto", "Error during configuration file writing on server '%s'!",
                   s->GetHost().GetHostName());
-            return kFALSE;
+            ret = kFALSE;
+            continue;
         }
 
         Info("WriteADConfigVeto", "Wrote configuration files on server '%s'",
              s->GetHost().GetHostName());
     }
 
-    return kTRUE;
+    return ret;
 }
 
 //______________________________________________________________________________
-Bool_t TTServerManager::StartCalibQAC()
+Bool_t TTServerManager::StartCalibQACBaF2()
 {
-    // Command all TAPS servers to start a QAC pedestal calibration.
-    // Return kTRUE on success, otherwise kFALSE.
+    // Command all BaF2 servers to start a QAC pedestal calibration.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
     
+    Bool_t ret = kTRUE;
+
     // loop over BaF2 servers
     for (Int_t i = 0; i < fServerBaF2->GetSize(); i++)
     {
@@ -418,7 +428,8 @@ Bool_t TTServerManager::StartCalibQAC()
         {
             Error("StartCalibQAC", "No connection to BaF2 server '%s'!",
                   s->GetHost().GetHostName());
-            return kFALSE;
+            ret = kFALSE;
+            continue;
         }
 
         // command start of QAC calibration
@@ -426,20 +437,60 @@ Bool_t TTServerManager::StartCalibQAC()
         {
             Error("StartCalibQAC", "Error during starting of QAC calibration on server '%s'!",
                   s->GetHost().GetHostName());
-            return kFALSE;
+            ret = kFALSE;
+            continue;
         }
 
         Info("StartCalibQAC", "Started QAC calibration on server '%s'",
              s->GetHost().GetHostName());
     }
 
-    return kTRUE;
+    return ret;
 }
 
 //______________________________________________________________________________
-Bool_t TTServerManager::StopCalibQAC()
+Bool_t TTServerManager::StartCalibQACVeto()
 {
-    // Command all TAPS servers to stop the QAC pedestal calibration.
+    // Command all Veto servers to start a QAC pedestal calibration.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
+    
+    Bool_t ret = kTRUE;
+ 
+    // loop over Veto servers
+    for (Int_t i = 0; i < fServerVeto->GetSize(); i++)
+    {
+        // get server
+        TTClientVeto* s = (TTClientVeto*) fServerVeto->At(i);
+
+        // check of server connection
+        if (s->GetStatus() != TTNetClient::kReady)
+        {
+            Error("StartCalibQAC", "No connection to Veto server '%s'!",
+                  s->GetHost().GetHostName());
+            ret = kFALSE;
+            continue;
+        }
+
+        // command start of QAC calibration
+        if (!s->StartCalibQAC())
+        {
+            Error("StartCalibQAC", "Error during starting of QAC calibration on server '%s'!",
+                  s->GetHost().GetHostName());
+            ret = kFALSE;
+            continue;
+        }
+
+        Info("StartCalibQAC", "Started QAC calibration on server '%s'",
+             s->GetHost().GetHostName());
+    }
+
+    return ret;
+}
+
+//______________________________________________________________________________
+Bool_t TTServerManager::StopCalibQACBaF2()
+{
+    // Command all BaF2 servers to stop the QAC pedestal calibration.
     // Return kTRUE on success, otherwise kFALSE.
     
     // loop over BaF2 servers
@@ -466,7 +517,7 @@ Bool_t TTServerManager::StopCalibQAC()
     }
     
     printf("\n\n");
-    printf("QAC pedestal calibration results");
+    printf("BaF2 QAC pedestal calibration results");
     printf("\n\n");
 
     // loop over BaF2 servers
@@ -481,6 +532,53 @@ Bool_t TTServerManager::StopCalibQAC()
         s->GetCalibQAC()->SavePedToDB();
     }
 
+    return kTRUE;
+}
+
+//______________________________________________________________________________
+Bool_t TTServerManager::StopCalibQACVeto()
+{
+    // Command all Veto servers to stop the QAC pedestal calibration.
+    // Return kTRUE on success, otherwise kFALSE.
+    
+    // loop over Veto servers
+    for (Int_t i = 0; i < fServerVeto->GetSize(); i++)
+    {
+        // get server
+        TTClientVeto* s = (TTClientVeto*) fServerVeto->At(i);
+
+        // check of server connection
+        if (s->GetStatus() != TTNetClient::kReady)
+        {
+            Error("StopCalibQAC", "No connection to Veto server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+
+        // command stop of QAC calibration
+        if (!s->StopCalibQAC())
+        {
+            Error("StopCalibQAC", "Error during stopping of QAC calibration on server '%s'!",
+                  s->GetHost().GetHostName());
+            return kFALSE;
+        }
+    }
+    
+    printf("\n\n");
+    printf("QAC pedestal calibration results");
+    printf("\n\n");
+
+    // loop over Veto servers
+    for (Int_t i = 0; i < fServerVeto->GetSize(); i++)
+    {
+        // get server
+        TTClientVeto* s = (TTClientVeto*) fServerVeto->At(i);
+
+        // show results and ask for saving to database
+        printf("%s\n", s->GetHost().GetHostName());
+        s->GetCalibQAC()->PrintPedPos();
+        s->GetCalibQAC()->SavePedToDB();
+    }
 
     return kTRUE;
 }

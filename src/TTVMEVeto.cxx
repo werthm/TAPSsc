@@ -109,6 +109,14 @@ void TTVMEVeto::SetPedestal(UInt_t p)
 }
 
 //______________________________________________________________________________
+void TTVMEVeto::SetPedestalChannel(Int_t c, UInt_t* p)
+{
+    // Set the pedestal of the channel 'c' to the values stored in the array 'p'.
+
+    fPed[c]  = p[0];
+}
+
+//______________________________________________________________________________
 void TTVMEVeto::SetThreshold(UInt_t t)
 {
     // Set the LED thresholds of all channels to 't'.

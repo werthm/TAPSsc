@@ -18,6 +18,7 @@
 
 #include "TTServer.h"
 #include "TTWriteADConfigVeto.h"
+#include "TTVMECrateVeto.h"
 
 
 class TTServerVeto : public TTServer
@@ -25,9 +26,12 @@ class TTServerVeto : public TTServer
 
 private:
     TTWriteADConfigVeto* fWriter;           // AcquDAQ config file writer
+    TTVMECrateVeto* fCrate;                 // VME crate
 
     Bool_t WriteADConfig(const Char_t* cmd, TSocket* s);
     
+    static const Long_t fgVMEBase;
+
 protected:
     virtual Bool_t ProcessCommand(const Char_t* cmd, TSocket* s);
 

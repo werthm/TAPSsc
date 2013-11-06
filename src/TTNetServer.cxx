@@ -95,7 +95,7 @@ void TTNetServer::Listen()
         if (!fIsRunning) break;
  
         // wait for connections via socket
-        TSocket* s = mon->Select(TTConfig::kStdNetTimeout);
+        TSocket* s = mon->Select(TTConfig::kShortNetTimeout);
         
         // check socket connection
         if (s == (TSocket*)-1) continue;

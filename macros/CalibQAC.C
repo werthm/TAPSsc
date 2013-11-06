@@ -14,7 +14,7 @@
 
 
 //______________________________________________________________________________
-void CalibQAC(Int_t status)
+void CalibQAC(Bool_t isVeto, Int_t status)
 {
     // load TAPSsc
     gSystem->Load("libTAPSsc.so");
@@ -26,9 +26,17 @@ void CalibQAC(Int_t status)
     
     // start/stop calibration
     Bool_t ret;
-    if (status) ret =TTServerManager::GetManager()->StartCalibQAC();
-    else ret = TTServerManager::GetManager()->StopCalibQAC();
-    
+    if (status) 
+    {
+        if (isVeto) ret =TTServerManager::GetManager()->StartCalibQACVeto();
+        else ret =TTServerManager::GetManager()->StartCalibQACBaF2();
+    }
+    else 
+    {
+        if (isVeto) ret = TTServerManager::GetManager()->StopCalibQACVeto();
+        else ret = TTServerManager::GetManager()->StopCalibQACBaF2();
+    }
+
     if (ret) printf("Operation successful!\n");
     else printf("Operation failed!\n");
  

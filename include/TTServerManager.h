@@ -56,8 +56,10 @@ public:
     Bool_t WriteADConfigBaF2();
     Bool_t WriteADConfigVeto();
 
-    Bool_t StartCalibQAC();
-    Bool_t StopCalibQAC();
+    Bool_t StartCalibQACBaF2();
+    Bool_t StartCalibQACVeto();
+    Bool_t StopCalibQACBaF2();
+    Bool_t StopCalibQACVeto();
 
     void PrintStatus();
 

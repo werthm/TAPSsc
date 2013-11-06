@@ -111,8 +111,6 @@ void TTCalibQAC::CalculatePed()
     // Calculate a new set of pedestal values based on the current values and
     // the added data.
     
-    Double_t w;
-
     // loop over modules
     for (Int_t i = 0; i < fNModule; i++)
     {
@@ -131,13 +129,9 @@ void TTCalibQAC::CalculatePed()
                 // calculate the new pedestal value
                 if ((Int_t)pos != fgPedPos) 
                 {
-                    Double_t diff = pos - fgPedPos;
-                    if (TMath::Abs(diff) > 200) w = 80;
-                    else if (TMath::Abs(diff) > 100) w = 10;
-                    else w = 2;
-                    
-                    if (pos) fPed[i][j][k] += diff / pos*w;
-                    else fPed[i][j][k] -= 50;
+                    if (!pos) fPed[i][j][k] -= 50;
+                    else if (pos > 100) fPed[i][j][k] += 1;
+                    else fPed[i][j][k] -= 1;
                 }
 
                 // save current pedestal position

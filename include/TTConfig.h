@@ -32,6 +32,7 @@ namespace TTConfig
     extern const Int_t kTAPSServerPort;
     extern const Int_t kStdNetTimeout;
     extern const Int_t kHVNetTimeout;
+    extern const Int_t kShortNetTimeout;
     extern const Int_t kLongNetTimeout;
 
     // network commands

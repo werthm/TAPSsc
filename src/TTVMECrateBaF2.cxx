@@ -180,9 +180,6 @@ void* TTVMECrateBaF2::RunCalibQAC(void* arg)
 
                 // write the new pedestal values to the hardware
                 m[i]->WritePed();
-
-                // debug
-                calib->PrintPedPos();
             }
         }
     }

@@ -714,7 +714,7 @@ void TTMySQLManager::CreateTable(TTDataType* d)
     const Char_t* tableFormat = 0;
     if (d->GetType() == kParType) tableFormat = TTConfig::kParTableFormat;
     else if (d->GetType() == kMapType) tableFormat = TTConfig::kMapTableFormat;
-    sprintf(query, "CREATE TABLE %s ( %s )", d->GetTableName(), tableFormat);
+    sprintf(query, "CREATE TABLE %s ( %s ) ENGINE = INNODB", d->GetTableName(), tableFormat);
 
     // submit the query
     res = SendQuery(query);
