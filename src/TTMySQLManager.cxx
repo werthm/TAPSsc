@@ -370,9 +370,6 @@ Bool_t TTMySQLManager::ReadParameters(const Char_t* data, Int_t length,
     // Read 'length' entries of the parameter data type 'data' for the elements 
     // 'elem' from the database to the array 'outPar'.
     // Return kFALSE if an error occurred, otherwise kTRUE.
-    // NOTE: The element numbers in 'elem' have to be sorted in ascending order!
-
-    Char_t tmp[256];
 
     // get the data type
     TTDataType* d = (TTDataType*) fData->FindObject(data);
@@ -389,61 +386,48 @@ Bool_t TTMySQLManager::ReadParameters(const Char_t* data, Int_t length,
         return kFALSE;
     }   
  
-    // create the query
-    Char_t query[8192];
-    sprintf(query, "SELECT value FROM %s WHERE id IN (SELECT MAX(id) FROM %s GROUP BY elem ) ",
-            d->GetTableName(), d->GetTableName());
+    // get the parameters
+    Int_t read = 0;
+    Char_t query[1024];
     for (Int_t i = 0; i < length; i++)
     {
-        if (i == 0) sprintf(tmp, "AND (elem = %d ", elem[i]);
-        else sprintf(tmp, "OR elem = %d ", elem[i]);
-        strcat(query, tmp);
+        // build query
+        sprintf(query, "SELECT value FROM %s WHERE elem = %d ORDER BY id DESC LIMIT 1", 
+                d->GetTableName(), elem[i]);
+ 
+        // get data from database
+        TSQLResult* res = SendQuery(query);
+        if (res)
+        {
+            if (res->GetRowCount() == 1)
+            {
+                TSQLRow* row = res->Next();
+                outPar[i] = atof(row->GetField(0));
+                
+                delete row;
+                delete res;
+                read++;
+            }
+            else 
+            {
+                delete res;
+            }
+        } 
     }
-    strcat(query, ")");
 
-    // read from database
-    TSQLResult* res = SendQuery(query);
-
-    // check result
-    if (!res)
+    // check outcome
+    if (read == length)
     {
-        if (!fSilence) Error("ReadParameters", "Could not read values of parameter data type '%s'!", 
-                             d->GetName());
+        if (!fSilence) Info("ReadParameters", "Read %d parameters of '%s' from the database", 
+                            length, data);
+         return kTRUE;
+    }
+    else
+    {
+        if (!fSilence) Error("ReadParameters", "Could not read %d parameters of '%s'!", 
+                             length, data);
         return kFALSE;
     }
-    else if (!res->GetRowCount())
-    {
-        if (!fSilence) Error("ReadParameters", "No values found for parameter data type '%s'!", 
-                             d->GetName());
-        delete res;
-        return kFALSE;
-    }
-
-    // count rows
-    if (res->GetRowCount() != length)
-    {
-        if (!fSilence) Error("ReadParameters", "Numbers of requested and read values differ! (%d != %d)", 
-                             length, res->GetRowCount());
-        delete res;
-        return kFALSE;
-    }
-
-    // read get data
-    for (Int_t i = 0; i < length; i++) 
-    {
-        TSQLRow* row = res->Next();
-        outPar[i] = atof(row->GetField(0));
-        delete row;
-    }
-
-    // clean-up
-    delete res;
-    
-    // user information
-    if (!fSilence) Info("ReadParameters", "Read %d parameters of '%s' from the database", 
-                        length, data);
-    
-    return kTRUE;
 }
 
 //______________________________________________________________________________
@@ -454,10 +438,7 @@ Bool_t TTMySQLManager::ReadMaps(const Char_t* data, Int_t length, Int_t* elem,
     // from the database to the arrays 'outCrate', 'outModule' and 'outChannel' 
     // (if non-zero, respectively).
     // Return kFALSE if an error occurred, otherwise kTRUE.
-    // NOTE: The element numbers in 'elem' have to be sorted in ascending order!
     
-    Char_t tmp[256];
-
     // get the data type
     TTDataType* d = (TTDataType*) fData->FindObject(data);
     if (!d)
@@ -473,63 +454,50 @@ Bool_t TTMySQLManager::ReadMaps(const Char_t* data, Int_t length, Int_t* elem,
         return kFALSE;
     }   
  
-    // create the query
-    Char_t query[8192];
-    sprintf(query, "SELECT crate,module,channel FROM %s WHERE id IN (SELECT MAX(id) FROM %s GROUP BY elem ) ",
-            d->GetTableName(), d->GetTableName());
+    // get the values
+    Int_t read = 0;
+    Char_t query[1024];
     for (Int_t i = 0; i < length; i++)
     {
-        if (i == 0) sprintf(tmp, "AND (elem = %d ", elem[i]);
-        else sprintf(tmp, "OR elem = %d ", elem[i]);
-        strcat(query, tmp);
+        // build query
+        sprintf(query, "SELECT crate,module,channel FROM %s WHERE elem = %d ORDER BY id DESC LIMIT 1", 
+                        d->GetTableName(), elem[i]);
+ 
+        // get data from database
+        TSQLResult* res = SendQuery(query);
+        if (res)
+        {
+            if (res->GetRowCount() == 1)
+            {
+                TSQLRow* row = res->Next();
+                outCrate[i] = atoi(row->GetField(0));
+                outModule[i] = atoi(row->GetField(1));
+                outChannel[i] = atoi(row->GetField(2));
+                
+                delete row;
+                delete res;
+                read++;
+            }
+            else 
+            {
+                delete res;
+            }
+        } 
     }
-    strcat(query, ")");
 
-    // read from database
-    TSQLResult* res = SendQuery(query);
-
-    // check result
-    if (!res)
+    // check outcome
+    if (read == length)
     {
-        if (!fSilence) Error("ReadMaps", "Could not read values of map data type '%s'!", 
-                             d->GetName());
+        if (!fSilence) Info("ReadMaps", "Read %d maps of '%s' from the database", 
+                            length, data);
+         return kTRUE;
+    }
+    else
+    {
+        if (!fSilence) Error("ReadMaps", "Could not read %d maps of '%s'!", 
+                             length, data);
         return kFALSE;
     }
-    else if (!res->GetRowCount())
-    {
-        if (!fSilence) Error("ReadMaps", "No values found for map data type '%s'!", 
-                             d->GetName());
-        delete res;
-        return kFALSE;
-    }
-
-    // count rows
-    if (res->GetRowCount() != length)
-    {
-        if (!fSilence) Error("ReadMaps", "Numbers of requested and read values differ! (%d != %d)", 
-                             length, res->GetRowCount());
-        delete res;
-        return kFALSE;
-    }
-
-    // read get data
-    for (Int_t i = 0; i < length; i++) 
-    {
-        TSQLRow* row = res->Next();
-        if (outCrate) outCrate[i] = atof(row->GetField(0));
-        if (outModule) outModule[i] = atof(row->GetField(1));
-        if (outChannel) outChannel[i] = atof(row->GetField(2));
-        delete row;
-    }
-
-    // clean-up
-    delete res;
-    
-    // user information
-    if (!fSilence) Info("ReadMaps", "Read %d maps of '%s' from the database", 
-                        length, data);
-    
-    return kTRUE;
 }
 
 //______________________________________________________________________________
