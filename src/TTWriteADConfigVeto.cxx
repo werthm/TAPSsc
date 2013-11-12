@@ -27,11 +27,12 @@ Bool_t TTWriteADConfigVeto::ParseLine()
     // parse key line: 'Hardware-ID'
     if (TTUtils::IndexOf(fLineIn, "Hardware-ID:") != -1)
     {
+        Int_t ch = 0;
         Int_t elem;
         Double_t tmp;
         
         // get map info from data base
-        if (TTMySQLManager::GetManager()->GetElements("Map.Veto.HWID", fCrate, fModule, &elem) != 1)
+        if (!TTMySQLManager::GetManager()->ReadElements("Map.Veto.HWID", 1, &ch, fCrate, fModule, &elem))
         {
             Error("ParseLine", "MySQLManager reported an error when trying to get 'Map.Veto.HWID' values.");
             return kFALSE;

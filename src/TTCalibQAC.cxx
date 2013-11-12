@@ -165,13 +165,22 @@ Bool_t TTCalibQAC::InitPedFromDB()
     // map type
     const Char_t* map = fIsVeto ? fgMapVeto : fgMapBaF2;
 
+    // channel and element arrays
+    Int_t elem[fNCh];
+    Int_t ch[fNCh];
+
+    // init channel array
+    for (Int_t i = 0; i < fNCh; i++) ch[i] = i;
+
     // loop over modules
     for (Int_t i = 0; i < fNModule; i++)
     {
-        Int_t elem[fNCh];
-
-        // get channels in the module
-        TTMySQLManager::GetManager()->GetElements(map, fCrateID, i, elem);
+        // get elements in the module
+        if (!TTMySQLManager::GetManager()->ReadElements(map, fNCh, ch, fCrateID, i, elem))
+        {
+            Error("InitPedFromDB", "Could not read elements from the database!");
+            return kFALSE;
+        }
         
         // get pedestal values
         for (Int_t j = 0; j < fNPed; j++)
@@ -187,11 +196,9 @@ Bool_t TTCalibQAC::InitPedFromDB()
                 Error("InitPedFromDB", "Could not read the '%s' parameters from the database!", key);
                 return kFALSE;
             }
-            else
-            {
-                // set pedestal values for all channels
-                for (Int_t k = 0; k < fNCh; k++) fPed[i][k][j] = val[k];
-            }
+            
+            // set pedestal values for all channels
+            for (Int_t k = 0; k < fNCh; k++) fPed[i][k][j] = val[k];
         }
     }
 
@@ -211,13 +218,21 @@ void TTCalibQAC::SavePedToDB()
     // map type
     const Char_t* map = fIsVeto ? fgMapVeto : fgMapBaF2;
     
+    // init channel array
+    Int_t ch[fNCh];
+    for (Int_t i = 0; i < fNCh; i++) ch[i] = i;
+ 
     // fill flat lists with element indices and pedestal values
     // loop over modules
     for (Int_t i = 0; i < fNModule; i++)
     {
-        // get channels in the module
-        TTMySQLManager::GetManager()->GetElements(map, fCrateID, i, elem+i*fNCh);
-        
+        // get elements in the module
+        if (!TTMySQLManager::GetManager()->ReadElements(map, fNCh, ch, fCrateID, i, elem+i*fNCh))
+        {
+            Error("SavePedToDB", "Could not read elements from the database!");
+            return;
+        }
+         
         // loop over channels
         for (Int_t j = 0; j < fNCh; j++)
         {

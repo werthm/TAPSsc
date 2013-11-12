@@ -21,7 +21,7 @@ ClassImp(TTWriteADConfig)
 
 //______________________________________________________________________________
 TTWriteADConfig::TTWriteADConfig(const Int_t crate, const Char_t* const type, 
-                                 const Char_t* map)
+                                 const Char_t* map, const Int_t nElem)
 {
     // Constructor.
 
@@ -32,8 +32,8 @@ TTWriteADConfig::TTWriteADConfig(const Int_t crate, const Char_t* const type,
     strcpy(fMap, map);
     fModule = -1;
 
-    fNElements = 0;
-    fElements = new Int_t[64];
+    fNElements = nElem;
+    fElements = new Int_t[fNElements];
 
     fLineIn  = new Char_t[1024];
     fLineOut = new Char_t[1024];
@@ -88,12 +88,17 @@ Bool_t TTWriteADConfig::Write(const Int_t module)
     // open output file
     if (!OpenADConfig(module)) return kFALSE;
 
-    // get element info form data base
-    fNElements = TTMySQLManager::GetManager()->GetElements(fMap, fCrate, module, fElements);
+    // init channel array
+    Int_t ch[fNElements];
+    for (Int_t i = 0; i < fNElements; i++) ch[i] = i;
 
-    // check result
-    if (fNElements == -1) return kFALSE;
-
+    // get elements in the module
+    if (!TTMySQLManager::GetManager()->ReadElements(fMap, fNElements, ch, fCrate, module, fElements))
+    {
+        Error("Write", "Could not read elements from the database!");
+        return kFALSE;
+    }
+  
     // parse lines of template files
     while (fTemplateFile->good())
     {

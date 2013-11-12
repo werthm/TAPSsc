@@ -37,7 +37,7 @@ namespace TTConfig
                     "               ON UPDATE CURRENT_TIMESTAMP";
     
     // version numbers
-    const Char_t kTAPSscVersion[] = "0.0.1";
+    const Char_t kTAPSscVersion[] = "0.0.2";
     const Int_t kStdNetTimeout = 1000;
     const Int_t kHVNetTimeout = 5000;
     const Int_t kShortNetTimeout = 50;

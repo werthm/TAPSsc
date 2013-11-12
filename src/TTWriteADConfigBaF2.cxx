@@ -27,11 +27,12 @@ Bool_t TTWriteADConfigBaF2::ParseLine()
     // parse key line: 'Hardware-ID'
     if (TTUtils::IndexOf(fLineIn, "Hardware-ID:") != -1)
     {
+        Int_t ch = 0;
         Int_t elem;
         Double_t tmp;
         
         // get map info from data base
-        if (TTMySQLManager::GetManager()->GetElements("Map.BaF2.HWID", fCrate, fModule, &elem) != 1)
+        if (!TTMySQLManager::GetManager()->ReadElements("Map.BaF2.HWID", 1, &ch, fCrate, fModule, &elem))
         {
             Error("ParseLine", "MySQLManager reported an error when trying to get 'Map.BaF2.HWID' values.");
             return kFALSE;

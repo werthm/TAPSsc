@@ -311,55 +311,69 @@ Bool_t TTMySQLManager::IsConnected()
 }
 
 //______________________________________________________________________________
-Int_t TTMySQLManager::GetElements(const Char_t* data, Int_t crate, Int_t module, 
-                                  Int_t* outElem)
+Bool_t TTMySQLManager::ReadElements(const Char_t* data, Int_t length, Int_t* channels,
+                                    Int_t crate, Int_t module, Int_t* outElem)
 {
-    // Search all elements of the crate 'crate' and module 'module' using the map
-    // data type 'data' and write / them to 'outElem'. 
-    // Return the number of elements or -1 if any error occurred.
+    // Using the map 'data', read all elements in the 'length' channels stored 
+    // in 'channels' of crate 'crate' and module 'module' and store them in 'outElem'.
+    // Return kFALSE if an error occurred, otherwise kTRUE.
     
     // get the data type
     TTDataType* d = (TTDataType*) fData->FindObject(data);
     if (!d)
     {
-        if (!fSilence) Error("GetElements", "Data type '%s' was not found!", data);
-        return -1;
+        if (!fSilence) Error("ReadElements", "Data type '%s' was not found!", data);
+        return kFALSE;
     }
 
     // check data type
     if (d->GetType() != kMapType)
     {
-        if (!fSilence) Error("GetElements", "Data type '%s' is not a map data type!", data);
-        return -1;
+        if (!fSilence) Error("ReadElements", "Data type '%s' is not a map data type!", data);
+        return kFALSE;
     }   
  
-    // create the query
-    Char_t query[256];
-    sprintf(query, "select elem from %s where crate = %d AND module = %d ORDER BY channel ASC", 
-            d->GetTableName(), crate, module);
-
-    // read from database
-    TSQLResult* res = SendQuery(query);
-
-    // check result
-    if (!res)
+    // get the parameters
+    Int_t read = 0;
+    Char_t query[1024];
+    for (Int_t i = 0; i < length; i++)
     {
-        if (!fSilence) Error("GetElements", "Could not read table of map data type '%s'!", 
-                             d->GetName());
-        return -1;
-    }
-    else 
-    {
-        // read and save data
-        Int_t nElem = res->GetRowCount();
-        for (Int_t i = 0; i < nElem; i++) 
+        // build query
+        sprintf(query, "SELECT elem FROM %s WHERE crate = %d AND module = %d and channel = %d ORDER BY id DESC LIMIT 1",
+                d->GetTableName(), crate, module, channels[i]);
+ 
+        // get data from database
+        TSQLResult* res = SendQuery(query);
+        if (res)
         {
-            TSQLRow* row = res->Next();
-            outElem[i] = atoi(row->GetField(0));
-            delete row;
-        }
-        delete res;
-        return nElem;
+            if (res->GetRowCount() == 1)
+            {
+                TSQLRow* row = res->Next();
+                outElem[i] = atoi(row->GetField(0));
+                
+                delete row;
+                delete res;
+                read++;
+            }
+            else 
+            {
+                delete res;
+            }
+        } 
+    }
+
+    // check outcome
+    if (read == length)
+    {
+        if (!fSilence) Info("ReadElements", "Read %d elements of '%s' from the database", 
+                            length, data);
+         return kTRUE;
+    }
+    else
+    {
+        if (!fSilence) Error("ReadElements", "Could not read %d elements of '%s'!", 
+                             length, data);
+        return kFALSE;
     }
 }
 

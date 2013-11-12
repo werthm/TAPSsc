@@ -56,7 +56,7 @@ protected:
 
 public:
     TTWriteADConfig(const Int_t crate, const Char_t* const type,
-                    const Char_t* map);
+                    const Char_t* map, const Int_t nElem);
     virtual ~TTWriteADConfig();
 
     Bool_t Write(const Int_t module);

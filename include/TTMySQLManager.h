@@ -65,8 +65,8 @@ public:
                            Int_t* elem, Double_t* par);
     Bool_t WriteMaps(const Char_t* data, Int_t length, Int_t* elem, 
                      Int_t* crate, Int_t* module, Int_t* channel);
-    Int_t GetElements(const Char_t* data, Int_t crate, Int_t module, 
-                      Int_t* outElem);
+    Bool_t ReadElements(const Char_t* data, Int_t length, Int_t* channels,
+                        Int_t crate, Int_t module, Int_t* outElem);
     
     void CreateTable(TTDataType* d);
     Bool_t InitDatabase();

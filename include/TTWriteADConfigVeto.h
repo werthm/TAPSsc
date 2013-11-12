@@ -28,7 +28,7 @@ protected:
 
 public:
     TTWriteADConfigVeto(const Int_t crate)
-       : TTWriteADConfig(crate, "Veto", "Map.Veto") { };
+       : TTWriteADConfig(crate, "Veto", "Map.Veto", 8) { };
     virtual ~TTWriteADConfigVeto() {};
 
     ClassDef(TTWriteADConfigVeto, 0) // Write AcquDAQ Veto configuration files
