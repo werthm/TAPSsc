@@ -1,0 +1,83 @@
+################################################################################
+# TAPSsc configuration                                                         #
+################################################################################
+
+################################################################################
+# Database configuration                                                       #
+################################################################################
+
+DB.Host:                phys-jaguar
+DB.Name:                taps_domi
+DB.User:                calib_rw
+DB.Pass:                write_real
+
+################################################################################
+# Database data types configuration                                            #
+################################################################################
+
+DB.DataTypes.Par:       config/par.def
+DB.DataTypes.Map:       config/map.def
+
+################################################################################
+# HV control configuration                                                     #
+################################################################################
+
+HV.RS232.Device:        /dev/ttyUSB0
+
+################################################################################
+# Server configuration                                                         #
+################################################################################
+
+Server.Number:          11
+
+Server-0.Host:          vme-taps-trigger
+Server-0.Type:          HV
+
+Server-1.Host:          vme-taps-baf-a
+Server-1.Type:          BaF2
+Server-1.VME.Range:     0x30000000
+
+Server-2.Host:          vme-taps-baf-b
+Server-2.Type:          BaF2
+Server-2.VME.Range:     0x30000000
+
+Server-3.Host:          vme-taps-baf-c
+Server-3.Type:          BaF2
+Server-3.VME.Range:     0x30000000
+
+Server-4.Host:          vme-taps-baf-d
+Server-4.Type:          BaF2
+Server-4.VME.Range:     0x30000000
+
+Server-5.Host:          vme-taps-baf-e
+Server-5.Type:          BaF2
+Server-5.VME.Range:     0x30000000
+
+Server-6.Host:          vme-taps-baf-f
+Server-6.Type:          BaF2
+Server-6.VME.Range:     0x30000000
+
+Server-7.Host:          vme-taps-veto-ab
+Server-7.Type:          Veto
+Server-7.VME.Range:     0x50000000
+
+Server-8.Host:          vme-taps-veto-cd
+Server-8.Type:          Veto
+Server-8.VME.Range:     0x50000000
+
+Server-9.Host:          vme-taps-veto-ef
+Server-9.Type:          Veto
+Server-9.VME.Range:     0x50000000
+
+Server-10.Host:         vme-taps-pwo
+Server-10.Type:         PWO
+
+################################################################################
+# AcquDAQ configuration                                                        #
+################################################################################
+
+ARDAQ.Cfg.Mod.Templ.BaF2:   config/Module_Template_BaF2
+ARDAQ.Cfg.Mod.Templ.Veto:   config/Module_Template_Veto
+ARDAQ.Cfg.Mod.Templ.PWO:    config/Module_Template_PWO
+ARDAQ.Cfg.Mod.File.Prefix:  /root/acqu/data/Module_
+

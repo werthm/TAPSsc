@@ -1,0 +1,45 @@
+// SVN Info: $Id: TTClientBaF2.h 1751 2013-11-05 02:02:46Z werthm $
+
+/*************************************************************************
+ * Author: Dominik Werthmueller, 2013
+ *************************************************************************/
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+// TTClientBaF2                                                         //
+//                                                                      //
+// BaF2 TAPS client class.                                              //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+
+
+#ifndef TTCLIENTBAF2_H
+#define TTCLIENTBAF2_H
+
+#include "TTClient.h"
+#include "TTCalibQAC.h"
+
+
+class TTClientBaF2 : public TTClient
+{
+
+private:
+    TTCalibQAC* fCalibQAC;          // QAC pedestal calibration
+
+public:
+    TTClientBaF2() : TTClient(),
+                     fCalibQAC(0) { }
+    TTClientBaF2(const Char_t* server, Int_t port);
+    virtual ~TTClientBaF2();
+ 
+    TTCalibQAC* GetCalibQAC() const { return fCalibQAC; }
+
+    Bool_t WriteADConfig();
+    Bool_t StartCalibQAC();
+    Bool_t StopCalibQAC();
+
+    ClassDef(TTClientBaF2, 0) // BaF2 TAPS client
+};
+
+#endif
+
