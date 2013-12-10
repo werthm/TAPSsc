@@ -6,10 +6,10 @@
 # Database configuration                                                       #
 ################################################################################
 
-DB.Host:                phys-jaguar
-DB.Name:                taps_domi
-DB.User:                calib_rw
-DB.Pass:                write_real
+DB.Host:                taps00.online.a2.kph
+DB.Name:                TAPSsc
+DB.User:                taps
+DB.Pass:                taps2003
 
 ################################################################################
 # Database data types configuration                                            #
