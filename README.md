@@ -10,7 +10,13 @@ Installation
 * ROOT 5.34 (with MySQL support)
 
 ### Installation
-`make clean ; make`
+
+* Compile the software using `make clean ; make`
+* Set some shell variables, e.g.
+```
+export TAPSSC="$HOME/TAPSsc"
+export LD_LIBRARY_PATH="$TAPSSC/lib:$LD_LIBRARY_PATH"
+```
 
 Changelog
 ---------
