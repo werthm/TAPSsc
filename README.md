@@ -10,7 +10,6 @@ Installation
 * ROOT 5.34 (with MySQL support)
 
 ### Installation
-
 * Compile the software using `make clean ; make`
 * Set some shell variables, e.g.
 ```
