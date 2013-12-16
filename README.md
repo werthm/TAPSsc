@@ -15,7 +15,6 @@ Installation
 
 ```
 export TAPSSC="$HOME/TAPSsc"
-
 export LD_LIBRARY_PATH="$TAPSSC/lib:$LD_LIBRARY_PATH"
 ```
 
