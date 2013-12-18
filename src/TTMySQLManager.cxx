@@ -482,9 +482,9 @@ Bool_t TTMySQLManager::ReadMaps(const Char_t* data, Int_t length, Int_t* elem,
             if (res->GetRowCount() == 1)
             {
                 TSQLRow* row = res->Next();
-                outCrate[i] = atoi(row->GetField(0));
-                outModule[i] = atoi(row->GetField(1));
-                outChannel[i] = atoi(row->GetField(2));
+                if (outCrate) outCrate[i] = atoi(row->GetField(0));
+                if (outModule) outModule[i] = atoi(row->GetField(1));
+                if (outChannel) outChannel[i] = atoi(row->GetField(2));
                 
                 delete row;
                 delete res;
