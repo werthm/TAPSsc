@@ -211,7 +211,7 @@ void TTCalibQAC::SavePedToDB()
     // flat list of elements and pedestal values
     const Int_t nElem = fNModule*fNCh;
     Int_t elem[nElem];
-    Int_t newPed[fNPed][nElem];
+    Double_t newPed[fNPed][nElem];
 
     // map type
     const Char_t* map = fIsVeto ? fgMapVeto : fgMapBaF2;
@@ -243,29 +243,15 @@ void TTCalibQAC::SavePedToDB()
         }
     }
 
-    // sort lists
-    Int_t elemSort[nElem];
-    Double_t newPedSort[fNPed][nElem];
-    Int_t sortIdx[nElem];
-    TMath::Sort(nElem, elem, sortIdx, kFALSE);
-    for (Int_t i = 0; i < nElem; i++)
-    {
-        elemSort[i] = elem[sortIdx[i]];
-        for (Int_t j = 0; j < fNPed; j++)
-        {
-            newPedSort[j][i] = newPed[j][sortIdx[i]];
-        }
-    }
-    
     // read old values from database for comparison
-    Double_t oldPedSort[fNPed][nElem];
+    Double_t oldPed[fNPed][nElem];
     for (Int_t i = 0; i < fNPed; i++)
     {
         // get parameter key
         const Char_t* key = fIsVeto ? fgParPedVeto[i] : fgParPedBaF2[i];
 
         // read from database
-        if (!TTMySQLManager::GetManager()->ReadParameters(key, nElem, elemSort, oldPedSort[i]))
+        if (!TTMySQLManager::GetManager()->ReadParameters(key, nElem, elem, oldPed[i]))
         {
             Error("SavePedToDB", "Could not read the '%s' parameters from the database!", key);
             return;
@@ -276,9 +262,9 @@ void TTCalibQAC::SavePedToDB()
     // loop over modules
     for (Int_t i = 0; i < nElem; i++)
     {
-        printf("%03d:  ", elemSort[i]);
+        printf("%03d:  ", elem[i]);
         for (Int_t j = 0; j < fNPed; j++)
-            printf("%5.1f%%  ", 100.*(newPedSort[j][i]-oldPedSort[j][i])/oldPedSort[j][i]);
+            printf("%5.1f%%  ", 100.*(newPed[j][i]-oldPed[j][i])/oldPed[j][i]);
         printf("\n");
     }
 
@@ -299,7 +285,7 @@ void TTCalibQAC::SavePedToDB()
         const Char_t* key = fIsVeto ? fgParPedVeto[i] : fgParPedBaF2[i];
 
         // write to database
-        if (!TTMySQLManager::GetManager()->WriteParameters(key, nElem, elemSort, newPedSort[i]))
+        if (!TTMySQLManager::GetManager()->WriteParameters(key, nElem, elem, newPed[i]))
         {
             Error("SavePedToDB", "Could not write the '%s' parameters to the database!", key);
             return;
