@@ -355,6 +355,8 @@ void TTCalibQAC::PrintPedPos()
 {
     // Print the current pedestal position to stdout.
 
+    Int_t fg;
+
     // loop over modules
     for (Int_t i = 0; i < fNModule; i++)
     {
@@ -368,7 +370,9 @@ void TTCalibQAC::PrintPedPos()
             // loop over pedestal values
             for (Int_t k = 0; k < fNPed; k++)
             {
-                printf("%4d ", fPedPos[i][j][k]);
+                if (fPedPos[i][j][k] == 100) fg = 32;
+                else fg = 31;
+                printf("%c[%d;%dm%4d%c[%dm", 0x1b, 0, fg, fPedPos[i][j][k], 0x1b, 0);
             }
         }
 
