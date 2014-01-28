@@ -258,13 +258,36 @@ void TTCalibQAC::SavePedToDB()
         }
     }
         
-    // print relative differences
+    // print old/new values and relative differences and check limits
     // loop over modules
     for (Int_t i = 0; i < nElem; i++)
     {
         printf("%03d:  ", elem[i]);
         for (Int_t j = 0; j < fNPed; j++)
-            printf("%5.1f%%  ", 100.*(newPed[j][i]-oldPed[j][i])/oldPed[j][i]);
+        {
+            // get parameter key
+            const Char_t* key = fIsVeto ? fgParPedVeto[j] : fgParPedBaF2[j];
+            
+            // get the data type
+            TTDataTypePar* d = (TTDataTypePar*) TTMySQLManager::GetManager()->GetDataTypes()->FindObject(key);
+            
+            // check and correct limits
+            Bool_t corrected = kFALSE;
+            if (newPed[j][i] < d->GetMin()) 
+            {
+                newPed[j][i] = d->GetMin();
+                corrected = kTRUE;
+            }
+            if (newPed[j][i] > d->GetMax()) 
+            {
+                newPed[j][i] = d->GetMax();
+                corrected = kTRUE;
+            }
+
+            printf("old: %4.0f   new: %4.0f   (%5.1f%%)  ", oldPed[j][i], newPed[j][i], 
+                   100.*(newPed[j][i]-oldPed[j][i])/oldPed[j][i]);
+            if (corrected) printf("[corrected to limits]  ");
+        }
         printf("\n");
     }
 
