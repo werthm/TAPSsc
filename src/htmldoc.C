@@ -1,5 +1,5 @@
 /*************************************************************************
- * Author: Dominik Werthmueller, 2013
+ * Author: Dominik Werthmueller, 2014
  *************************************************************************/
 
 //////////////////////////////////////////////////////////////////////////
@@ -16,9 +16,10 @@ void htmldoc()
 {
     gROOT->Reset();
     if (!gROOT->GetClass("TTMySQLManager")) gSystem->Load("libTAPSsc.so");
-
+    
+    gEnv->SetValue("Unix.*.Root.Html.SourceDir", "src:include");
+ 
     THtml h;
-    h.SetInputDir(".:src:include");
     h.SetOutputDir("htmldoc");
     h.SetAuthorTag("* Author:");
     h.SetProductName("TAPSsc");
