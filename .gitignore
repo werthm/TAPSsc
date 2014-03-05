@@ -13,3 +13,6 @@ G__*.h
 
 # binaries
 /bin/*
+
+# HTML documentation
+/htmldoc
