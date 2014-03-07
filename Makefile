@@ -4,7 +4,7 @@
 ##                     TAPS slowcontrol software                   ##
 ##                                                                 ##
 ##                                                                 ##
-##                           (C) 2013 by                           ##
+##                        (C) 2013-2014 by                         ##
 ##      Dominik Werthmueller <dominik.werthmueller@unibas.ch>      ##
 ##              Thomas Strub <thomas.strub@unibas.ch>              ##
 ##                                                                 ##
@@ -92,10 +92,21 @@ $(S)/G__TAPSsc.cxx: $(INC) $(I)/LinkDef.h
 	@mkdir -p $(O)
 	@$(CCCOMP) $(CXXFLAGS) -o $(O)/$@ -c $< 
 
-docs:
+docs: htmldoc docu
 	@echo "Creating HTML documentation"
 	@rm -r -f htmldoc
 	root -b -n -q $(S)/htmldoc.C
+	@echo "Done."
+
+htmldoc: $(LIB_TAPSsc)
+	@echo "Creating HTML documentation"
+	@rm -r -f htmldoc
+	root -b -n -q $(S)/htmldoc.C
+	@echo "Done."
+
+docu:
+	@echo "Creating documentation"
+	@make -s -C doc
 	@echo "Done."
 
 clean:
@@ -105,5 +116,6 @@ clean:
 	rm -f -r $(O)
 	rm -r -f $(B)
 	rm -r -f htmldoc
+	@make -s -C doc clean
 	@echo "Done."
  

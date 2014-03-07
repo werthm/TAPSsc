@@ -16,3 +16,8 @@ G__*.h
 
 # HTML documentation
 /htmldoc
+
+# temporary files of the documentation
+/doc/uml/class_hierarchy_1.pdf
+/doc/uml/class_hierarchy_2.pdf
+
