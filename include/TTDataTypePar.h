@@ -40,7 +40,7 @@ public:
     void SetMax(Double_t max) { fMax = max; }
     void SetMap(TTDataTypeMap* m) { fMap = m; }
     
-    virtual void Print();
+    virtual void Print(Option_t* option = "") const;
     
     ClassDef(TTDataTypePar, 1) // Parameter data type class
 };

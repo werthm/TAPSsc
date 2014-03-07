@@ -28,7 +28,7 @@ TTDataType::TTDataType(const Char_t* name, const Char_t* title,
 }
 
 //______________________________________________________________________________
-void TTDataType::Print()
+void TTDataType::Print(Option_t* option) const
 {
     // Print the content of this class.
     

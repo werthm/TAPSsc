@@ -51,6 +51,7 @@ Bool_t TTWriteADConfigBaF2::ParseLine()
     }
     
     // keys for channel-wise configuration
+    Char_t fval[256];
     const Int_t keyN = 7;
     const Char_t* keySt[keyN] = { "Thr-CFD-Raw:", "Thr-LED1:", "Thr-LED2:",
                                   "Ped-LG:", "Ped-LGS:", "Ped-SG:", "Ped-SGS:" };
@@ -74,8 +75,12 @@ Bool_t TTWriteADConfigBaF2::ParseLine()
             else
             {
                 // prepare output line
-                sprintf(fLineOut, keySt[i]);            
-                for (Int_t j = 0; j < fNElements; j++) sprintf(fLineOut, "%s %.f", fLineOut, tmp[j]);
+                sprintf(fLineOut, "%s ", keySt[i]);
+                for (Int_t j = 0; j < fNElements; j++) 
+                {
+                    sprintf(fval, "%.f ", tmp[j]);
+                    strcat(fLineOut, fval);
+                }
                 return kTRUE;
             }
         }

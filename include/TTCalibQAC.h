@@ -64,7 +64,7 @@ public:
     Bool_t InitPedFromDB();
     void SavePedToDB();
     void PrintPedPos();
-    void Print();
+    virtual void Print(Option_t* option = "") const;
 
     ClassDef(TTCalibQAC, 1) // BaF2/Veto board QAC calibration
 };

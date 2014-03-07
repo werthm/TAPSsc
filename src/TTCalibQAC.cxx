@@ -392,7 +392,7 @@ void TTCalibQAC::PrintPedPos()
 }
 
 //______________________________________________________________________________
-void TTCalibQAC::Print()
+void TTCalibQAC::Print(Option_t* option) const
 {
     // Print out the content of this class.
 
