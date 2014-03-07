@@ -76,7 +76,8 @@ Bool_t TTWriteADConfigVeto::ParseLine()
                 sprintf(fLineOut, "%s ", keySt[i]);
                 for (Int_t j = 0; j < fNElements; j++) 
                 {
-                    sprintf(fval, "%.f ", tmp[j]);
+                    if (j == fNElements-1) sprintf(fval, "%.f", tmp[j]);
+                    else sprintf(fval, "%.f ", tmp[j]);
                     strcat(fLineOut, fval);
                 }
                 return kTRUE;
