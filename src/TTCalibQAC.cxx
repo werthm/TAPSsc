@@ -291,28 +291,107 @@ void TTCalibQAC::SavePedToDB()
         printf("\n");
     }
 
-    // ask for user confirmation
+    //
+    // ask for user action
+    //
+
     Char_t answer[256];
-    printf("\nWould you like to write the new values to the database? (yes/no) : ");
+    printf("\nWould you like to write the new values to the database? (no/all/list of modules sep. by ',') : ");
     scanf("%s", answer);
-    if (strcmp(answer, "yes")) 
+    if (!strcmp(answer, "no"))
     {
+        //
+        // no database writing
+        //
+
         printf("Aborted.\n");
         return;
     }
-    
-    // write to the database
-    for (Int_t i = 0; i < fNPed; i++)
+    else if (!strcmp(answer, "all"))
     {
-        // get parameter key
-        const Char_t* key = fIsVeto ? fgParPedVeto[i] : fgParPedBaF2[i];
+        //
+        // write values of all modules to the database
+        //
 
-        // write to database
-        if (!TTMySQLManager::GetManager()->WriteParameters(key, nElem, elem, newPed[i]))
+        // loop over pedestal types
+        for (Int_t i = 0; i < fNPed; i++)
         {
-            Error("SavePedToDB", "Could not write the '%s' parameters to the database!", key);
+            // get parameter key
+            const Char_t* key = fIsVeto ? fgParPedVeto[i] : fgParPedBaF2[i];
+
+            // write to database
+            if (!TTMySQLManager::GetManager()->WriteParameters(key, nElem, elem, newPed[i]))
+            {
+                Error("SavePedToDB", "Could not write the '%s' parameters to the database!", key);
+                return;
+            }
+        }
+        return;
+    }
+    else
+    {
+        //
+        // try to create list of modules whose values should be written to the database
+        //
+
+        // tokenize string
+        TString st(answer);
+        TObjArray* list = st.Tokenize(",");
+        Int_t nMod = list->GetEntries();
+
+        // check number of modules
+        if (nMod > fNModule)
+        {
+            Error("SavePedToDB", "Number of provided modules (%d) larger than number of modules in crate (%d)!",
+                  nMod, fNModule);
             return;
         }
+
+        printf("DEBUG: saving values for %d modules\n", nMod);
+
+        // module list
+        Int_t mod[nMod];
+
+        // loop over token
+        for (Int_t i = 0; i < nMod; i++)
+        {
+            // get string
+            TObjString* s = (TObjString*) list->At(i);
+
+            // convert to double and save to edge array
+            mod[i] = atoi(s->GetString().Data());
+        }
+
+        // clean-up
+        delete list;
+
+        // write values of selected modules
+        for (Int_t i = 0; i < nMod; i++)
+        {
+            printf("DEBUG: saving values for board %d\n", mod[i]);
+
+            // loop over pedestal types
+            for (Int_t j = 0; j < fNPed; j++)
+            {
+                // get parameter key
+                const Char_t* key = fIsVeto ? fgParPedVeto[j] : fgParPedBaF2[j];
+
+                printf("DEBUG: Saving in %s\n", key);
+                for (Int_t k = 0; k < fNCh; k++)
+                {
+                    printf("elem: %d   value: %4.0f\n", *(elem+mod[i]*fNCh+k), *(newPed[j]+mod[i]*fNCh+k));
+                }
+
+                // write to database
+                //if (!TTMySQLManager::GetManager()->WriteParameters(key, fNCh, elem+mod[i]*fNCh, newPed[j]+mod[i]*fNCh))
+                //{
+                //    Error("SavePedToDB", "Could not write the '%s' parameters to the database!", key);
+                //    return;
+                //}
+            }
+
+        }
+        return;
     }
 }
 
