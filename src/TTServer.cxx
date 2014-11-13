@@ -11,10 +11,14 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TSocket.h"
+#include "TError.h"
+
 #include "TTServer.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
 
 ClassImp(TTServer)
-
 
 //______________________________________________________________________________
 TTServer::TTServer(TServerType_t type, Int_t port, Int_t id)

@@ -16,7 +16,6 @@
 
 #include "TTNetServer.h"
 
-
 // server type enum
 enum ETServerType {
     kNoServer,
@@ -26,7 +25,6 @@ enum ETServerType {
     kHVServer
 };
 typedef ETServerType TServerType_t;
-
 
 class TTServer : public TTNetServer
 {

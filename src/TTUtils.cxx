@@ -11,8 +11,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 
-#include "TTUtils.h"
+#include "TSocket.h"
 
+#include "TTUtils.h"
 
 //______________________________________________________________________________
 Int_t TTUtils::IndexOf(const Char_t* s1, const Char_t* s2, UInt_t p)

@@ -14,11 +14,8 @@
 #ifndef TTCLIENT_H
 #define TTCLIENT_H
 
-//#include <cstdlib>
-
 #include "TTNetClient.h"
 #include "TTServer.h"
-
 
 class TTClient : public TTNetClient, public TObject
 {

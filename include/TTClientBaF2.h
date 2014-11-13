@@ -15,8 +15,8 @@
 #define TTCLIENTBAF2_H
 
 #include "TTClient.h"
-#include "TTCalibQAC.h"
 
+class TTCalibQAC;
 
 class TTClientBaF2 : public TTClient
 {

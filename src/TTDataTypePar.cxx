@@ -12,9 +12,9 @@
 
 
 #include "TTDataTypePar.h"
+#include "TTDataTypeMap.h"
 
 ClassImp(TTDataTypePar)
-
 
 //______________________________________________________________________________
 TTDataTypePar::TTDataTypePar(const Char_t* name, const Char_t* title, 

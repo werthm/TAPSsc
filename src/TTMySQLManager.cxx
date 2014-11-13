@@ -11,14 +11,25 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include <fstream>
+
+#include "THashList.h"
+#include "TEnv.h"
+#include "TSystem.h"
+#include "TObjArray.h"
+#include "TObjString.h"
+#include "TSQLResult.h"
+#include "TSQLRow.h"
+
 #include "TTMySQLManager.h"
+#include "TTConfig.h"
+#include "TTDataTypeMap.h"
+#include "TTDataTypePar.h"
 
 ClassImp(TTMySQLManager)
 
-
 // init static class members
 TTMySQLManager* TTMySQLManager::fgMySQLManager = 0;
-
 
 //______________________________________________________________________________
 TTMySQLManager::TTMySQLManager()

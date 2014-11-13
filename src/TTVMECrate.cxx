@@ -12,9 +12,9 @@
 
 
 #include "TTVMECrate.h"
+#include "TTVMEKPh.h"
 
 ClassImp(TTVMECrate)
-
 
 //______________________________________________________________________________
 TTVMECrate::TTVMECrate(Int_t id, TCrateType_t type, Long_t vmeRange,

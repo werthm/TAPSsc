@@ -12,10 +12,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include <fstream>
+
+#include "TSystem.h"
+#include "TEnv.h"
+
 #include "TTWriteADConfig.h"
+#include "TTMySQLManager.h"
 
 ClassImp(TTWriteADConfig)
-
 
 //______________________________________________________________________________
 TTWriteADConfig::TTWriteADConfig(const Int_t crate, const Char_t* const type, 

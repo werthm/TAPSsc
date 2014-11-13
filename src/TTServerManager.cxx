@@ -11,14 +11,22 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TList.h"
+#include "TError.h"
+#include "TEnv.h"
+
 #include "TTServerManager.h"
+#include "TTConfig.h"
+#include "TTClientVeto.h"
+#include "TTClientBaF2.h"
+#include "TTClientHV.h"
+#include "TTClientPWO.h"
+#include "TTCalibQAC.h"
 
 ClassImp(TTServerManager)
 
-
 // init static class members
 TTServerManager* TTServerManager::fgServerManager = 0;
-
 
 //______________________________________________________________________________
 TTServerManager::TTServerManager()

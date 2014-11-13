@@ -16,14 +16,12 @@
 
 #include "TNamed.h"
 
-
 enum ETDataType {
     kNoType,
     kParType,
     kMapType
 };
 typedef ETDataType TDataType_t;
-
 
 class TTDataType : public TNamed
 {

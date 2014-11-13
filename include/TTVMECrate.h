@@ -14,8 +14,9 @@
 #ifndef TTVMECRATE_H
 #define TTVMECRATE_H
 
-#include "TTVMEKPh.h"
+#include "Rtypes.h"
 
+class TTVMEKPh;
 
 // crate type enum
 enum ETCrateType {
@@ -25,7 +26,6 @@ enum ETCrateType {
     kPWOCrate,
 };
 typedef ETCrateType TCrateType_t;
-
 
 class TTVMECrate
 {

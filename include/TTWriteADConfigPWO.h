@@ -17,7 +17,6 @@
 
 #include "TTWriteADConfig.h"
 
-
 class TTWriteADConfigPWO : public TTWriteADConfig
 {
 

@@ -11,10 +11,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TError.h"
+#include "TThread.h"
+
 #include "TTVMECrateBaF2.h"
+#include "TTVMEBaF2.h"
+#include "TTVMEKPh.h"
+#include "TTCalibQAC.h"
 
 ClassImp(TTVMECrateBaF2)
-
 
 // init static class members
 const UShort_t TTVMECrateBaF2::fgPedInit = 0x1000;
@@ -24,7 +29,6 @@ const Long_t TTVMECrateBaF2::fgBoardBase[] = { 0x30000000, 0x21000000, 0x2200000
                                                0x29000000, 0x2a000000, 0x2b000000,
                                                0x2c000000, 0x2d000000, 0x2e000000,
                                                0x2f000000 };
-
 
 //______________________________________________________________________________
 TTVMECrateBaF2::TTVMECrateBaF2(Int_t id, Long_t vmeRange)

@@ -16,7 +16,6 @@
 
 ClassImp(TTWriteADConfigPWO)
 
-
 //______________________________________________________________________________
 Bool_t TTWriteADConfigPWO::ParseLine()
 {

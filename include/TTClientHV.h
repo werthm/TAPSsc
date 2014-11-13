@@ -15,8 +15,8 @@
 #define TTCLIENTHV_H
 
 #include "TTClient.h"
-#include "TTDataTypePar.h"
 
+class TTDataTypePar;
 
 class TTClientHV : public TTClient
 {

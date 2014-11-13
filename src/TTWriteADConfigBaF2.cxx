@@ -12,10 +12,13 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TError.h"
+
 #include "TTWriteADConfigBaF2.h"
+#include "TTUtils.h"
+#include "TTMySQLManager.h"
 
 ClassImp(TTWriteADConfigBaF2)
-
 
 //______________________________________________________________________________
 Bool_t TTWriteADConfigBaF2::ParseLine()

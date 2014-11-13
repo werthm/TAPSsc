@@ -14,15 +14,12 @@
 #ifndef TTSERVERMANAGER_H
 #define TTSERVERMANAGER_H
 
-#include "TEnv.h"
-#include "TError.h"
+#include "Rtypes.h"
 
-#include "TTConfig.h"
-#include "TTClientBaF2.h"
-#include "TTClientVeto.h"
-#include "TTClientPWO.h"
-#include "TTClientHV.h"
+#include "TTDataTypePar.h"
 
+class TTClient;
+class TTClientHV;
 
 class TTServerManager
 {

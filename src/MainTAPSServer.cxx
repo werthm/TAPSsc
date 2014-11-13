@@ -17,6 +17,7 @@
 
 #include "TSystem.h"
 #include "TEnv.h"
+#include "TError.h"
 
 #include "TTServerBaF2.h"
 #include "TTServerVeto.h"
@@ -25,12 +26,10 @@
 #include "TTConfig.h"
 #include "TTUtils.h"
 
-
 // global variables
 static TTServer* gTAPSServer = 0;
 static Int_t gTAPSServerID = -1;
 static Char_t gCfgFile[256] = "";
-
 
 // enum for command line arguments
 enum ETAPSServerArgs 
@@ -40,7 +39,6 @@ enum ETAPSServerArgs
     kBadServerID,
     kOk
 };
-
 
 //______________________________________________________________________________
 void PrintHelp()

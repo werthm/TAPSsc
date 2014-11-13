@@ -11,14 +11,21 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TSocket.h"
+#include "TMessage.h"
+
 #include "TTServerVeto.h"
+#include "TTWriteADConfigVeto.h"
+#include "TTVMECrateVeto.h"
+#include "TTMySQLManager.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
+#include "TTCalibQAC.h"
 
 ClassImp(TTServerVeto)
 
-
 // init static class members
 const Long_t TTServerVeto::fgVMEBase = 0x50000000;
-
 
 //______________________________________________________________________________
 TTServerVeto::TTServerVeto(Int_t port, Int_t id)

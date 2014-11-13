@@ -16,7 +16,6 @@
 
 #include "TTDataType.h"
 
-
 class TTDataTypeMap : public TTDataType
 {
 

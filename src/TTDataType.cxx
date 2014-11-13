@@ -15,7 +15,6 @@
 
 ClassImp(TTDataType)
 
-
 //______________________________________________________________________________
 TTDataType::TTDataType(const Char_t* name, const Char_t* title, 
                        TDataType_t type, Int_t nSize)

@@ -11,10 +11,17 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TServerSocket.h"
+#include "TMonitor.h"
+#include "TMessage.h"
+#include "TList.h"
+#include "TError.h"
+
 #include "TTNetServer.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
 
 ClassImp(TTNetServer)
-
 
 //______________________________________________________________________________
 TTNetServer::TTNetServer(Int_t port)

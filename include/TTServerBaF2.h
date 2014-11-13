@@ -15,9 +15,9 @@
 #define TTSERVERBAF2_H
 
 #include "TTServer.h"
-#include "TTWriteADConfigBaF2.h"
-#include "TTVMECrateBaF2.h"
 
+class TTWriteADConfigBaF2;
+class TTVMECrateBaF2;
 
 class TTServerBaF2 : public TTServer
 {

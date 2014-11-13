@@ -15,13 +15,11 @@
 
 ClassImp(TTVMEVeto)
 
-
 // init static class members
 const Long_t TTVMEVeto::fgRegPed[] = { 0x10, 0x11, 0x12, 0x13, 
                                        0x14, 0x15, 0x16, 0x17 };
 const Long_t TTVMEVeto::fgRegThr[] = { 0x08, 0x09, 0x0A, 0x0B, 
                                        0x0C, 0x0D, 0x0E, 0x0F };
-
 
 //______________________________________________________________________________
 TTVMEVeto::TTVMEVeto(Long_t adr, Int_t len)

@@ -14,23 +14,13 @@
 #ifndef TTMYSQLMANAGER_H
 #define TTMYSQLMANAGER_H
 
-#include <fstream>
-#include <cstdlib>
-
 #include "TSQLServer.h"
-#include "TSQLResult.h"
-#include "TSQLRow.h"
 #include "TError.h"
-#include "TEnv.h"
-#include "TObjString.h"
-#include "TObjArray.h"
-#include "THashList.h"
-#include "TSystem.h"
 
-#include "TTConfig.h"
-#include "TTDataTypePar.h"
-#include "TTDataTypeMap.h"
+#include "TTDataType.h"
 
+class TSQLResult;
+class THashList;
 
 class TTMySQLManager
 {

@@ -11,10 +11,20 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TError.h"
+#include "TEnv.h"
+#include "TSocket.h"
+#include "THashList.h"
+
 #include "TTServerHV.h"
+#include "TTLeCroy1445.h"
+#include "TTDataTypePar.h"
+#include "TTDataTypeMap.h"
+#include "TTMySQLManager.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
 
 ClassImp(TTServerHV)
-
 
 //______________________________________________________________________________
 TTServerHV::TTServerHV(Int_t port, Int_t id)

@@ -15,8 +15,6 @@
 #define TTLECROY1445_H
 
 #include "TTRS232.h"
-#include "TTUtils.h"
-
 
 class TTLeCroy1445 : public TTRS232
 {

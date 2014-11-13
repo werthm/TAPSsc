@@ -13,9 +13,10 @@
 
 
 #include "TTWriteADConfigVeto.h"
+#include "TTUtils.h"
+#include "TTMySQLManager.h"
 
 ClassImp(TTWriteADConfigVeto)
-
 
 //______________________________________________________________________________
 Bool_t TTWriteADConfigVeto::ParseLine()

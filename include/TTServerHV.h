@@ -15,9 +15,8 @@
 #define TTSERVERHV_H
 
 #include "TTServer.h"
-#include "TTMySQLManager.h"
-#include "TTLeCroy1445.h"
 
+class TTLeCroy1445;
 
 class TTServerHV : public TTServer
 {

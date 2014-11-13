@@ -15,14 +15,14 @@
 
 #include "TSystem.h"
 #include "TEnv.h"
+#include "TError.h"
 
 #include "TTLeCroy1445.h"
-
+#include "TTUtils.h"
 
 // global variables
 static TTLeCroy1445* gLeCroy = 0;
 static Char_t gCfgFile[256] = "";
-
 
 // enum for command line arguments
 enum EHVTalkArgs 
@@ -30,7 +30,6 @@ enum EHVTalkArgs
     kPrintHelp,
     kOk
 };
-
 
 //______________________________________________________________________________
 void PrintHelp()

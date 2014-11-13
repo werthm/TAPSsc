@@ -11,10 +11,13 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include <sys/mman.h>
+
+#include "TError.h"
+
 #include "TTVMEModule.h"
 
 ClassImp(TTVMEModule)
-
 
 //______________________________________________________________________________
 TTVMEModule::TTVMEModule(Long_t adr, Int_t len, Int_t nCh, Int_t nADC)

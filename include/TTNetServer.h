@@ -14,15 +14,10 @@
 #ifndef TTNETSERVER_H
 #define TTNETSERVER_H
 
-#include "TServerSocket.h"
-#include "TMonitor.h"
-#include "TMessage.h"
-#include "TError.h"
-#include "TList.h"
+#include "Rtypes.h"
 
-#include "TTConfig.h"
-#include "TTUtils.h"
-
+class TServerSocket;
+class TSocket;
 
 class TTNetServer
 {

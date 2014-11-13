@@ -11,10 +11,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TObjString.h"
+#include "TObjArray.h"
+#include "THashList.h"
+
 #include "TTCalibQAC.h"
+#include "TTMySQLManager.h"
+#include "TTDataTypePar.h"
 
 ClassImp(TTCalibQAC)
-
 
 // init static class members
 const Int_t TTCalibQAC::fgPedPos = 100;
@@ -28,7 +33,6 @@ const Char_t TTCalibQAC::fgMapVeto[] = "Map.Veto";
 const Char_t* TTCalibQAC::fgParPedBaF2[] = { "Par.BaF2.QAC.LG", "Par.BaF2.QAC.LGS", 
                                               "Par.BaF2.QAC.SG", "Par.BaF2.QAC.SGS" };
 const Char_t* TTCalibQAC::fgParPedVeto[] = { "Par.Veto.QAC" };
-
 
 //______________________________________________________________________________
 TTCalibQAC::TTCalibQAC(Int_t crateID, Bool_t isVeto, UInt_t pedInit)

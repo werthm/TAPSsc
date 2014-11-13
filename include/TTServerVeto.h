@@ -15,9 +15,9 @@
 #define TTSERVERVETO_H
 
 #include "TTServer.h"
-#include "TTWriteADConfigVeto.h"
-#include "TTVMECrateVeto.h"
 
+class TTWriteADConfigVeto;
+class TTVMECrateVeto;
 
 class TTServerVeto : public TTServer
 {

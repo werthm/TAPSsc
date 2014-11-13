@@ -11,10 +11,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TError.h"
+#include "TThread.h"
+
 #include "TTVMECrateVeto.h"
+#include "TTVMEVeto.h"
+#include "TTVMEKPh.h"
+#include "TTCalibQAC.h"
 
 ClassImp(TTVMECrateVeto)
-
 
 // init static class members
 const UShort_t TTVMECrateVeto::fgPedInit = 0x1000;
@@ -24,7 +29,6 @@ const Long_t TTVMECrateVeto::fgBoardBase[] = { 0x50000000, 0x41000000, 0x4200000
                                                0x49000000, 0x4a000000, 0x4b000000,
                                                0x4c000000, 0x4d000000, 0x4e000000,
                                                0x4f000000 };
-
 
 //______________________________________________________________________________
 TTVMECrateVeto::TTVMECrateVeto(Int_t id, Long_t vmeRange)

@@ -13,10 +13,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include <fcntl.h>
+#include <termios.h>
+#include <errno.h>
+
+#include "TError.h"
+
 #include "TTRS232.h"
 
 ClassImp(TTRS232)
-
 
 //______________________________________________________________________________
 TTRS232::TTRS232(const Char_t* device)

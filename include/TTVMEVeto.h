@@ -16,7 +16,6 @@
 
 #include "TTVMEV874.h"
 
-
 class TTVMEVeto : public TTVMEV874
 {
 

@@ -11,10 +11,14 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TMessage.h"
+
 #include "TTClientBaF2.h"
+#include "TTCalibQAC.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
 
 ClassImp(TTClientBaF2)
-
 
 //______________________________________________________________________________
 TTClientBaF2::TTClientBaF2(const Char_t* host, Int_t port)

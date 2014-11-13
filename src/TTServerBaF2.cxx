@@ -11,14 +11,21 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TSocket.h"
+#include "TMessage.h"
+
 #include "TTServerBaF2.h"
+#include "TTWriteADConfigBaF2.h"
+#include "TTVMECrateBaF2.h"
+#include "TTMySQLManager.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
+#include "TTCalibQAC.h"
 
 ClassImp(TTServerBaF2)
 
-
 // init static class members
 const Long_t TTServerBaF2::fgVMEBase = 0x30000000;
-
 
 //______________________________________________________________________________
 TTServerBaF2::TTServerBaF2(Int_t port, Int_t id)

@@ -15,7 +15,6 @@
 
 ClassImp(TTDataTypeMap)
 
-
 //______________________________________________________________________________
 TTDataTypeMap::TTDataTypeMap(const Char_t* name, const Char_t* title, 
                              Int_t nSize)

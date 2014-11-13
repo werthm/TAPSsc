@@ -15,8 +15,8 @@
 #define TTUTILS_H
 
 #include "Rtypes.h"
-#include "TSocket.h"
 
+class TSocket;
 
 namespace TTUtils
 {

@@ -11,10 +11,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include <fcntl.h>
+#include <sys/mman.h>
+
+#include "TError.h"
+
 #include "TTVMEKPh.h"
+#include "TTVMEModule.h"
 
 ClassImp(TTVMEKPh)
-
 
 //______________________________________________________________________________
 TTVMEKPh::TTVMEKPh(Long_t adrRange)

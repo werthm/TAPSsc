@@ -15,12 +15,10 @@
 
 ClassImp(TTVMEV874)
 
-
 // init static class members
 const Long_t TTVMEV874::fgReg[] = { 0x1000, 0x1006, 0x1008, 0x1032, 0x1034,
                                     0x102e, 0x1066, 0x1060, 0x1062, 0x1010,
                                     0x1080, 0x1200, 0x100e, 0x30 };
-
 
 //______________________________________________________________________________
 TTVMEV874::TTVMEV874(Long_t adr, Int_t len, Int_t nCh)

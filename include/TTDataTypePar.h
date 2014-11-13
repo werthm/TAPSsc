@@ -14,8 +14,9 @@
 #ifndef TTDATATYPEPAR_H
 #define TTDATATYPEPAR_H
 
-#include "TTDataTypeMap.h"
+#include "TTDataType.h"
 
+class TTDataTypeMap;
 
 class TTDataTypePar : public TTDataType
 {

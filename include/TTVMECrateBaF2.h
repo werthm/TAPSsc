@@ -14,12 +14,9 @@
 #ifndef TTVMECRATEBAF2_H
 #define TTVMECRATEBAF2_H
 
-#include "TThread.h"
-
 #include "TTVMECrate.h"
-#include "TTVMEBaF2.h"
-#include "TTCalibQAC.h"
 
+class TTCalibQAC;
 
 class TTVMECrateBaF2 : public TTVMECrate
 {

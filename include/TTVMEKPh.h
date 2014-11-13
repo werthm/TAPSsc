@@ -14,10 +14,9 @@
 #ifndef TTVMEKPH_H
 #define TTVMEKPH_H
 
-#include <fcntl.h>
+#include "Rtypes.h"
 
-#include "TTVMEModule.h"
-
+class TTVMEModule;
 
 class TTVMEKPh
 {

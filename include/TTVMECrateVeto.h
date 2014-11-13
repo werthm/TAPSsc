@@ -14,12 +14,9 @@
 #ifndef TTVMECRATEVETO_H
 #define TTVMECRATEVETO_H
 
-#include "TThread.h"
-
 #include "TTVMECrate.h"
-#include "TTVMEVeto.h"
-#include "TTCalibQAC.h"
 
+class TTCalibQAC;
 
 class TTVMECrateVeto : public TTVMECrate
 {

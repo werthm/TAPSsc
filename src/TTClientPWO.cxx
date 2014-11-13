@@ -15,7 +15,6 @@
 
 ClassImp(TTClientPWO)
 
-
 //______________________________________________________________________________
 TTClientPWO::TTClientPWO(const Char_t* host, Int_t port)
     : TTClient(host, port)

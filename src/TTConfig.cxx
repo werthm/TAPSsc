@@ -13,7 +13,6 @@
 
 #include "TTConfig.h"
 
-
 namespace TTConfig
 {   
     // format of the parameter tables

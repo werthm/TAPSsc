@@ -11,10 +11,14 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TMessage.h"
+
 #include "TTClientVeto.h"
+#include "TTCalibQAC.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
 
 ClassImp(TTClientVeto)
-
 
 //______________________________________________________________________________
 TTClientVeto::TTClientVeto(const Char_t* host, Int_t port)

@@ -15,14 +15,7 @@
 #ifndef TTWRITEADCONFIG_H
 #define TTWRITEADCONFIG_H
 
-#include <fstream>
-
-#include "TEnv.h"
-#include "TError.h"
-
-#include "TTMySQLManager.h"
-#include "TTUtils.h"
-
+#include "Rtypes.h"
 
 class TTWriteADConfig
 {

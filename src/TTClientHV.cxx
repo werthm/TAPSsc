@@ -12,9 +12,11 @@
 
 
 #include "TTClientHV.h"
+#include "TTDataTypePar.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
 
 ClassImp(TTClientHV)
-
 
 //______________________________________________________________________________
 TTClientHV::TTClientHV(const Char_t* host, Int_t port)

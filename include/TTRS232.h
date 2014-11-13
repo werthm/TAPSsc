@@ -16,12 +16,7 @@
 #ifndef TTRS232_H
 #define TTRS232_H
 
-#include <fcntl.h>
-#include <termios.h>
-#include <errno.h>
-
-#include "TError.h"
-
+#include "Rtypes.h"
 
 class TTRS232
 {

@@ -14,12 +14,7 @@
 #ifndef TTVMECALIBQAC_H
 #define TTVMECALIBQAC_H
 
-
 #include "TObject.h"
-#include "TMath.h"
-
-#include "TTMySQLManager.h"
-
 
 class TTCalibQAC : public TObject
 {

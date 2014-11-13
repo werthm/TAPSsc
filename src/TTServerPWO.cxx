@@ -11,10 +11,13 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TError.h"
+
 #include "TTServerPWO.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
 
 ClassImp(TTServerPWO)
-
 
 //______________________________________________________________________________
 TTServerPWO::TTServerPWO(Int_t port, Int_t id)

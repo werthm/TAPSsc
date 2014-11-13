@@ -16,7 +16,6 @@
 
 #include "Rtypes.h"
 
-
 namespace TTConfig
 {   
     // database format definitions

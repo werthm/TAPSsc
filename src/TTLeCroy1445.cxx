@@ -11,10 +11,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include <fcntl.h>
+#include <termios.h>
+
+#include "TError.h"
+
 #include "TTLeCroy1445.h"
+#include "TTUtils.h"
 
 ClassImp(TTLeCroy1445)
-
 
 //______________________________________________________________________________
 TTLeCroy1445::TTLeCroy1445(const Char_t* device)

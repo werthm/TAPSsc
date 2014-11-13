@@ -11,10 +11,13 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include "TError.h"
+
 #include "TTNetClient.h"
+#include "TTUtils.h"
+#include "TTConfig.h"
 
 ClassImp(TTNetClient)
-
 
 //______________________________________________________________________________
 TTNetClient::TTNetClient(const Char_t* host, Int_t port)

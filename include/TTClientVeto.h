@@ -15,8 +15,8 @@
 #define TTCLIENTVETO_H
 
 #include "TTClient.h"
-#include "TTCalibQAC.h"
 
+class TTCalibQAC;
 
 class TTClientVeto : public TTClient
 {

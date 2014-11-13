@@ -14,11 +14,7 @@
 #ifndef TTVMEMODULE_H
 #define TTVMEMODULE_H
 
-#include <sys/mman.h>
-
 #include "Rtypes.h"
-#include "TError.h"
-
 
 class TTVMEModule
 {

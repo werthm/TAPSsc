@@ -16,7 +16,6 @@
 
 #include "TTVMEV874.h"
 
-
 class TTVMEBaF2 : public TTVMEV874
 {
 

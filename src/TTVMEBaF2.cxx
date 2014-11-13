@@ -15,7 +15,6 @@
 
 ClassImp(TTVMEBaF2)
 
-
 // init static class members
 const Long_t TTVMEBaF2::fgRegPedLG[]   = { 0x0f, 0x0e, 0x09, 0x08 };
 const Long_t TTVMEBaF2::fgRegPedLGS[]  = { 0x10, 0x11, 0x16, 0x17 };
@@ -24,7 +23,6 @@ const Long_t TTVMEBaF2::fgRegPedSGS[]  = { 0x20, 0x21, 0x26, 0x27 };
 const Long_t TTVMEBaF2::fgRegThrCFD[]  = { 0x24, 0x1c, 0x14, 0x0c };
 const Long_t TTVMEBaF2::fgRegThrLED1[] = { 0x22, 0x1a, 0x12, 0x0a };
 const Long_t TTVMEBaF2::fgRegThrLED2[] = { 0x23, 0x1b, 0x13, 0x0b };
-
 
 //______________________________________________________________________________
 TTVMEBaF2::TTVMEBaF2(Long_t adr, Int_t len)
