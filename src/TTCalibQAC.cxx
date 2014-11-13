@@ -353,7 +353,8 @@ void TTCalibQAC::SavePedToDB()
             return;
         }
 
-        printf("DEBUG: saving values for %d modules\n", nMod);
+        // user info
+        Info("SavePedToDB", "Saving values for %d modules", nMod);
 
         // module list
         Int_t mod[nMod];
@@ -374,7 +375,7 @@ void TTCalibQAC::SavePedToDB()
         // write values of selected modules
         for (Int_t i = 0; i < nMod; i++)
         {
-            printf("DEBUG: saving values for board %d\n", mod[i]);
+            Info("SavePedToDB", "Saving values for board %d", mod[i]);
 
             // loop over pedestal types
             for (Int_t j = 0; j < fNPed; j++)
@@ -382,18 +383,17 @@ void TTCalibQAC::SavePedToDB()
                 // get parameter key
                 const Char_t* key = fIsVeto ? fgParPedVeto[j] : fgParPedBaF2[j];
 
-                printf("DEBUG: Saving in %s\n", key);
                 for (Int_t k = 0; k < fNCh; k++)
                 {
                     printf("elem: %d   value: %4.0f\n", *(elem+mod[i]*fNCh+k), *(newPed[j]+mod[i]*fNCh+k));
                 }
 
                 // write to database
-                //if (!TTMySQLManager::GetManager()->WriteParameters(key, fNCh, elem+mod[i]*fNCh, newPed[j]+mod[i]*fNCh))
-                //{
-                //    Error("SavePedToDB", "Could not write the '%s' parameters to the database!", key);
-                //    return;
-                //}
+                if (!TTMySQLManager::GetManager()->WriteParameters(key, fNCh, elem+mod[i]*fNCh, newPed[j]+mod[i]*fNCh))
+                {
+                    Error("SavePedToDB", "Could not write the '%s' parameters to the database!", key);
+                    return;
+                }
             }
 
         }
