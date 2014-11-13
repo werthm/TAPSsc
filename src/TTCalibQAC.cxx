@@ -11,6 +11,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#include <cstdlib>
+
 #include "TObjString.h"
 #include "TObjArray.h"
 #include "THashList.h"
