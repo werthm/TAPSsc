@@ -33,9 +33,10 @@ private:
     
     Bool_t ReadDataTypes(TDataType_t type);
     TSQLResult* SendQuery(const Char_t* query);
+    
+    TTMySQLManager();
 
 public:
-    TTMySQLManager();
     virtual ~TTMySQLManager();
 
     void SetSilenceMode(Bool_t s) { fSilence = s; }
