@@ -129,7 +129,8 @@ void TTCalibQAC::CalculatePed()
 
                 // calculate the mean data channel
                 Double_t pos = fDataRead[i][adc] ? fDataSum[i][adc]/(Double_t)fDataRead[i][adc] : 0;
-                
+                //printf("Mod: %d  Ch: %d  Ped: %d  Read: %d  Pos: %f\n", i, j, k, fDataRead[i][adc], pos);
+
                 // calculate the new pedestal value
                 if ((Int_t)pos != fgPedPos) 
                 {

@@ -178,6 +178,8 @@ void* TTVMECrateBaF2::RunCalibQAC(void* arg)
                 for (Int_t j = 0; j < crate->GetNChannel(); j++)
                 {
                     m[i]->SetPedestalChannel(j, calib->GetPedestal(i, j));
+                    //printf("Mod: %d  Ch: %d   Ped0: %d  Ped1: %d  Ped2: %d  Ped3: %d\n", i, j,
+                    //       calib->GetPedestal(i, j)[0], calib->GetPedestal(i, j)[1], calib->GetPedestal(i, j)[2], calib->GetPedestal(i, j)[3]);
                 }
 
                 // write the new pedestal values to the hardware
