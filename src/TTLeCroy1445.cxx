@@ -343,8 +343,14 @@ Bool_t TTLeCroy1445::ReadHV(Int_t mf, Int_t c, Int_t* outDem,
         Int_t nscan = sscanf(line, "C%d -%d -%d -%d", &ch, &de, &ba, &ac);
         if (nscan != 4) 
         {
-            Error("ReadHV", "Could not parse response from HV controller!");
-            return kFALSE;
+            // try parsing *OVF* line
+            nscan = sscanf(line, "C%d -%d *OVF* -%d", &ch, &de, &ac);
+            ba = 0;
+            if (nscan != 3)
+            {
+                Error("ReadHV", "Could not parse response '%s' from HV controller!", line);
+                return kFALSE;
+            }
         }
 
         // check channel number
