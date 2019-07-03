@@ -24,7 +24,7 @@ else
     # program TAPS standalone trigger with high pulser rate
     cd $HOME/acqu
     #AcquDAQ AcquDAQ.TestQAC &> /dev/null &
-    /opt/acqu/build/bin/AcquDAQ AcquDAQ.CalibQAC &
+    /AcquBin/AcquDAQ AcquDAQ.CalibQAC &
     PN=`jobs -p`
     sleep 5
     kill $PN
