@@ -47,7 +47,7 @@ then
             # start new instance
             if [ "$CMD" == "restart" ]
             then
-                nohup $LOC/bin/TAPSServer -id $ID &> /dev/null &
+                nohup $LOC/bin/TAPSServer -id $ID &> /var/log/TAPSServer.log &
             fi
         fi
     else
