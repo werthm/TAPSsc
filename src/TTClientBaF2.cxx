@@ -78,7 +78,7 @@ Bool_t TTClientBaF2::StartCalibQAC()
 {
     // Start the QAC calibration.
     // Return kTRUE on success, otherwise kFALSE.
-    
+
     Char_t tmp[256];
 
     // check if server has the correct type and is connected
@@ -91,13 +91,13 @@ Bool_t TTClientBaF2::StartCalibQAC()
 
     // send start QAC calibration command
     TTUtils::SendNetworkCmd(fSocket, TTConfig::kNCStartCalibQAC);
-    
+
     // wait for the response
     if (fSocket->Select(TSocket::kRead, TTConfig::kLongNetTimeout) == 1)
     {
         // get response
         fSocket->Recv(tmp, 256);
-        
+
         // check response
         Int_t nc = TTUtils::GetNetworkCmd(tmp);
         if (nc == TTConfig::kNCStartCalibQACSuccess) return kTRUE;
